@@ -1,0 +1,87 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.form-label{
+  display: block;
+    text-align: left;
+}
+.blockContent input{
+  display: block !important;
+}
+.nav-item button{
+  background: transparent;
+  border: none;
+  color: var(--bs-dark);
+  font-size: 13px;
+  background-color: transparent;
+  padding: 23px 18px;
+  text-transform: uppercase;
+  -webkit-transition: all .3s ease;
+  transition: all .3s ease;
+  position: relative;
+  font-weight: 600;
+}
+.text-left{
+  text-align: left;
+}
+.text-left input{
+  margin-right: 5px;
+}
+.text-left label{
+  margin-right: 15px;
+}
+.blockContent input {
+  display: block !important;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--bs-border-color);
+}
+.btn-primary {
+  background-color: #027984 !important;
+  border-color: #027984 !important;
+}
+.text-primary, .filter-search-form i {
+  color : #22b783 !important;
+}
+.text-left label {
+  font-weight: 500 !important;
+}
