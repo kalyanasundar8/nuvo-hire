@@ -203,7 +203,7 @@ export default function Pagination({
     }
 
     if (params.type === 'custom' && params.renderCustom) {
-      $el.html(params.renderCustom(swiper, current + 1, total));
+      $el.php(params.renderCustom(swiper, current + 1, total));
       emit('paginationRender', $el[0]);
     } else {
       emit('paginationUpdate', $el[0]);
@@ -237,7 +237,7 @@ export default function Pagination({
         }
       }
 
-      $el.html(paginationHTML);
+      $el.php(paginationHTML);
       swiper.pagination.bullets = $el.find(classesToSelector(params.bulletClass));
     }
 
@@ -248,7 +248,7 @@ export default function Pagination({
         paginationHTML = `<span class="${params.currentClass}"></span>` + ' / ' + `<span class="${params.totalClass}"></span>`;
       }
 
-      $el.html(paginationHTML);
+      $el.php(paginationHTML);
     }
 
     if (params.type === 'progressbar') {
@@ -258,7 +258,7 @@ export default function Pagination({
         paginationHTML = `<span class="${params.progressbarFillClass}"></span>`;
       }
 
-      $el.html(paginationHTML);
+      $el.php(paginationHTML);
     }
 
     if (params.type !== 'custom') {

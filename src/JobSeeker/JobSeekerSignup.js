@@ -4,6 +4,7 @@ import './JobSeekerSignup.css';
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import * as yup from 'yup'
 
 function JobSeekerSignup() {
 
@@ -22,9 +23,15 @@ function JobSeekerSignup() {
 
     const [validationError,setValidationError] = useState({})
 
+
+    
+
+      
+
     const changeResumeHandler = (event) => {
 		setResume(event.target.files[0]);
 	};
+    
 
 
     const jobSeekerSignup = async (e) => {
@@ -44,19 +51,107 @@ function JobSeekerSignup() {
         formData.append('terms', terms)
         formData.append('resume', resume)
 
+
+        if (jobseekerType === "") {
+            Swal.fire({
+                text: "Please select jobseeker Type",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (firstName === "") {
+            Swal.fire({
+                text: "Please enter your First Name",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (email === "") {
+            Swal.fire({
+                text: "Please enter your email ",
+                icon:"error"
+              })
+
+              return false;
+        }
+
+        if (mobileNo === "") {
+            Swal.fire({
+                text: "Please enter your mobile number ",
+                icon:"error"
+              })
+
+              return false;
+        }
+
+        if (password === "") {
+            Swal.fire({
+                text: "Please enter your password ",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (password.length < 8) {
+            Swal.fire({
+                text: "Password must be 8 characters length",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (password !== confirmPassword) {
+            Swal.fire({
+                text: "Password and confirm password must be equal",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (workStatus === "") {
+            Swal.fire({
+                text: "Please select work status ",
+                icon:"error"
+              })
+
+              return false;
+        }
+
+        
+        if (resume === "") {
+            Swal.fire({
+                text: "Please upload your resume ",
+                icon:"error"
+              })
+
+              return false;
+        }
+        if (terms === "") {
+            Swal.fire({
+                text: "Please confirm terms & conditions ",
+                icon:"error"
+              })
+
+              return false;
+        }
     
-        await axios.post(`http://localhost:8000/api/signup-as-jobseeker`, formData).then(({data}) => {
+        await axios.post(`https://admin.demo.nuvohire.com/api/signup-as-jobseeker`, formData).then(({data}) => {
           Swal.fire({
             icon:"success",
             text:data.message
           })
           navigate("/")
         }).catch(({response}) => {
-          if( response.status === 422 ) {
-            setValidationError(response.data.errors)
+          if( response.status === 400 ) {
+            Swal.fire({
+                icon:"error",
+                text:response.data.message
+            })
           } else {
             Swal.fire({
-              text:response.data.message,
+              text: "Something went wrong",
               icon:"error"
             })
           }

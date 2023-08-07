@@ -30,8 +30,8 @@ export default function A11y({
   function notify(message) {
     const notification = liveRegion;
     if (notification.length === 0) return;
-    notification.html('');
-    notification.html(message);
+    notification.php('');
+    notification.php(message);
   }
 
   function getRandomNumber(size = 16) {

@@ -8,11 +8,19 @@
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="Web site created using create-react-app" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <meta charset="utf-8" />
+  <title>Nuvo Hire</title>
+       
+        
+  <meta name="keywords" content="" />
+  <meta content="Themesdesign" name="author" />
+
   <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="stylesheet" href="%PUBLIC_URL%/style.css"  type = "text/css" />
   <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -22,24 +30,28 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  <title>React App</title>
+  
+ <!-- App favicon -->
+ 
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/assets/images/nuvo_hire_favicon.png">
 
-  <!-- App favicon -->
-  <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <!-- Choise Css -->
+        <link rel="stylesheet" href="/assets/libs/choices.js/public/assets/styles/choices.min.css">
 
-  <!-- Choise Css -->
-  <link rel="stylesheet" href="assets/libs/choices.js/public/assets/styles/choices.min.css">
+        <!-- Swiper Css -->
+        <link rel="stylesheet" href="/assets/libs/swiper/swiper-bundle.min.css">
+		
+		<!-- Nouislider Css -->
+		<link rel="stylesheet" href="/assets/libs/nouislider/nouislider.min.css">
+        <!-- Bootstrap Css -->
+        <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet"/>
+        <!-- Icons Css -->
+        <link href="/assets/css/icons.min.css" rel="stylesheet" />
+        <!-- App Css-->
+        <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" />
+        <!--Custom Css-->
 
-  <!-- Swiper Css -->
-  <link rel="stylesheet" href="assets/libs/swiper/swiper-bundle.min.css">
-
-  <!-- Bootstrap Css -->
-  <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" />
-  <!-- Icons Css -->
-  <link href="assets/css/icons.min.css" rel="stylesheet" />
-  <!-- App Css-->
-  <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" />
-  <!--Custom Css-->
 </head>
 
 <body>
@@ -57,25 +69,35 @@
     -->
 
     <!-- JAVASCRIPT -->
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="https://unicons.iconscout.com/release/v4.0.0/script/monochrome/bundle.js"></script>
 
 
     <!-- Choice Js -->
-    <script src="assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="/assets/libs/choices.js/public/assets/scripts/choices.min.js"></script>
+    
+<!-- Nouislider Js -->
+<script src="/assets/libs/nouislider/nouislider.min.js"></script>
+<script src="/assets/js/pages/area-filter-range.init.js"></script>
 
+<!-- Checkbox Init Js -->
+<script src="/assets/js/pages/checkbox.init.js"></script>
+
+<!-- Job Init Js -->
+<script src="/assets/js/pages/job-list.init.js"></script>
     <!-- Swiper Js -->
-    <script src="assets/libs/swiper/swiper-bundle.min.js"></script>
+    <script src="/assets/libs/swiper/swiper-bundle.min.js"></script>
 
     <!-- Index Js -->
-    <script src="assets/js/pages/job-list.init.js"></script>
-    <script src="assets/js/pages/index.init.js"></script>
+    <script src="/assets/js/pages/job-list.init.js"></script>
+    <script src="/assets/js/pages/index.init.js"></script>
 
     <!-- Switcher Js -->
-    <script src="assets/js/pages/switcher.init.js"></script>
-
+    <script src="/assets/js/pages/switcher.init.js"></script>
+    
     <!-- App Js -->
-    <script src="assets/js/app.js"></script>
+    <script src="/assets/js/app.js"></script>
+
 </body>
 
 </html>
