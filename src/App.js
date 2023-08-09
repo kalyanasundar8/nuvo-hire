@@ -22,6 +22,7 @@ import JobCategories from './components/JobCategories';
 import MyProfile from './components/MyProfile';
 import Services from './components/Services';
 import Candidates from './components/Candidates';
+import Pricing from './components/Pricing';
 import CandidateDetail from './components/CandidateDetail';
 import CandidateGrid from './components/CandidateGrid';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -62,6 +63,7 @@ function App() {
           <Route path="/candidate-detail" element={<CandidateDetail />} />
           <Route path="/candidate-grid" element={<CandidateGrid />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/pricing-plans" element={<Pricing />} />
         </Routes>
        <Footer/>
       </BrowserRouter>

@@ -180,6 +180,9 @@ function Header() {
                                 </ul>
                             </li>
                             <li className="nav-item">
+                                <Link to="/pricing-plans" className="nav-link">Pricing</Link>
+                            </li>
+                            <li className="nav-item">
                                 <Link to="/contact-us" className="nav-link">Contact Us</Link>
                             </li>
                         </ul>
