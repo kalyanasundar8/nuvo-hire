@@ -102,8 +102,9 @@ export default function Contact() {
                                             <div class="flex-shrink-0 fs-22 text-primary">
                                                 <i class="uil uil-map-marker"></i>
                                             </div>
+                                            
                                             <div class="flex-grow-1 ms-2">
-                                                <p class="mb-0">#113, 2nd floor, Srinagar, Hope college, Peelamedu, Coimbatore – 641004, Tamil Nadu, India.</p>
+                                                <p class="mb-0">Nuvohire, 5th Floor, Wing-A, Statesman House, Barakhamba Rd, New Delhi, Delhi 110001.</p>
                                             </div>
                                         </div>
                                         <div class="d-flex text-muted align-items-center mt-2">
@@ -111,17 +112,17 @@ export default function Contact() {
                                                 <i class="uil uil-envelope"></i>
                                             </div>
                                             <div class="flex-grow-1 ms-2">
-                                                <p class="mb-0">support@ready2jobs.com</p>
+                                                <p class="mb-0">info@nuvohire.com </p>
                                             </div>
                                         </div>
-                                        <div class="d-flex text-muted align-items-center mt-2">
+                                        {/* <div class="d-flex text-muted align-items-center mt-2">
                                             <div class="flex-shrink-0 fs-22 text-primary">
                                                 <i class="uil uil-phone-alt"></i>
                                             </div>
                                             <div class="flex-grow-1 ms-2">
                                                 <p class="mb-0">+91 422 436 4489</p>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import useScrollToTop from './useScrollToTop';
+import useScrollToTop from '../hooks/useScrollToTop';
 
 export default function Jobs() {
     useScrollToTop();

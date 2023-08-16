@@ -63,9 +63,9 @@ function Header() {
                                     <ul className="topbar-social-menu list-inline mb-0">
                                         <li className="list-inline-item"><a href="https://www.linkedin.com/company/ready2jobs-manpower-suppliers-pvt-ltd/" className="social-link"><i
                                                     className="uil uil-linkedin"></i></a></li>
-                                        <li className="list-inline-item"><a href="https://www.facebook.com/OfficialR2J" className="social-link"><i
+                                        <li className="list-inline-item"><a href="https://www.facebook.com/nuvohire/" target='_blank' className="social-link"><i
                                                     className="uil uil-facebook"></i></a></li>
-                                        <li className="list-inline-item"><a href="https://www.instagram.com/ready2jobs_official/" className="social-link"><i
+                                        <li className="list-inline-item"><a href="https://instagram.com/nuvohire" target='_blank' className="social-link"><i
                                                     className="uil uil-instagram"></i></a></li>
                                         <li className="list-inline-item"><a href="https://www.youtube.com/channel/UCgkBlMK3ePbzl7LZlMrwU1Q" className="social-link"><i
                                                     className="uil uil-youtube"></i></a></li>
