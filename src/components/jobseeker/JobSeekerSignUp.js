@@ -1,8 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react";
 
-import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import GoogleSignInBtn from "../atoms/GoogleSignIn/GoogleSignInBtn";
 
 export default function JobSeekerSignUp() {
 
@@ -24,13 +25,9 @@ export default function JobSeekerSignUp() {
     const changeResumeHandler = (event) => {
 		setResume(event.target.files[0]);
 	};
-    
-
 
     const jobSeekerSignup = async (e) => {
-
         e.preventDefault();
-    
         const formData = new FormData()
     
         formData.append('jobseeker_type', jobseekerType)
@@ -43,7 +40,6 @@ export default function JobSeekerSignUp() {
         formData.append('work_status', workStatus)
         formData.append('terms', terms)
         formData.append('resume', resume)
-
 
         if (jobseekerType === "") {
             Swal.fire({
@@ -374,6 +370,12 @@ export default function JobSeekerSignUp() {
                                                 <div class="text-center">
                                                     <button type="submit" class="btn btn-white btn-hover w-100">Sign Up</button>
                                                 </div>
+                                                <div class="mt-3 text-center">
+                                                    <p class="mb-0">Or</p>
+                                                </div>
+                                               <div>
+                                                    <GoogleSignInBtn />
+                                               </div>
                                             </div>
                                         </form>
                                         <div class="mt-3 text-center">
