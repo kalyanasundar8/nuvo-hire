@@ -1,13 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import useScrollToTop from './useScrollToTop';
 
-export default function Jobs() 
-{
-  
+export default function Jobs() {
+    useScrollToTop();
+
     return (
         <div class="page-content">
 
-           
             <section class="page-title-box">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -25,15 +25,13 @@ export default function Jobs()
                                 </div>
                             </div>
                         </div>
-                       
-                    </div>
-                   
-                </div>
-         
-            </section>
-           
 
-         
+                    </div>
+
+                </div>
+
+            </section>
+
             <div class="position-relative" style={{ zIndex: 1 }}>
                 <div class="shape">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
@@ -42,7 +40,7 @@ export default function Jobs()
                     </svg>
                 </div>
             </div>
-           
+
             <section class="section">
                 <div class="container">
                     <div class="row">
@@ -57,7 +55,7 @@ export default function Jobs()
                                                     <input type="search" class="form-control filter-job-input-box" id="exampleFormControlInput1" placeholder="Job, company... " />
                                                 </div>
                                             </div>
-                                           
+
                                             <div class="col-lg-3 col-md-6">
                                                 <div class="filler-job-form">
                                                     <i class="uil uil-location-point"></i>
@@ -311,7 +309,7 @@ export default function Jobs()
                                                     </select>
                                                 </div>
                                             </div>
-                                           
+
                                             <div class="col-lg-3 col-md-6">
                                                 <div class="filler-job-form">
                                                     <i class="uil uil-clipboard-notes"></i>
@@ -323,16 +321,16 @@ export default function Jobs()
                                                     </select>
                                                 </div>
                                             </div>
-                                           
+
                                             <div class="col-lg-3 col-md-6">
-                                                 <Link to="" class="btn btn-primary w-100"><i class="uil uil-filter"></i> Fliter</Link>
+                                                <Link to="" class="btn btn-primary w-100"><i class="uil uil-filter"></i> Fliter</Link>
                                             </div>
-                                           
+
                                         </div>
-                                       
+
                                     </form>
                                 </div>
-                               
+
                                 <div class="wedget-popular-title mt-4">
                                     <h6>Popular</h6>
                                     <ul class="list-inline">
@@ -341,7 +339,7 @@ export default function Jobs()
                                                 <div class="number flex-shrink-0 me-2">
                                                     20
                                                 </div>
-                                                 <Link to="" class="primary-link stretched-link">
+                                                <Link to="" class="primary-link stretched-link">
                                                     <h6 class="fs-14 mb-0">UI/UX designer</h6>
                                                 </Link>
                                             </div>
@@ -351,7 +349,7 @@ export default function Jobs()
                                                 <div class="number flex-shrink-0 me-2">
                                                     18
                                                 </div>
-                                                 <Link to="" class="primary-link stretched-link">
+                                                <Link to="" class="primary-link stretched-link">
                                                     <h6 class="fs-14 mb-0">HR manager</h6>
                                                 </Link>
                                             </div>
@@ -361,7 +359,7 @@ export default function Jobs()
                                                 <div class="number flex-shrink-0 me-2">
                                                     10
                                                 </div>
-                                                 <Link to="" class="primary-link stretched-link">
+                                                <Link to="" class="primary-link stretched-link">
                                                     <h6 class="fs-14 mb-0">Product manager</h6>
                                                 </Link>
                                             </div>
@@ -371,7 +369,7 @@ export default function Jobs()
                                                 <div class="number flex-shrink-0 me-2">
                                                     15
                                                 </div>
-                                                 <Link to="" class="primary-link stretched-link">
+                                                <Link to="" class="primary-link stretched-link">
                                                     <h6 class="fs-14 mb-0">Sales manager</h6>
                                                 </Link>
                                             </div>
@@ -381,36 +379,36 @@ export default function Jobs()
                                                 <div class="number flex-shrink-0 me-2">
                                                     28
                                                 </div>
-                                                 <Link to="" class="primary-link stretched-link">
+                                                <Link to="" class="primary-link stretched-link">
                                                     <h6 class="fs-14 mb-0">Developer</h6>
                                                 </Link>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
-                               
-                             
+
+
                                 <div>
                                     <div class="job-box card mt-5">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-01.png" alt="" class="img-fluid rounded-3"/></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-01.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -419,7 +417,7 @@ export default function Jobs()
                                                         <p class="text-muted"> Escondido,California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -428,15 +426,15 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 3 min ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-success-subtle text-success fs-13 mt-1">Full Time</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -446,39 +444,39 @@ export default function Jobs()
                                                             - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div class="text-start text-md-end">
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                  
+
 
                                     <div class="job-box bookmark-post card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-md-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-02.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-02.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Digital Marketing
-                                                                Manager</Link></h5>
+                                                            Manager</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Nuvo Hire Technology Pvt.Ltd</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -487,7 +485,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Phoenix, Arizona</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -496,7 +494,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 15 min ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-success-subtle text-success fs-13 mt-1">Full Time</span>
@@ -504,9 +502,9 @@ export default function Jobs()
                                                         <span class="badge bg-primary-subtle text-primary fs-13 mt-1">Freelance</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -516,39 +514,39 @@ export default function Jobs()
                                                             4+ years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div>
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-         
+
 
                                     <div class="job-box card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-03.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-03.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -557,7 +555,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -566,15 +564,15 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 37 min ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-info-subtle text-info fs-13 mt-1">Internship</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -584,38 +582,38 @@ export default function Jobs()
                                                             - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div class="text-start text-md-end">
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                           
+
 
                                     <div class="job-box card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-04.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-04.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -624,7 +622,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -633,15 +631,15 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 50 min ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-primary-subtle text-primary fs-13 mt-1">Freelance</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -650,39 +648,39 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"><span class="text-dark">Experience :</span> 2 - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div class="text-start text-md-end">
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                 
+
 
                                     <div class="job-box bookmark-post card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-05.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-05.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -691,7 +689,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -700,15 +698,15 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 1 month ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-danger-subtle text-danger fs-13 mt-1">Part Time</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -717,39 +715,39 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"><span class="text-dark">Experience :</span> 2 - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div>
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                  
+
 
                                     <div class="job-box card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-06.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-06.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -758,7 +756,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -767,16 +765,16 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 2 month ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-primary-subtle text-primary fs-13 mt-1">Freelance</span>
                                                         <span class="badge bg-warning-subtle text-warning fs-13 mt-1">Urgent</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -785,39 +783,39 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"><span class="text-dark">Experience :</span> 2 - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div>
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                 
+
 
                                     <div class="job-box card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-07.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-07.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -826,7 +824,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -835,16 +833,16 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 1 month ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-danger-subtle text-danger fs-13 mt-1">Part Time</span>
                                                         <span class="badge bg-warning-subtle text-warning fs-13 mt-1">Urgent</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -853,39 +851,39 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"><span class="text-dark">Experience :</span> 2 - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div>
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                  
+
 
                                     <div class="job-box card mt-4">
                                         <div class="bookmark-label text-center">
-                                             <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
+                                            <Link to="" class="align-middle text-white"><i class="mdi mdi-star"></i></Link>
                                         </div>
                                         <div class="p-4">
                                             <div class="row align-items-center">
                                                 <div class="col-md-2">
                                                     <div class="text-center mb-4 mb-lg-0">
-                                                         <Link to="company-details.php"><img src="assets/images/featured-job/img-03.png" alt="" class="img-fluid rounded-3" /></Link>
+                                                        <Link to="company-details.php"><img src="assets/images/featured-job/img-03.png" alt="" class="img-fluid rounded-3" /></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="mb-2 mb-md-0">
                                                         <h5 class="fs-18 mb-0"> <Link to="/job-detail" class="text-dark">Product
-                                                                Director</Link></h5>
+                                                            Director</Link></h5>
                                                         <p class="text-muted fs-14 mb-0">Creative Agency</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-3">
                                                     <div class="d-flex mb-2">
                                                         <div class="flex-shrink-0">
@@ -894,7 +892,7 @@ export default function Jobs()
                                                         <p class="text-muted mb-0">Escondido, California</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div class="d-flex mb-0">
                                                         <div class="flex-shrink-0">
@@ -903,16 +901,16 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"> 3 month ago</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-2">
                                                     <div>
                                                         <span class="badge bg-info-subtle text-info  fs-13 mt-1">Internship</span>
                                                         <span class="badge bg-primary-subtle text-primary fs-13 mt-1">Private</span>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                         <div class="p-3 bg-light">
                                             <div class="row justify-content-between">
@@ -921,27 +919,27 @@ export default function Jobs()
                                                         <p class="text-muted mb-0"><span class="text-dark">Experience :</span> 2 - 3 years</p>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-lg-2 col-md-3">
                                                     <div>
-                                                         <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
+                                                        <Link to="#applyNow" data-bs-toggle="modal" class="primary-link">Apply Now <i class="mdi mdi-chevron-double-right"></i></Link>
                                                     </div>
                                                 </div>
-                                               
+
                                             </div>
-                                           
+
                                         </div>
                                     </div>
-                                
+
 
                                 </div>
-                          
+
                                 <div class="row">
                                     <div class="col-lg-12 mt-4 pt-2">
                                         <nav aria-label="Page navigation example">
                                             <ul class="pagination job-pagination mb-0 justify-content-center">
                                                 <li class="page-item disabled">
-                                                     <Link class="page-link" to="" tabindex="-1">
+                                                    <Link class="page-link" to="" tabindex="-1">
                                                         <i class="mdi mdi-chevron-double-left fs-15"></i>
                                                     </Link>
                                                 </li>
@@ -950,20 +948,20 @@ export default function Jobs()
                                                 <li class="page-item"> <Link class="page-link" to="">3</Link></li>
                                                 <li class="page-item"> <Link class="page-link" to="">4</Link></li>
                                                 <li class="page-item">
-                                                     <Link class="page-link" to="">
+                                                    <Link class="page-link" to="">
                                                         <i class="mdi mdi-chevron-double-right fs-15"></i>
                                                     </Link>
                                                 </li>
                                             </ul>
                                         </nav>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
-                       
 
-                       
+
+
                         <div class="col-lg-3">
                             <div class="side-bar mt-5 mt-lg-0">
                                 <div class="accordion" id="accordionExample">
@@ -984,7 +982,7 @@ export default function Jobs()
                                                     </div>
                                                     <div class="area-range">
                                                         <div class="form-label mb-3">Area Range: <span class="example-val mt-2" id="slider1-span">9.00</span> miles</div>
-                                                        <div id="slider1" class="noUi-target noUi-ltr noUi-horizontal noUi-txt-dir-ltr"> 
+                                                        <div id="slider1" class="noUi-target noUi-ltr noUi-horizontal noUi-txt-dir-ltr">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1032,7 +1030,7 @@ export default function Jobs()
                                             <div class="accordion-body">
                                                 <div class="side-title">
                                                     <div class="form-check mt-2">
-                                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault6" checked /> 
+                                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault6" checked />
                                                         <label class="form-check-label ms-2 text-muted" for="flexRadioDefault6">
                                                             Freelance
                                                         </label>
@@ -1119,29 +1117,29 @@ export default function Jobs()
                                         <div id="tagcloud" class="accordion-collapse collapse show" aria-labelledby="tagCloud">
                                             <div class="accordion-body">
                                                 <div class="side-title">
-                                                     <Link to="" class="badge tag-cloud fs-13 mt-2">design</Link>
-                                                     <Link to="" class="badge tag-cloud fs-13 mt-2">marketing</Link>
-                                                     <Link to="" class="badge tag-cloud fs-13 mt-2">business</Link>
-                                                     <Link to="" class="badge tag-cloud fs-13 mt-2">developer</Link>
+                                                    <Link to="" class="badge tag-cloud fs-13 mt-2">design</Link>
+                                                    <Link to="" class="badge tag-cloud fs-13 mt-2">marketing</Link>
+                                                    <Link to="" class="badge tag-cloud fs-13 mt-2">business</Link>
+                                                    <Link to="" class="badge tag-cloud fs-13 mt-2">developer</Link>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                 </div>
-                              
+
 
                             </div>
-                            
+
                         </div>
-                       
-                       
+
+
                     </div>
-                   
+
                 </div>
-              
+
             </section>
-           
+
 
 
             <div class="modal fade" id="applyNow" tabindex="-1" aria-labelledby="applyNow" aria-hidden="true">
@@ -1156,11 +1154,11 @@ export default function Jobs()
                             </div>
                             <div class="mb-3">
                                 <label for="nameControlInput" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="nameControlInput" placeholder="Enter your name"/>
+                                <input type="text" class="form-control" id="nameControlInput" placeholder="Enter your name" />
                             </div>
                             <div class="mb-3">
                                 <label for="emailControlInput2" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="emailControlInput2" placeholder="Enter your email"/>
+                                <input type="email" class="form-control" id="emailControlInput2" placeholder="Enter your email" />
                             </div>
                             <div class="mb-3">
                                 <label for="messageControlTextarea" class="form-label">Message</label>
@@ -1168,7 +1166,7 @@ export default function Jobs()
                             </div>
                             <div class="mb-4">
                                 <label class="form-label" for="inputGroupFile01">Resume Upload</label>
-                                <input type="file" class="form-control" id="inputGroupFile01"/>
+                                <input type="file" class="form-control" id="inputGroupFile01" />
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Send Application</button>
                         </div>
