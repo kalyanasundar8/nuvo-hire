@@ -140,9 +140,9 @@ export default function Footer() {
                             </div>
                         </div>
                     </div>
-                    <div class="bottom d-none d-md-block" >
+                    {/* <div class="bottom d-none d-md-block" >
                         <Link to="javascript: void(0);" class="settings rounded-end"><i class="mdi mdi-cog mdi-spin"></i></Link>
-                    </div>
+                    </div> */}
                 </div>
                
                

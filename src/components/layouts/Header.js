@@ -88,7 +88,7 @@ function Header() {
                                     <div className="dropdown d-inline-block language-switch">
                                         <button type="button" className="btn" data-bs-toggle="dropdown" aria-haspopup="true"
                                             aria-expanded="false">
-                                            <img id="header-lang-img" src="/assets/images/flags/us.jpg" alt="Header Language" height="16" />
+                                            <img id="header-lang-img" src="/assets/images/flags/india.jpg" alt="Header Language" height="20" />
                                         </button>
                                         <div className="dropdown-menu dropdown-menu-end">
                                             
@@ -276,10 +276,10 @@ function Header() {
                                 </div>
                             </li>
                             <li className="list-inline-item dropdown">
-                                <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
+                                {/* <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <img src="assets/images/profile.jpg" alt="mdo" width="35" height="35" className="rounded-circle me-1"/> <span className="d-none d-md-inline-block fw-medium">Hi, { user?.data ?  user?.data?.name : "Guest" }</span>
-                                </a>
+                                </a> */}
                                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userdropdown">
                                     <li><Link className="dropdown-item" to="/manage-jobs">Manage Jobs</Link></li>
                                     <li><Link className="dropdown-item" to="/bookmark-jobs">Bookmarks Jobs</Link></li>

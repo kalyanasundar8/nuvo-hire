@@ -35,6 +35,7 @@ export default function Home() {
 										<div className="filter-search-form mt-3 mt-md-0">
 											<i className="uil uil-map-marker"></i>
 											<select className="form-select home-select" data-trigger name="choices-single-location" id="choices-single-location" aria-label="Default select example">
+												<option value="IN">India</option>
 												<option value="AF">Afghanistan</option>
 												<option value="AX">&Aring;land Islands</option>
 												<option value="AL">Albania</option>
@@ -135,7 +136,7 @@ export default function Home() {
 												<option value="HK">Hong Kong</option>
 												<option value="HU">Hungary</option>
 												<option value="IS">Iceland</option>
-												<option value="IN">India</option>
+												
 												<option value="ID">Indonesia</option>
 												<option value="IR">Iran, Islamic Republic of</option>
 												<option value="IQ">Iraq</option>
