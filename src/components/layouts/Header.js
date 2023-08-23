@@ -20,7 +20,7 @@ function Header() {
 
     if ( isAuth ) {
         
-        setUser(JSON.parse(localStorage.getItem('user')));
+        // setUser(JSON.parse(localStorage.getItem('user')));
     }
 
     useEffect(() => {
