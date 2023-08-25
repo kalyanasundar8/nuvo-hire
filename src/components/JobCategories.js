@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import ApiService from "../services/ApiService";
+import useFetch from "./useFetch";
 
 export default function JobCategories() {
   // Create a state for job-categories
-  const [jobCategories, setJobCategories] = useState([]);
 
   const { id } = useParams();
 
-  // Fetching data from the db
-  const fetchData = async () => {
-    await ApiService(`sub-categories/${id}`, "GET", null, false)
-      .then((response) => {
-        console.log(response.data);
-        setJobCategories(response.data);
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
-  };
+  const jobCategoryData = useFetch(`sub-categories?category_id=${id}`);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const jobCategory = jobCategoryData.data;
 
   return (
     <div class='page-content'>
@@ -84,17 +71,17 @@ export default function JobCategories() {
             </div>
           </div>
           <div class='row'>
-            {Array.isArray(jobCategories)
-              ? jobCategories.map((jobCategory) => (
-                  <div key={jobCategory.id} class='col-lg-4'>
+            {Array.isArray(jobCategory)
+              ? jobCategory.map((jobCat) => (
+                  <div key={jobCat.id} class='col-lg-4'>
                     <div class='card job-Categories-box bg-light border-0'>
                       <div class='card-body p-4'>
                         <ul class='list-unstyled job-Categories-list mb-0'>
                           <li>
                             <Link to='/jobs' class='primary-link'>
-                              {jobCategory.name}{" "}
+                              {jobCat.name}{" "}
                               <span class='badge bg-info-subtle text-info float-end'>
-                                25
+                                {jobCat.jobs_count}
                               </span>
                             </Link>
                           </li>
