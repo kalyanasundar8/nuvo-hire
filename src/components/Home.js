@@ -2,22 +2,20 @@ import { Link, useNavigate } from "react-router-dom";
 import useFetch from "./useFetch";
 import { useEffect, useState } from "react";
 import ApiService from "../services/ApiService";
-
+import "./Home.css";
 export default function Home() {
   const navigate = useNavigate();
   // Job searching
   const countriesData = useFetch("countries");
   const countries = countriesData.data;
 
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const [countryId, setCountryId] = useState("101");
 
   const handleSearch = async () => {
     try {
       const searchResults = await ApiService(
-        `job-search?value=${encodeURIComponent(
-          searchQuery
-        )}&country_id=${countryId}`
+        `job-search?value=${encodeURIComponent(query)}&country_id=${countryId}`
       );
       const results = searchResults.data;
       navigate("/jobs", { state: results });
@@ -26,6 +24,26 @@ export default function Home() {
       console.log(error);
     }
   };
+
+  // Live search
+  const [query, setQuery] = useState("");
+  const [showSuggestion, setShowSuggestion] = useState(false);
+  const [selectedJob, setSelectedJob] = useState("");
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    setQuery(inputValue);
+    setShowSuggestion(inputValue !== "");
+  };
+
+  const handleSuggestionClick = (jobTitle) => {
+    setSelectedJob(jobTitle);
+    setQuery(jobTitle);
+    setShowSuggestion(false);
+  };
+
+  const jobsData = useFetch("onsearch-jobs");
+  const jobList = jobsData.data;
 
   // Categories Fetching
   const categoriesData = useFetch("categories");
@@ -96,17 +114,68 @@ export default function Home() {
                   <div className='registration-form'>
                     <div className='row g-0'>
                       <div className='col-md-4'>
-                        <div className='filter-search-form filter-border mt-3 mt-md-0'>
+                        <div
+                          className='filter-search-form filter-border mt-3 mt-md-0'
+                          style={{ position: "relative" }}
+                        >
                           <i className='uil uil-briefcase-alt'></i>
                           <input
                             type='search'
                             id='job-title'
                             className='form-control filter-input-box'
                             placeholder='Job, Company name...'
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={query}
+                            onChange={handleInputChange}
+                            autoComplete='off'
                           />
                         </div>
+                        {showSuggestion && (
+                          <ul
+                            style={{
+                              width: 300,
+                              position: "absolute",
+                              top: "105%",
+                              zIndex: 2,
+                              left: 10,
+                              listStyleType: "none",
+                              backgroundColor: "#fff",
+                              borderRadius: "0 0 8px 8px",
+                              padding: 20,
+                              margin: 0,
+                              boxShadow: "0 20px 20px rgba(0, 0, 0, 0.1)",
+                            }}
+                          >
+                            {Array.isArray(jobList)
+                              ? query &&
+                                jobList
+                                  .filter((jobs) =>
+                                    jobs.job_title.toLowerCase().includes(query)
+                                  )
+                                  .map((jobs, index) => (
+                                    <li
+                                      key={index}
+                                      style={{
+                                        padding: "8px",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        handleSuggestionClick(jobs.job_title)
+                                      }
+                                      onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor =
+                                          "#f0f0f0"; // Change background on hover
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor =
+                                          "initial"; // Reset background when not hovering
+                                      }}
+                                    >
+                                      {jobs.job_title}
+                                    </li>
+                                  ))
+                              : null}
+                          </ul>
+                        )}
                       </div>
 
                       <div className='col-md-4'>
