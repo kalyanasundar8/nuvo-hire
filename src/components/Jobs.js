@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useScrollToTop from "../hooks/useScrollToTop";
 import useFetch from "./useFetch";
 import { useLocation } from "react-router-dom";
 import ApiService from "../services/ApiService";
 
 export default function Jobs() {
+  const { id } = useParams();
+
   // Recent, Featured, freelancing, partTime, fullTime Jobs list
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -252,7 +254,10 @@ export default function Jobs() {
                                 <div class='mb-2 mb-md-0'>
                                   <h5 class='fs-18 mb-0'>
                                     {" "}
-                                    <Link to='/job-detail' class='text-dark'>
+                                    <Link
+                                      to={`/job-detail/${id}`}
+                                      class='text-dark'
+                                    >
                                       {searched.job_title}
                                     </Link>
                                   </h5>

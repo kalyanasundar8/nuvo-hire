@@ -52,7 +52,7 @@ function App() {
           <Route path='/jobs' element={<Jobs />} />
           <Route path='/contact-us' element={<Contact />} />
           <Route path='/sub-categories/:id' element={<JobCategories />} />
-          <Route path='/job-detail' element={<JobDetail />} />
+          <Route path='/job-detail/:id' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
           <Route path='/manage-jobs-post' element={<JobPost />} />
           <Route path='/bookmark-jobs' element={<BookmarkJobs />} />

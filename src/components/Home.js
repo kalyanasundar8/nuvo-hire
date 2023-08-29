@@ -1,15 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import { useEffect, useState } from "react";
 import ApiService from "../services/ApiService";
 import "./Home.css";
 export default function Home() {
   const navigate = useNavigate();
-  // Job searching
+  // Job searching => countries
   const countriesData = useFetch("countries");
   const countries = countriesData.data;
-
-  // const [searchQuery, setSearchQuery] = useState("");
   const [countryId, setCountryId] = useState("101");
 
   const handleSearch = async () => {
@@ -49,7 +47,7 @@ export default function Home() {
   const categoriesData = useFetch("categories");
   const categories = categoriesData.data;
 
-  // Browsing Job section
+  // Browsing Job section ( Recent_jobs, Featured_jobs, Freelancer_jobs, PartTime_jobs, FullTime_jobs)
   const [activeTab, setActiveTab] = useState("recent-jobs");
   const [activeJobsData, setActiveJobsData] = useState([]);
 
@@ -493,7 +491,7 @@ export default function Home() {
                                   <div className='mb-2 mb-md-0'>
                                     <h5 className='fs-18 mb-1'>
                                       <Link
-                                        to='/job-details.php'
+                                        to={`/job-detail/${recent.id}`}
                                         className='text-dark'
                                       >
                                         {recent.job_title}
@@ -632,7 +630,7 @@ export default function Home() {
                                   <div className='mb-2 mb-md-0'>
                                     <h5 className='fs-18 mb-1'>
                                       <Link
-                                        to='/job-details.php'
+                                        to={`/job-detail/${feature.id}`}
                                         className='text-dark'
                                       >
                                         {feature.job_title}
@@ -772,7 +770,7 @@ export default function Home() {
                                   <div className='mb-2 mb-md-0'>
                                     <h5 className='fs-18 mb-1'>
                                       <Link
-                                        to='/job-details.php'
+                                        to={`/job-detail/${freelance.id}`}
                                         className='text-dark'
                                       >
                                         {freelance.job_title}
@@ -909,7 +907,7 @@ export default function Home() {
                                   <div className='mb-2 mb-md-0'>
                                     <h5 className='fs-18 mb-1'>
                                       <Link
-                                        to='/job-details.php'
+                                        to={`/job-detail/${parTime.id}`}
                                         className='text-dark'
                                       >
                                         {parTime.job_title}
@@ -1044,7 +1042,7 @@ export default function Home() {
                                   <div className='mb-2 mb-md-0'>
                                     <h5 className='fs-18 mb-1'>
                                       <Link
-                                        to='/job-details.php'
+                                        to={`/job-detail/${fullTime.id}`}
                                         className='text-dark'
                                       >
                                         {fullTime.job_title}
