@@ -18,14 +18,15 @@ function Header() {
     const [user, setUser] = useState();
     console.log(isAuth);
 
-    if ( isAuth ) {
-        
-        // setUser(JSON.parse(localStorage.getItem('user')));
-    }
+    
 
     useEffect(() => {
+        if ( isAuth ) {
+        
+            setUser(JSON.parse(localStorage.getItem('user')));
+        }
        
-      }, []);
+      }, [isAuth]);
 
     const logOut = () => {
         localStorage.removeItem("user");
@@ -86,7 +87,7 @@ function Header() {
                                 </li>
                                 <li className="list-inline-item align-middle">
                                     <div className="dropdown d-inline-block language-switch">
-                                        <button type="button" className="btn" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        <button type="button" className="btn" data-bs-toggle="dropdown--" aria-haspopup="true"
                                             aria-expanded="false">
                                             <img id="header-lang-img" src="/assets/images/flags/india.jpg" alt="Header Language" height="20" />
                                         </button>
@@ -170,18 +171,32 @@ function Header() {
                             <li className="nav-item">                                
                                 <Link to="/jobs" className="nav-link">Jobs</Link>
                             </li>
+                            {isAuth === true ? (
+                                    ''
+                                ) : (
                             <li className="nav-item dropdown dropdown-hover">
                                 <a className="nav-link" href="" id="jobsdropdown" role="button" data-bs-toggle="dropdown">
                                     Company <div className="arrow-down"></div>
                                 </a>
-                                <ul className="dropdown-menu dropdown-menu-center" aria-labelledby="jobsdropdown">
-									<li><Link className="dropdown-item" to="/company-signup">Company Sign Up</Link></li>
-									<li><Link className="dropdown-item" to="/company-signin">Company Sign In</Link></li>
-                                </ul>
+                                
+                                    <ul className="dropdown-menu dropdown-menu-center" aria-labelledby="jobsdropdown">
+                                        <li><Link className="dropdown-item" to="/company-signup">Company Sign Up</Link></li>
+                                        <li><Link className="dropdown-item" to="/company-signin">Company Sign In</Link></li>
+                                    </ul>
+                               
+                                
+                                
                             </li>
-                            <li className="nav-item">
-                                <Link to="/pricing-plans" className="nav-link">Pricing</Link>
-                            </li>
+                             )}
+
+                             {isAuth === true ? (
+                                    <li className="nav-item">
+                                    <Link to="/pricing-plans" className="nav-link">Pricing</Link>
+                                </li>
+                                ) : (
+                                    ''
+                            )} 
+                            
                             <li className="nav-item">
                                 <Link to="/contact-us" className="nav-link">Contact Us</Link>
                             </li>

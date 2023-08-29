@@ -21,18 +21,20 @@ export default function CompanySignin() {
     const [password, setPassword] = useState("");
 
     console.log(isAuth);
-  const loginHandler = async (e) => {
+    
+  const loginHandler = async () => {
 
-    e.preventDefault();
+    // e.preventDefault();
 
     const payload = {
         email : userName,
         password: password
 
     }
-    await ApiService('employer-login', 'POST', payload, true).then(({data}) => {
+    const results = await ApiService('employer-login', 'POST', payload, true).then(({data}) => {
 
         if ( data?.status_code == 200 ) {
+
             dispatch(setIsAuthenticated(true));
 
             localStorage.setItem('user', JSON.stringify(data));

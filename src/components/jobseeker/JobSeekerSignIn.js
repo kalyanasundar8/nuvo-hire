@@ -29,7 +29,7 @@ export default function JobSeekerSignIn() {
             password: password
         }
 
-        await ApiService('login', 'POST', payload, true).then(({ data }) => {
+        const response = await ApiService('login', 'POST', payload, false).then(({ data }) => {
             dispatch(setIsAuthenticated(true));
 
             localStorage.setItem('user', JSON.stringify(data));
@@ -39,8 +39,8 @@ export default function JobSeekerSignIn() {
             })
             navigate("/")
             window.location.reload();
-        }).catch(({ response }) => {
-            console.log(response)
+        }).catch(({ err }) => {
+            console.log(err)
             // if( response.status === 400 ) {
             //   Swal.fire({
             //       icon:"error",
