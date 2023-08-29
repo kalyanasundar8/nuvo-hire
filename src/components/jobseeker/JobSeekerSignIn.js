@@ -13,6 +13,7 @@ export default function JobSeekerSignIn() {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    
 
     let isAuth =
         useSelector((state) => state?.auth?.isAuthenticated) ||
@@ -20,6 +21,7 @@ export default function JobSeekerSignIn() {
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const loginHandler = async (e) => {
         e.preventDefault();
@@ -29,30 +31,25 @@ export default function JobSeekerSignIn() {
             password: password
         }
 
-        const response = await ApiService('login', 'POST', payload, false).then(({ data }) => {
-            dispatch(setIsAuthenticated(true));
+        try {
+            const response = await ApiService('login', 'POST', payload, false);
+            
 
-            localStorage.setItem('user', JSON.stringify(data));
-            Swal.fire({
-                icon: "success",
-                text: data.message
-            })
-            navigate("/")
-            window.location.reload();
-        }).catch(({ err }) => {
-            console.log(err)
-            // if( response.status === 400 ) {
-            //   Swal.fire({
-            //       icon:"error",
-            //       text:response.data.message
-            //   })
-            // } else {
-            //   Swal.fire({
-            //     text: "Something went wrong",
-            //     icon:"error"
-            //   })
-            // }
-        })
+            if ( response?.data?.status_code == 200 ) {
+
+                dispatch(setIsAuthenticated(true));
+                localStorage.setItem('user', JSON.stringify(response.data.data));
+                setError('');
+                navigate("/")
+                window.location.reload();
+            } else {
+                console.log(response?.response?.data?.message);
+                setError(response?.response?.data?.message);
+            }
+        //   setJobDetails(responseData);
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+        }
 
     };
 
@@ -113,9 +110,17 @@ export default function JobSeekerSignIn() {
                                                     </div>
                                                     <div className="mb-4">
                                                         <div className="form-check"><input className="form-check-input" type="checkbox" id="flexCheckDefault" />
-                                                            <a href="reset-password.php" className="float-end text-white">Forgot Password?</a>
+                                                            <Link to="/forget-password" className="float-end text-white">Forgot Password?</Link>
                                                             <label className="form-check-label" for="flexCheckDefault">Remember me</label>
                                                         </div>
+
+                                                        {error ? (
+                                                            <div className="text-left mt-4">
+                                                                <span className='error'>{error}</span>
+                                                            </div>
+                                                        ) : (
+                                                            ''
+                                                        )}
                                                     </div>
                                                     <div className="text-center">
                                                         <button type="submit" className="btn btn-white btn-hover w-100">Sign In</button>

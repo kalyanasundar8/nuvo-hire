@@ -21,7 +21,7 @@ export default function CompanySignin() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    console.log(isAuth);
+    // console.log(isAuth);
     
   const loginHandler = async (e) => {
 
@@ -32,33 +32,66 @@ export default function CompanySignin() {
         password: password
 
     }
-    const response = await ApiService('employer-login', 'POST', payload, false).then(({ data }) => {
+   
+        try {
+            const response = await ApiService('employer-login', 'POST', payload, false);
+            
+
+            if ( response?.data?.status_code == 200 ) {
+
+                dispatch(setIsAuthenticated(true));
+                localStorage.setItem('user', JSON.stringify(response.data.data));
+                setError('');
+                navigate("/")
+                window.location.reload();
+            } else {
+                console.log(response?.response?.data?.message);
+                setError(response?.response?.data?.message);
+            }
+        //   setJobDetails(responseData);
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+        }
+      
+
+    // const result = await ApiService('employer-login', 'POST', payload, false).then(({ response }) => {
         
-        // dispatch(setIsAuthenticated(true));
-console.log(data);
-        // localStorage.setItem('user', JSON.stringify(data));
+     
+        // if (response.status_code === 200) {
+
+        //     // console.log(response.data.data)
+        //     // dispatch(setIsAuthenticated(true));
+        //     // localStorage.setItem('user', JSON.stringify(response.data.data));
+        //     // setError('');
+        //     // navigate("/")
+        //     // window.location.reload();
+
+        // } else {
+            
+        //     setError(response.data.message);
+        // }
+        // 
         // Swal.fire({
         //     icon: "success",
         //     text: data.message
         // })
-        setError('');
-        navigate("/")
-        window.location.reload();
-    }).catch(({ err }) => {
+       
+    // }).catch(({ err }) => {
 
-        console.log(err)
-        // if( response.status === 400 ) {
-        //   Swal.fire({
-        //       icon:"error",
-        //       text:response.data.message
-        //   })
-        // } else {
-        //   Swal.fire({
-        //     text: "Something went wrong",
-        //     icon:"error"
-        //   })
-        // }
-    })
+    //     console.log(err)
+    //     setError('Something went wrong');
+    //     // if( response.status === 400 ) {
+    //     //   Swal.fire({
+    //     //       icon:"error",
+    //     //       text:response.data.message
+    //     //   })
+    //     // } else {
+    //     //   Swal.fire({
+    //     //     text: "Something went wrong",
+    //     //     icon:"error"
+    //     //   })
+    //     // }
+    // })
 
 
     
@@ -128,8 +161,15 @@ console.log(data);
 
                                                        
                                                     </div>
+                                                    {error ? (
+                                                        <div className="text-left mt-4">
+                                                            <span className='error'>{error}</span>
+                                                        </div>
+                                                    ) : (
+                                                        ''
+                                                    )}
                                                     
-                                                   
+                                                    
                                                     
                                                 </div>
                                                 

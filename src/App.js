@@ -29,6 +29,8 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import JobSeekerSignIn from "./components/jobseeker/JobSeekerSignIn";
 import JobSeekerSignUp from "./components/jobseeker/JobSeekerSignUp";
 import PrivateRoute from "./Routes/PrivateRoutes";
+import ForgetPassword from "./components/ForgetPassword";
+import ResetPassword from "./components/ResetPassword";
 
 function App() {
   return (
@@ -43,10 +45,12 @@ function App() {
           <Route path='/services' element={<Services />}></Route>
           <Route path='/jobseeker-signin' element={<JobSeekerSignIn />}></Route>
           <Route path='/jobseeker-signup' element={<JobSeekerSignUp />}></Route>
+          <Route path='/forget-password' element={<ForgetPassword />} />
+          <Route path='/reset-password/:token' element={<ResetPassword />} />
           {/* <Route path="/jobseeker-signup" element={<JobSeekerSignup />} /> */}
 
-          <Route path='/company-signup' element={<CompanySignup />} />
-          <Route path='/company-signin' element={<CompanySignin />} />
+          <Route path='/employer-signup' element={<CompanySignup />} />
+          <Route path='/employer-signin' element={<CompanySignin />} />
           <Route path='/faqs' element={<Faq />} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/jobs' element={<Jobs />} />
