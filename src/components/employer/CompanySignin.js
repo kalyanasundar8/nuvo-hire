@@ -19,50 +19,48 @@ export default function CompanySignin() {
   
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     console.log(isAuth);
     
-  const loginHandler = async () => {
+  const loginHandler = async (e) => {
 
-    // e.preventDefault();
+    e.preventDefault();
 
     const payload = {
         email : userName,
         password: password
 
     }
-    const results = await ApiService('employer-login', 'POST', payload, true).then(({data}) => {
+    const response = await ApiService('employer-login', 'POST', payload, false).then(({ data }) => {
+        
+        // dispatch(setIsAuthenticated(true));
+console.log(data);
+        // localStorage.setItem('user', JSON.stringify(data));
+        // Swal.fire({
+        //     icon: "success",
+        //     text: data.message
+        // })
+        setError('');
+        navigate("/")
+        window.location.reload();
+    }).catch(({ err }) => {
 
-        if ( data?.status_code == 200 ) {
+        console.log(err)
+        // if( response.status === 400 ) {
+        //   Swal.fire({
+        //       icon:"error",
+        //       text:response.data.message
+        //   })
+        // } else {
+        //   Swal.fire({
+        //     text: "Something went wrong",
+        //     icon:"error"
+        //   })
+        // }
+    })
 
-            dispatch(setIsAuthenticated(true));
 
-            localStorage.setItem('user', JSON.stringify(data));
-
-            Swal.fire({
-            icon:"success",
-            text:data.message
-            })
-            navigate("/")
-            window.location.reload();
-        } else {
-            console.log('adasd');
-        }
-
-      }).catch(({response}) => {
-
-        if( response.status_code === 400 || response.status_code === 401 ) {
-          Swal.fire({
-              icon:"error",
-              text:response.data.message
-          })
-        } else {
-          Swal.fire({
-            text: "Something went wrong",
-            icon:"error"
-          })
-        }
-      })
     
   };
   
@@ -127,8 +125,14 @@ export default function CompanySignin() {
                                                     <div className="form-check"><input className="form-check-input" type="checkbox" id="flexCheckDefault"/>
                                                         <a href="reset-password.php" className="float-end text-white">Forgot Password?</a>
                                                         <label className="form-check-label" for="flexCheckDefault">Remember me</label>
+
+                                                       
                                                     </div>
+                                                    
+                                                   
+                                                    
                                                 </div>
+                                                
                                                 <div className="text-center">
                                                     <button type="submit" className="btn btn-white btn-hover w-100">Sign In</button>
                                                 </div>
