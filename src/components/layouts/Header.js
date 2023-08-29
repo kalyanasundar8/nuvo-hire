@@ -276,10 +276,11 @@ function Header() {
                                 </div>
                             </li>
                             <li className="list-inline-item dropdown">
-                                {/* <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
+                                <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                    <img src="assets/images/profile.jpg" alt="mdo" width="35" height="35" className="rounded-circle me-1"/> <span className="d-none d-md-inline-block fw-medium">Hi, { user?.data ?  user?.data?.name : "Guest" }</span>
-                                </a> */}
+                                    {/* <img src="assets/images/profile.jpg" alt="mdo" width="35" height="35" className="rounded-circle me-1"/>  */}
+                                    <span className="d-none d-md-inline-block fw-medium">Hi, { user?.data ?  user?.data?.name : "Guest" }</span>
+                                </a>
                                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userdropdown">
                                     <li><Link className="dropdown-item" to="/manage-jobs">Manage Jobs</Link></li>
                                     <li><Link className="dropdown-item" to="/bookmark-jobs">Bookmarks Jobs</Link></li>
