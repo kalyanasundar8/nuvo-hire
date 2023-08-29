@@ -1,17 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
+import ApiService from "../services/ApiService";
 
 export default function JobDetail() {
   const { id } = useParams();
 
   // Fetch job-details
-  const jobDetailsData = useFetch(`jobposts?id=${id}`);
-  const categoriesData = useFetch("categories");
-  const categories = categoriesData.data;
-  console.log(categories);
-  const jobDetails = jobDetailsData.data;
-  console.log(jobDetails);
+  const [jobDetails, setJobDetails] = useState([]);
+  const fetchData = async () => {
+    try {
+      const response = await ApiService(
+        `jobposts?id=${id}`,
+        "GET",
+        null,
+        false
+      );
+      const jobDetailsData = response.data;
+      const responseData = jobDetailsData.data.response;
+      setJobDetails(responseData);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div class='page-content'>
@@ -85,11 +100,10 @@ export default function JobDetail() {
                   <div>
                     <div class='row'>
                       <div class='col-md-8'>
-                        <h5 class='mb-1'>{jobDetails.response.job_title}</h5>
+                        <h5 class='mb-1'>{jobDetails.job_title}</h5>
                         <ul class='list-inline text-muted mb-0'>
                           <li class='list-inline-item'>
-                            <i class='mdi mdi-account'></i>{" "}
-                            {jobDetails.response.vacancy} vacancy
+                            <i class='mdi mdi-account'></i> vacancy
                           </li>
                           <li class='list-inline-item text-warning review-rating'>
                             <span class='badge bg-warning'>4.8</span>{" "}
