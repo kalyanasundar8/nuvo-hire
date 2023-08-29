@@ -105,7 +105,7 @@ export default function JobSeekerSignUp() {
                                                             <label for="Professional"> I am a Professional</label>
                                                         </div>
                                                     </div>
-                                                    {formik.errors.jobseeker_type && <span>{formik.errors.jobseeker_type}</span>}
+                                                    {formik.errors.jobseeker_type && <span className="error">{formik.errors.jobseeker_type}</span>}
                                                     <div className="col-lg-6">
                                                         <div className="mb-3">
                                                             <label htmlFor="nameInput" className="form-label">First Name *</label>
@@ -118,7 +118,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.first_name && formik.errors.first_name && <span>{formik.errors.first_name}</span>}
+                                                            {formik.touched.first_name && formik.errors.first_name && <span className="error">{formik.errors.first_name}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-lg-6">
@@ -133,7 +133,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.last_name && formik.errors.last_name && <span>{formik.errors.last_name}</span>}
+                                                            {formik.touched.last_name && formik.errors.last_name && <span className="error">{formik.errors.last_name}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -148,7 +148,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.email && formik.errors.email && <span>{formik.errors.email}</span>}
+                                                            {formik.touched.email && formik.errors.email && <span className="error">{formik.errors.email}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -163,7 +163,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.mobile_no && formik.errors.mobile_no && <span>{formik.errors.mobile_no}</span>}
+                                                            {formik.touched.mobile_no && formik.errors.mobile_no && <span className="error">{formik.errors.mobile_no}</span>}
                                                         </div>
                                                     </div>
 
@@ -179,7 +179,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.password && formik.errors.password && <span>{formik.errors.password}</span>}
+                                                            {formik.touched.password && formik.errors.password && <span className="error">{formik.errors.password}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -194,7 +194,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.password_confirmation && formik.errors.password_confirmation && <span>{formik.errors.password_confirmation}</span>}
+                                                            {formik.touched.password_confirmation && formik.errors.password_confirmation && <span className="error">{formik.errors.password_confirmation}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-12">
@@ -217,7 +217,7 @@ export default function JobSeekerSignUp() {
                                                             />
                                                             <label for="Experienced">Experienced</label>
                                                         </div>
-                                                        {formik.errors.work_status && <span>{formik.errors.work_status}</span>}
+                                                        {formik.errors.work_status && <span className="error">{formik.errors.work_status}</span>}
                                                     </div>
                                                     <div className="col-lg-12">
                                                         <div className="mb-3 blockContent">
@@ -242,7 +242,7 @@ export default function JobSeekerSignUp() {
                                                             />
                                                             <label class="form-check-label" for="terms">I agree to the <a href="" class="text-white text-decoration-underline">Terms and conditions</a></label>
                                                         </div>
-                                                        {formik.errors.terms && <span>{formik.errors.terms}</span>}
+                                                        {formik.errors.terms && <span className="error">{formik.errors.terms}</span>}
                                                     </div>
                                                     <div class="text-center">
                                                         <button disabled={!formik.isValid} type="submit" class="btn btn-white btn-hover w-100">Sign Up</button>
