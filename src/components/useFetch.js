@@ -11,6 +11,7 @@ function useFetch(endpoint) {
       try {
         const response = await ApiService(endpoint, "GET", null, false);
         console.log(response.data);
+        console.log("Entry");
         if (response.data.status_code === 200) {
           const res = response.data.data;
           setData(res);
