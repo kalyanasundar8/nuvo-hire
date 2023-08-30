@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import GoogleSignInBtn from "../atoms/GoogleSignIn/GoogleSignInBtn";
+import useScrollToTop from "../../hooks/useScrollToTop";
 import './JobSeeker.css';
 
 export default function JobSeekerSignUp() {
@@ -53,6 +54,7 @@ export default function JobSeekerSignUp() {
             console.log(values);
         },
     });
+    useScrollToTop();
 
     return (
         <section class="bg-auth">

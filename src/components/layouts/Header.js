@@ -82,8 +82,12 @@ function Header() {
                                 <li className="list-inline-item py-2 me-2 align-middle">
                                     {/* <a href="#signupModal" className="text-dark fw-medium fs-13" data-bs-toggle="modal"><i className="uil uil-lock"></i>
                                         Sign Up</a> */}
-                                        <Link to="/jobseeker-signup" className="text-dark fw-medium fs-13" ><i className="uil uil-lock"></i>
-                                        Sign Up</Link>
+                                        {isAuth === true ? (
+                                        ''
+                                        ) : (
+                                            <Link to="/jobseeker-signup" className="text-dark fw-medium fs-13" ><i className="uil uil-lock"></i>
+                                            Sign Up</Link>
+                                        )}
                                 </li>
                                 <li className="list-inline-item align-middle">
                                     <div className="dropdown d-inline-block language-switch">
@@ -128,8 +132,8 @@ function Header() {
                 </div>
                 
             </div>
-           
-            <nav className="navbar navbar-expand-lg fixed-top sticky" id="navbar">
+
+              <nav className="navbar navbar-expand-lg fixed-top sticky" id="navbar">
                 <div className="container-fluid custom-container">
                     <Link className="navbar-brand text-dark fw-bold me-auto" to="/">
                         <img src="assets/images/nuvo_logo.png" height="100" alt="" className="logo-dark" />
@@ -157,17 +161,36 @@ function Header() {
                                     <li><Link to="/services"  className="dropdown-item" href="services.php">Our Services</Link></li>
                                 </ul>
                             </li>
-                            <li className="nav-item dropdown dropdown-hover">
-                                <a className="nav-link" href="" id="jobsdropdown" role="button" data-bs-toggle="dropdown">
-                                    Job Seeker <div className="arrow-down"></div>
-                                </a>
-                                <ul className="dropdown-menu dropdown-menu-center" aria-labelledby="jobsdropdown">
-									<li><Link to="/jobseeker-signup" className="dropdown-item" href="sign-up.php">Job Seeker Sign Up</Link></li>
-									<li><Link  to="/jobseeker-signin" className="dropdown-item" href="sign-in.php">Job Seeker Sign In</Link></li>
-                                    <li><Link className="dropdown-item" to="/faqs">FAQs</Link></li>
-                                    <li><Link className="dropdown-item" to="/blogs">Blog</Link></li>
-                                </ul>
-                            </li>
+
+                           
+                                <li className="nav-item dropdown dropdown-hover">
+                                    <a className="nav-link" href="" id="jobsdropdown" role="button" data-bs-toggle="dropdown">
+                                        Job Seeker <div className="arrow-down"></div>
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-center" aria-labelledby="jobsdropdown">
+                                    
+                                    {isAuth === true ? (
+                                        ''
+                                    ) : (
+                                        <li><Link to="/jobseeker-signup" className="dropdown-item" href="sign-up.php">Sign Up</Link></li>
+                                        
+                                    )}
+
+                                    {isAuth === true ? (
+                                        ''
+                                    ) : (
+                                        <li><Link  to="/jobseeker-signin" className="dropdown-item" href="sign-in.php">Sign In</Link></li>
+                                        
+                                    )}
+
+
+                                        
+                                
+                                        <li><Link className="dropdown-item" to="/faqs">FAQs</Link></li>
+                                        <li><Link className="dropdown-item" to="/blogs">Blog</Link></li>
+                                    </ul>
+                                </li>
+                               
                             <li className="nav-item">                                
                                 <Link to="/jobs" className="nav-link">Jobs</Link>
                             </li>
@@ -176,12 +199,12 @@ function Header() {
                                 ) : (
                             <li className="nav-item dropdown dropdown-hover">
                                 <a className="nav-link" href="" id="jobsdropdown" role="button" data-bs-toggle="dropdown">
-                                    Company <div className="arrow-down"></div>
+                                    Employer <div className="arrow-down"></div>
                                 </a>
                                 
                                     <ul className="dropdown-menu dropdown-menu-center" aria-labelledby="jobsdropdown">
-                                        <li><Link className="dropdown-item" to="/company-signup">Company Sign Up</Link></li>
-                                        <li><Link className="dropdown-item" to="/company-signin">Company Sign In</Link></li>
+                                        <li><Link className="dropdown-item" to="/employer-signup"> Sign Up</Link></li>
+                                        <li><Link className="dropdown-item" to="/employer-signin"> Sign In</Link></li>
                                     </ul>
                                
                                 
@@ -189,13 +212,10 @@ function Header() {
                             </li>
                              )}
 
-                             {isAuth === true ? (
-                                    <li className="nav-item">
-                                    <Link to="/pricing-plans" className="nav-link">Pricing</Link>
-                                </li>
-                                ) : (
-                                    ''
-                            )} 
+                             
+                            <li className="nav-item">
+                            <Link to="/pricing-plans" className="nav-link">Pricing</Link>
+                            </li>
                             
                             <li className="nav-item">
                                 <Link to="/contact-us" className="nav-link">Contact Us</Link>
@@ -291,26 +311,33 @@ function Header() {
                                 </div>
                             </li>
                             <li className="list-inline-item dropdown">
-                                <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    {/* <img src="assets/images/profile.jpg" alt="mdo" width="35" height="35" className="rounded-circle me-1"/>  */}
-                                    <span className="d-none d-md-inline-block fw-medium">Hi, { user?.data ?  user?.data?.name : "Guest" }</span>
-                                </a>
-                                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userdropdown">
-                                    <li><Link className="dropdown-item" to="/manage-jobs">Manage Jobs</Link></li>
-                                    <li><Link className="dropdown-item" to="/bookmark-jobs">Bookmarks Jobs</Link></li>
-                                    <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
-                                    <li><Link className="dropdown-item" to="/" onClick={logOut}>Logout</Link></li>
-                                </ul>
+                                
+                                {isAuth === true ? (
+                                    <div>
+                                    <a href="" className="header-item" id="userdropdown" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        
+                                        <span className="d-none d-md-inline-block fw-medium">Hi, { user ?  user?.name : "Guest" }</span>
+                                    </a>
+                                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userdropdown">
+                                        <li><Link className="dropdown-item" to="/manage-jobs">Manage Jobs</Link></li>
+                                        <li><Link className="dropdown-item" to="/bookmark-jobs">Bookmarks Jobs</Link></li>
+                                        <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
+                                        <li><Link className="dropdown-item" to="/" onClick={logOut}>Logout</Link></li>
+                                    </ul>
+                                    </div>
+                                ) : (
+                                    ''
+                                )}
+                                
                             </li>
                         </ul>
-                        {/* {isAuth === true ? (
-                    ) : (
-                        ''
-                    )} */}
+                      
                 </div>
                 
             </nav>
+           
+         
             
             <div className="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">

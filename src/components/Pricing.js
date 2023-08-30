@@ -82,174 +82,71 @@ export default function Pricing() {
           </div>
           {/*end row*/}
           <div className='row'>
-            <div className='col-lg-4 col-md-6 mt-5 pt-2'>
-              <div className='pricing-box card bg-light'>
+           
                 {Array.isArray(pricing)
                   ? pricing.map((price) => (
-                      <div key={price.id} className='card-body p-4 px-lg-5'>
-                        <div className='pricing-icon bg-light rounded-circle icons-md'>
-                          <i className='uim uim-telegram-alt'></i>
+                      <div className='col-lg-4 col-md-6 mt-5 pt-2'>
+                        <div className='pricing-box card bg-light'>
+                          <div key={price.id} className='card-body p-4 px-lg-5'>
+                            <div className='pricing-icon bg-light rounded-circle icons-md'>
+                              <i className='uim uim-telegram-alt'></i>
+                            </div>
+                            <div className='pricing-name text-center mt-4 pt-2'>
+                              <h4 className='fs-18'>{price.name}</h4>
+                            </div>
+                            <div className='pricing-price text-center mt-4'>
+                              <h2 className='fw-semibold'>
+                                {price.currency} {price.amount}
+                                <small className='fs-16'>/mo</small>
+                              </h2>
+                            </div>
+                            <ul className='list-unstyled pricing-details text-muted mt-4'>
+                              <li className='pricing-item'>
+                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
+                                {price.profile_download}
+                              </li>
+                              <li className='pricing-item'>
+                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
+                                {price.validity}
+                              </li>
+                              <li className='pricing-item'>
+                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
+                                {price.validity_value}
+                              </li>
+                              <li className='pricing-item text-decoration-line-through'>
+                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
+                                {price.profile_view}
+                              </li>
+                              <li className='pricing-item text-decoration-line-through'>
+                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
+                                {price.email}
+                              </li>
+                              <li className='pricing-item text-decoration-line-through'>
+                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
+                                {price.no_of_jobs}
+                              </li>
+                              <li className='pricing-item text-decoration-line-through'>
+                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
+                                {price.save_candidate_profile}
+                              </li>
+                            </ul>
+                            <div className='text-center mt-4 mb-2'>
+                              <a
+                                href='javascript:void(0)'
+                                className='btn btn-soft-primary rounded-pill'
+                              >
+                                Purchase Now <i className='uil uil-arrow-right'></i>
+                              </a>
+                            </div>
+                          </div>
                         </div>
-                        <div className='pricing-name text-center mt-4 pt-2'>
-                          <h4 className='fs-18'>{price.name}</h4>
-                        </div>
-                        <div className='pricing-price text-center mt-4'>
-                          <h2 className='fw-semibold'>
-                            {price.currency} {price.amount}
-                            <small className='fs-16'>/mo</small>
-                          </h2>
-                        </div>
-                        <ul className='list-unstyled pricing-details text-muted mt-4'>
-                          <li className='pricing-item'>
-                            <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                            {price.profile_download}
-                          </li>
-                          <li className='pricing-item'>
-                            <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                            {price.validity}
-                          </li>
-                          <li className='pricing-item'>
-                            <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                            {price.validity_value}
-                          </li>
-                          <li className='pricing-item text-decoration-line-through'>
-                            <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                            {price.profile_view}
-                          </li>
-                          <li className='pricing-item text-decoration-line-through'>
-                            <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                            {price.email}
-                          </li>
-                          <li className='pricing-item text-decoration-line-through'>
-                            <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                            {price.no_of_jobs}
-                          </li>
-                          <li className='pricing-item text-decoration-line-through'>
-                            <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                            {price.save_candidate_profile}
-                          </li>
-                        </ul>
-                        <div className='text-center mt-4 mb-2'>
-                          <a
-                            href='javascript:void(0)'
-                            className='btn btn-soft-primary rounded-pill'
-                          >
-                            Purchase Now <i className='uil uil-arrow-right'></i>
-                          </a>
-                        </div>
-                      </div>
+                      {/*end pricing-box*/}
+                    </div>
                     ))
                   : null}
-              </div>
-              {/*end pricing-box*/}
-            </div>
+             
 
-            <div className='col-lg-4 col-md-6 mt-5 pt-2'>
-              {/* <div className='pricing-box card bg-light'>
-                <div className='card-body p-4 px-lg-5'>
-                  <div className='pricing-icon bg-light rounded-circle icons-md'>
-                    <i className='uim uim-rocket'></i>
-                  </div>
-                  <div className='pricing-name text-center mt-4 pt-2'>
-                    <h4 className='fs-18'>Professional</h4>
-                  </div>
-                  <div className='pricing-price text-center mt-4'>
-                    <h2 className='fw-semibold'>
-                      $49.99<small className='fs-16'>/mo</small>
-                    </h2>
-                  </div>
-                  <ul className='list-unstyled pricing-details text-muted mt-4'>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Unlimited file recovery
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Professional reports
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Sell on marketplaces
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Unlimited Builds
-                    </li>
-                    <li className='pricing-item text-decoration-line-through'>
-                      <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                      Job displayed for 30 days
-                    </li>
-                    <li className='pricing-item text-decoration-line-through'>
-                      <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                      Premium Support 24/7
-                    </li>
-                  </ul>
-                  <div className='text-center mt-4 mb-2'>
-                    <a
-                      href='javascript:void(0)'
-                      className='btn btn-primary rounded-pill'
-                    >
-                      Purchase Now <i className='uil uil-arrow-right'></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-               */}
-            </div>
-            {/*end col*/}
-            <div className='col-lg-4 col-md-6 mt-5 pt-2'>
-              {/* <div className='pricing-box card bg-light'>
-                <div className='card-body p-4 px-lg-5'>
-                  <div className='pricing-icon bg-light rounded-circle icons-md'>
-                    <i className='uim uim-bag'></i>
-                  </div>
-                  <div className='pricing-name text-center mt-4 pt-2'>
-                    <h4 className='fs-18'>Enterprice</h4>
-                  </div>
-                  <div className='pricing-price text-center mt-4'>
-                    <h2 className='fw-semibold'>
-                      $59.99<small className='fs-16'>/mo</small>
-                    </h2>
-                  </div>
-                  <ul className='list-unstyled pricing-details text-muted mt-4'>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Unlimited file recovery
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Professional reports
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Sell on marketplaces
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Unlimited Builds
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Job displayed for 30 days
-                    </li>
-                    <li className='pricing-item'>
-                      <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                      Premium Support 24/7
-                    </li>
-                  </ul>
-                  <div className='text-center mt-4 mb-2'>
-                    <a
-                      href='javascript:void(0)'
-                      className='btn btn-soft-primary rounded-pill'
-                    >
-                      Purchase Now <i className='uil uil-arrow-right'></i>
-                    </a>
-                  </div>
-                </div>
-              </div> */}
-              {/*end pricing-box*/}
-            </div>
-            {/*end col*/}
+           
           </div>
           {/*end row*/}
         </div>

@@ -19,50 +19,81 @@ export default function CompanySignin() {
   
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-    console.log(isAuth);
+    // console.log(isAuth);
     
-  const loginHandler = async () => {
+  const loginHandler = async (e) => {
 
-    // e.preventDefault();
+    e.preventDefault();
 
     const payload = {
         email : userName,
         password: password
 
     }
-    const results = await ApiService('employer-login', 'POST', payload, true).then(({data}) => {
+   
+        try {
+            const response = await ApiService('employer-login', 'POST', payload, false);
+            
 
-        if ( data?.status_code == 200 ) {
+            if ( response?.data?.status_code == 200 ) {
 
-            dispatch(setIsAuthenticated(true));
-
-            localStorage.setItem('user', JSON.stringify(data));
-
-            Swal.fire({
-            icon:"success",
-            text:data.message
-            })
-            navigate("/")
-            window.location.reload();
-        } else {
-            console.log('adasd');
+                dispatch(setIsAuthenticated(true));
+                localStorage.setItem('user', JSON.stringify(response.data.data));
+                setError('');
+                navigate("/")
+                window.location.reload();
+            } else {
+                console.log(response?.response?.data?.message);
+                setError(response?.response?.data?.message);
+            }
+        //   setJobDetails(responseData);
+        } catch (error) {
+          console.error("Error fetching data: ", error);
         }
+      
 
-      }).catch(({response}) => {
+    // const result = await ApiService('employer-login', 'POST', payload, false).then(({ response }) => {
+        
+     
+        // if (response.status_code === 200) {
 
-        if( response.status_code === 400 || response.status_code === 401 ) {
-          Swal.fire({
-              icon:"error",
-              text:response.data.message
-          })
-        } else {
-          Swal.fire({
-            text: "Something went wrong",
-            icon:"error"
-          })
-        }
-      })
+        //     // console.log(response.data.data)
+        //     // dispatch(setIsAuthenticated(true));
+        //     // localStorage.setItem('user', JSON.stringify(response.data.data));
+        //     // setError('');
+        //     // navigate("/")
+        //     // window.location.reload();
+
+        // } else {
+            
+        //     setError(response.data.message);
+        // }
+        // 
+        // Swal.fire({
+        //     icon: "success",
+        //     text: data.message
+        // })
+       
+    // }).catch(({ err }) => {
+
+    //     console.log(err)
+    //     setError('Something went wrong');
+    //     // if( response.status === 400 ) {
+    //     //   Swal.fire({
+    //     //       icon:"error",
+    //     //       text:response.data.message
+    //     //   })
+    //     // } else {
+    //     //   Swal.fire({
+    //     //     text: "Something went wrong",
+    //     //     icon:"error"
+    //     //   })
+    //     // }
+    // })
+
+
     
   };
   
@@ -127,8 +158,21 @@ export default function CompanySignin() {
                                                     <div className="form-check"><input className="form-check-input" type="checkbox" id="flexCheckDefault"/>
                                                         <a href="reset-password.php" className="float-end text-white">Forgot Password?</a>
                                                         <label className="form-check-label" for="flexCheckDefault">Remember me</label>
+
+                                                       
                                                     </div>
+                                                    {error ? (
+                                                        <div className="text-left mt-4">
+                                                            <span className='error'>{error}</span>
+                                                        </div>
+                                                    ) : (
+                                                        ''
+                                                    )}
+                                                    
+                                                    
+                                                    
                                                 </div>
+                                                
                                                 <div className="text-center">
                                                     <button type="submit" className="btn btn-white btn-hover w-100">Sign In</button>
                                                 </div>
