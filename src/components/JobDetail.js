@@ -8,6 +8,14 @@ export default function JobDetail() {
 
   // Fetch job-details
   const [jobDetails, setJobDetails] = useState([]);
+  const [jobOverView, setJobOverView] = useState([]);
+  const [companyDetails, setCompanyDetails] = useState([]);
+
+  // Related Jobs
+  const relatesJobsData = useFetch("jobs");
+  const relatedJobs = relatesJobsData.data;
+  console.log(relatedJobs);
+
   const fetchData = async () => {
     try {
       const response = await ApiService(
@@ -18,7 +26,12 @@ export default function JobDetail() {
       );
       const jobDetailsData = response.data;
       const responseData = jobDetailsData.data.response;
+      const jobOverView = jobDetailsData.data.job_over_view;
+      const companyDetails = jobDetailsData.data.company_details;
+      console.log(responseData, jobOverView, companyDetails);
       setJobDetails(responseData);
+      setJobOverView(jobOverView);
+      setCompanyDetails(companyDetails);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -103,7 +116,8 @@ export default function JobDetail() {
                         <h5 class='mb-1'>{jobDetails.job_title}</h5>
                         <ul class='list-inline text-muted mb-0'>
                           <li class='list-inline-item'>
-                            <i class='mdi mdi-account'></i> vacancy
+                            <i class='mdi mdi-account'></i>
+                            {jobDetails.vacancy} vacancy
                           </li>
                           <li class='list-inline-item text-warning review-rating'>
                             <span class='badge bg-warning'>4.8</span>{" "}
@@ -141,25 +155,39 @@ export default function JobDetail() {
                       <div class='col-lg-3'>
                         <div class='border rounded-start p-3'>
                           <p class='text-muted mb-0 fs-13'>Experience</p>
-                          <p class='fw-medium fs-15 mb-0'>Minimum 1 Year</p>
+                          <p class='fw-medium fs-15 mb-0'>
+                            Minimum{" "}
+                            {jobDetails.experience_id &&
+                              jobDetails.experience_id.year}
+                          </p>
                         </div>
                       </div>
                       <div class='col-lg-3'>
                         <div class='border p-3'>
                           <p class='text-muted fs-13 mb-0'>Employee type</p>
-                          <p class='fw-medium mb-0'>Full Time</p>
+                          <p class='fw-medium mb-0'>
+                            {jobDetails.employment_type_id &&
+                              jobDetails.employment_type_id.name}
+                          </p>
                         </div>
                       </div>
                       <div class='col-lg-3'>
                         <div class='border p-3'>
                           <p class='text-muted fs-13 mb-0'>Position</p>
-                          <p class='fw-medium mb-0'>Senior</p>
+                          <p class='fw-medium mb-0'>
+                            {jobDetails.designation_id &&
+                              jobDetails.designation_id.name}
+                          </p>
                         </div>
                       </div>
                       <div class='col-lg-3'>
                         <div class='border rounded-end p-3'>
                           <p class='text-muted fs-13 mb-0'>Offer Salary</p>
-                          <p class='fw-medium mb-0'>$2150/ Month</p>
+                          <p class='fw-medium mb-0'>
+                            ${" "}
+                            {jobDetails.salary_id && jobDetails.salary_id.name}/
+                            Month
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -169,15 +197,7 @@ export default function JobDetail() {
                     <h5 class='mb-3'>Job Description</h5>
                     <div class='job-detail-desc'>
                       <p class='text-muted mb-0'>
-                        As a Product Designer, you will work within a Product
-                        Delivery Team fused with UX, engineering, product and
-                        data talent. You will help the team design beautiful
-                        interfaces that solve business challenges for our
-                        clients. We work with a number of Tier 1 banks on
-                        building web-based applications for AML, KYC and
-                        Sanctions List management workflows. This role is ideal
-                        if you are looking to segue your career into the FinTech
-                        or Big Data arenas.
+                        {jobDetails.job_description}
                       </p>
                     </div>
                   </div>
@@ -185,35 +205,7 @@ export default function JobDetail() {
                   <div class='mt-4'>
                     <h5 class='mb-3'>Responsibilities</h5>
                     <div class='job-detail-desc mt-2'>
-                      <p class='text-muted'>
-                        As a Product Designer, you will work within a Product
-                        Delivery Team fused with UX, engineering, product and
-                        data talent.
-                      </p>
-                      <ul class='job-detail-list list-unstyled mb-0 text-muted'>
-                        <li>
-                          <i class='uil uil-circle'></i> Have sound knowledge of
-                          commercial activities.
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Build next-generation
-                          web applications with a focus on the client side
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Work on multiple
-                          projects at once, and consistently meet draft
-                          deadlines
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> have already graduated
-                          or are currently in any year of study
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Revise the work of
-                          previous designers to create a unified aesthetic for
-                          our brand materials
-                        </li>
-                      </ul>
+                      <p class='text-muted'>{jobDetails.responsibilities}</p>
                     </div>
                   </div>
 
@@ -301,280 +293,110 @@ export default function JobDetail() {
 
               <div class='mt-4'>
                 <h5>Related Jobs</h5>
-                <div class='job-box card mt-4'>
-                  <div class='p-4'>
-                    <div class='row'>
-                      <div class='col-lg-1'>
-                        <img
-                          src='assets/images/featured-job/img-01.png'
-                          alt=''
-                          class='img-fluid rounded-3'
-                        />
-                      </div>
-                      <div class='col-lg-10'>
-                        <div class='mt-3 mt-lg-0'>
-                          <h5 class='fs-17 mb-1'>
-                            <Link to='/job-detail' class='text-dark'>
-                              HTML Developer
-                            </Link>{" "}
-                            <small class='text-muted fw-normal'>
-                              (0-2 Yrs Exp.)
-                            </small>
-                          </h5>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                Nuvo Hire Technology Pvt.Ltd
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='mdi mdi-map-marker'></i> California
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='uil uil-wallet'></i> $250 - $800 /
-                                month
-                              </p>
-                            </li>
-                          </ul>
-                          <div class='mt-2'>
-                            <span class='badge bg-success-subtle text-success mt-1'>
-                              Full Time
-                            </span>
-                            <span class='badge bg-warning-subtle text-warning mt-1'>
-                              Urgent
-                            </span>
-                            <span class='badge bg-info-subtle text-info mt-1'>
-                              Private
-                            </span>
+                {Array.isArray(relatedJobs)
+                  ? relatedJobs.map((related) => (
+                      <div class='job-box card mt-4'>
+                        <div class='p-4'>
+                          <div class='row'>
+                            <div class='col-lg-1'>
+                              <img
+                                src='assets/images/featured-job/img-01.png'
+                                alt=''
+                                class='img-fluid rounded-3'
+                              />
+                            </div>
+                            <div class='col-lg-10'>
+                              <div class='mt-3 mt-lg-0'>
+                                <h5 class='fs-17 mb-1'>
+                                  <Link to='/job-detail' class='text-dark'>
+                                    {related.job_title}
+                                  </Link>{" "}
+                                  <small class='text-muted fw-normal'>
+                                    (
+                                    {related.experience_id &&
+                                      related.experience_id.year}{" "}
+                                    Yrs Exp.)
+                                  </small>
+                                </h5>
+                                <ul class='list-inline mb-0'>
+                                  <li class='list-inline-item'>
+                                    <p class='text-muted fs-14 mb-0'>
+                                      {related.company_name}
+                                    </p>
+                                  </li>
+                                  <li class='list-inline-item'>
+                                    <p class='text-muted fs-14 mb-0'>
+                                      <i class='mdi mdi-map-marker'></i>{" "}
+                                      {related.city_id && related.city_id.name}
+                                    </p>
+                                  </li>
+                                  <li class='list-inline-item'>
+                                    <p class='text-muted fs-14 mb-0'>
+                                      <i class='uil uil-wallet'></i> $
+                                      {related.salary_id &&
+                                        related.salary_id.name}
+                                      / month
+                                    </p>
+                                  </li>
+                                </ul>
+                                <div class='mt-2'>
+                                  <span class='badge bg-success-subtle text-success mt-1'>
+                                    {related.employment_type_id &&
+                                      related.employment_type_id.name}
+                                  </span>
+                                  <span class='badge bg-warning-subtle text-warning mt-1'>
+                                    Urgent
+                                  </span>
+                                  <span class='badge bg-info-subtle text-info mt-1'>
+                                    Private
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class='favorite-icon'>
+                            <Link to=''>
+                              <i class='uil uil-heart-alt fs-18'></i>
+                            </Link>
+                          </div>
+                        </div>
+                        <div class='p-3 bg-light'>
+                          <div class='row justify-content-between'>
+                            <div class='col-md-8'>
+                              <div>
+                                <ul class='list-inline mb-0'>
+                                  <li class='list-inline-item'>
+                                    <i class='uil uil-tag'></i> Keywords :
+                                  </li>
+                                  <li class='list-inline-item'>
+                                    <Link to='' class='primary-link text-muted'>
+                                      Ui designer
+                                    </Link>
+                                    ,
+                                  </li>
+                                  <li class='list-inline-item'>
+                                    <Link to='' class='primary-link text-muted'>
+                                      developer
+                                    </Link>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class='col-md-3'>
+                              <div class='text-md-end'>
+                                <Link to='' class='primary-link'>
+                                  Apply Now{" "}
+                                  <i class='mdi mdi-chevron-double-right'></i>
+                                </Link>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class='favorite-icon'>
-                      <Link to=''>
-                        <i class='uil uil-heart-alt fs-18'></i>
-                      </Link>
-                    </div>
-                  </div>
-                  <div class='p-3 bg-light'>
-                    <div class='row justify-content-between'>
-                      <div class='col-md-8'>
-                        <div>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <i class='uil uil-tag'></i> Keywords :
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                Ui designer
-                              </Link>
-                              ,
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                developer
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div class='col-md-3'>
-                        <div class='text-md-end'>
-                          <Link to='' class='primary-link'>
-                            Apply Now{" "}
-                            <i class='mdi mdi-chevron-double-right'></i>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='job-box bookmark-post card mt-4'>
-                  <div class='p-4'>
-                    <div class='row'>
-                      <div class='col-lg-1'>
-                        <img
-                          src='assets/images/featured-job/img-02.png'
-                          alt=''
-                          class='img-fluid rounded-3'
-                        />
-                      </div>
-                      <div class='col-lg-10'>
-                        <div class='mt-3 mt-lg-0'>
-                          <h5 class='fs-17 mb-1'>
-                            <Link to='/job-detail' class='text-dark'>
-                              Marketing Director
-                            </Link>{" "}
-                            <small class='text-muted fw-normal'>
-                              (2-4 Yrs Exp.)
-                            </small>
-                          </h5>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                Creative Agency
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='mdi mdi-map-marker'></i> New York
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='uil uil-wallet'></i> $250 - $800 /
-                                month
-                              </p>
-                            </li>
-                          </ul>
-                          <div class='mt-2'>
-                            <span class='badge bg-danger-subtle text-danger mt-1'>
-                              Part Time
-                            </span>
-                            <span class='badge bg-info-subtle text-info  mt-1'>
-                              Private
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class='favorite-icon'>
-                      <Link to=''>
-                        <i class='uil uil-heart-alt fs-18'></i>
-                      </Link>
-                    </div>
-                  </div>
-                  <div class='p-3 bg-light'>
-                    <div class='row justify-content-between'>
-                      <div class='col-md-8'>
-                        <div>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <i class='uil uil-tag'></i> Keywords :
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                Marketing
-                              </Link>
-                              ,
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                business
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div class='col-md-3'>
-                        <div class='text-md-end'>
-                          <Link to='' class='primary-link'>
-                            Apply Now{" "}
-                            <i class='mdi mdi-chevron-double-right'></i>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class='job-box card mt-4'>
-                  <div class='p-4'>
-                    <div class='row'>
-                      <div class='col-lg-1'>
-                        <img
-                          src='assets/images/featured-job/img-03.png'
-                          alt=''
-                          class='img-fluid rounded-3'
-                        />
-                      </div>
-                      <div class='col-lg-10'>
-                        <div class='mt-3 mt-lg-0'>
-                          <h5 class='fs-17 mb-1'>
-                            <Link to='/job-detail' class='text-dark'>
-                              HTML Developer
-                            </Link>{" "}
-                            <small class='text-muted fw-normal'>
-                              (2-4 Yrs Exp.)
-                            </small>
-                          </h5>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                Nuvo Hire Technology Pvt.Ltd
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='mdi mdi-map-marker'></i> California
-                              </p>
-                            </li>
-                            <li class='list-inline-item'>
-                              <p class='text-muted fs-14 mb-0'>
-                                <i class='uil uil-wallet'></i> $250 - $800 /
-                                month
-                              </p>
-                            </li>
-                          </ul>
-                          <div class='mt-2'>
-                            <span class='badge bg-primary-subtle text-primary mt-1'>
-                              Freelance
-                            </span>
-                            <span class='badge bg-info-subtle text-info mt-1'>
-                              Internship
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class='favorite-icon'>
-                      <Link to=''>
-                        <i class='uil uil-heart-alt fs-18'></i>
-                      </Link>
-                    </div>
-                  </div>
-                  <div class='p-3 bg-light'>
-                    <div class='row justify-content-between'>
-                      <div class='col-md-8'>
-                        <div>
-                          <ul class='list-inline mb-0'>
-                            <li class='list-inline-item'>
-                              <i class='uil uil-tag'></i> Keywords :
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                Ui designer
-                              </Link>
-                              ,
-                            </li>
-                            <li class='list-inline-item'>
-                              <Link to='' class='primary-link text-muted'>
-                                developer
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div class='col-md-3'>
-                        <div class='text-md-end'>
-                          <Link to='' class='primary-link'>
-                            Apply Now{" "}
-                            <i class='mdi mdi-chevron-double-right'></i>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    ))
+                  : null}
               </div>
-
               <div class='text-center mt-4'>
                 <Link to='/jobs' class='primary-link form-text'>
                   View More <i class='mdi mdi-arrow-right'></i>
@@ -593,7 +415,9 @@ export default function JobDetail() {
                           <i class='uil uil-user icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Job Title</h6>
-                            <p class='text-muted mb-0'>Product Designer</p>
+                            <p class='text-muted mb-0'>
+                              {jobDetails.job_title}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -602,7 +426,10 @@ export default function JobDetail() {
                           <i class='uil uil-star-half-alt icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Experience</h6>
-                            <p class='text-muted mb-0'> 0-3 Years</p>
+                            <p class='text-muted mb-0'>
+                              {jobDetails.experience_id &&
+                                jobDetails.experience_id.year}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -611,7 +438,9 @@ export default function JobDetail() {
                           <i class='uil uil-location-point icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Location</h6>
-                            <p class='text-muted mb-0'> New york</p>
+                            <p class='text-muted mb-0'>
+                              {jobDetails.city_id && jobDetails.city_id.name}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -620,7 +449,11 @@ export default function JobDetail() {
                           <i class='uil uil-usd-circle icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Offered Salary</h6>
-                            <p class='text-muted mb-0'>$35k - $45k</p>
+                            <p class='text-muted mb-0'>
+                              $
+                              {jobDetails.salary_id &&
+                                jobDetails.salary_id.name}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -629,7 +462,10 @@ export default function JobDetail() {
                           <i class='uil uil-graduation-cap icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Qualification</h6>
-                            <p class='text-muted mb-0'>Bachelor Degree</p>
+                            <p class='text-muted mb-0'>
+                              {jobDetails.degree_id &&
+                                jobDetails.degree_id.name}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -638,7 +474,10 @@ export default function JobDetail() {
                           <i class='uil uil-building icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Industry</h6>
-                            <p class='text-muted mb-0'>Private</p>
+                            <p class='text-muted mb-0'>
+                              {jobDetails.industry_id &&
+                                jobDetails.industry_id.name}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -680,7 +519,9 @@ export default function JobDetail() {
                       />
 
                       <div class='mt-4'>
-                        <h6 class='fs-17 mb-1'>Nuvo Hire Technology Pvt.Ltd</h6>
+                        <h6 class='fs-17 mb-1'>
+                          {companyDetails.company_name}
+                        </h6>
                         <p class='text-muted'>Since July 2017</p>
                       </div>
                     </div>
@@ -690,7 +531,9 @@ export default function JobDetail() {
                           <i class='uil uil-phone-volume text-primary fs-4'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Phone</h6>
-                            <p class='text-muted fs-14 mb-0'>+589 560 56555</p>
+                            <p class='text-muted fs-14 mb-0'>
+                              +{companyDetails.phone}
+                            </p>
                           </div>
                         </div>
                       </li>
@@ -700,7 +543,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Email</h6>
                             <p class='text-muted fs-14 mb-0'>
-                              pixltechnology@info.com
+                              {companyDetails.email}
                             </p>
                           </div>
                         </div>
@@ -711,7 +554,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Website</h6>
                             <p class='text-muted fs-14 text-break mb-0'>
-                              www.Jobcytechnology.pvt.ltd.com
+                              {companyDetails.website}
                             </p>
                           </div>
                         </div>

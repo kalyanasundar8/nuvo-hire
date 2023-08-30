@@ -8,7 +8,6 @@ export default function JobCategories() {
   const { id } = useParams();
 
   const jobCategoryData = useFetch(`sub-categories?category_id=${id}`);
-
   const jobCategory = jobCategoryData.data;
 
   return (
@@ -78,7 +77,19 @@ export default function JobCategories() {
                       <div class='card-body p-4'>
                         <ul class='list-unstyled job-Categories-list mb-0'>
                           <li>
-                            <Link to='/jobs' class='primary-link'>
+                            <Link
+                              to={`/jobs?subcategory_id=${jobCat.id}`}
+                              style={
+                                jobCat.jobs_count === 0
+                                  ? {
+                                      pointerEvents: "none",
+                                      color: "#007bff",
+                                      textDecoration: "none",
+                                    }
+                                  : { color: "inherit" }
+                              }
+                              class='primary-link'
+                            >
                               {jobCat.name}{" "}
                               <span class='badge bg-info-subtle text-info float-end'>
                                 {jobCat.jobs_count}
@@ -91,78 +102,7 @@ export default function JobCategories() {
                   </div>
                 ))
               : null}
-            {/* <div class='col-lg-4'>
-              <div class='card job-Categories-box bg-light border-0'>
-                <div class='card-body p-4'>
-                  <ul class='list-unstyled job-Categories-list mb-0'>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Accounting & Finance{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          25
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Bank Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          10
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Data Entry Job{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          71
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Purchasing Manager{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          40
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Project Manager{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          86
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Education & training{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          47
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Marketing & Advertising{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          47
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Catering & Tourism{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          47
-                        </span>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div> */}
+
             <div class='col-lg-4'>
               <div class='card job-Categories-box bg-light border-0'>
                 <div class='card-body p-4'>

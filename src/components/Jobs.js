@@ -12,6 +12,7 @@ export default function Jobs() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab");
+  const subCategoryId = searchParams.get("subcategory_id");
   const searchedResults = location.state;
 
   console.log(searchedResults);
@@ -39,8 +40,14 @@ export default function Jobs() {
   }
 
   // All jobs list
-  const allJobsData = useFetch("alljobs");
+  const allJobsData = useFetch("jobs");
   const allJobs = allJobsData.data;
+  console.log(allJobs);
+
+  // SubCategories Jobs
+  const subCategoriesData = useFetch(`jobs?subcategory_id=${subCategoryId}`);
+  const subCategory = subCategoriesData.data;
+  console.log("Subcategory", subCategory);
 
   // Job Search
   const countriesData = useFetch("countries");
@@ -228,7 +235,193 @@ export default function Jobs() {
                 </div>
 
                 <div>
-                  {searchedResults && Array.isArray(searchedResults)
+                  {subCategory && Array.isArray(subCategory)
+                    ? subCategory.map((subCat) => (
+                        <div key={subCat.id} class='job-box card mt-5'>
+                          <div class='bookmark-label text-center'>
+                            <Link to='' class='align-middle text-white'>
+                              <i class='mdi mdi-star'></i>
+                            </Link>
+                          </div>
+                          <div class='p-4'>
+                            <div class='row align-items-center'>
+                              <div class='col-md-2'>
+                                <div class='text-center mb-4 mb-lg-0'>
+                                  <Link to='company-details.php'>
+                                    <img
+                                      src='assets/images/featured-job/img-01.png'
+                                      alt=''
+                                      class='img-fluid rounded-3'
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+
+                              <div class='col-md-3'>
+                                <div class='mb-2 mb-md-0'>
+                                  <h5 class='fs-18 mb-0'>
+                                    {" "}
+                                    <Link to='/job-detail' class='text-dark'>
+                                      {subCat.job_title}
+                                    </Link>
+                                  </h5>
+                                  <p class='text-muted fs-14 mb-0'>
+                                    Creative Agency
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-3'>
+                                <div class='d-flex mb-2'>
+                                  <div class='flex-shrink-0'>
+                                    <i class='mdi mdi-map-marker text-primary me-1'></i>
+                                  </div>
+                                  <p class='text-muted'>
+                                    {" "}
+                                    Escondido,California
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-2'>
+                                <div class='d-flex mb-0'>
+                                  <div class='flex-shrink-0'>
+                                    <i class='uil uil-clock-three text-primary me-1'></i>
+                                  </div>
+                                  <p class='text-muted mb-0'> 3 min ago</p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-2'>
+                                <div>
+                                  <span class='badge bg-success-subtle text-success fs-13 mt-1'>
+                                    Full Time
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class='p-3 bg-light'>
+                            <div class='row justify-content-between'>
+                              <div class='col-md-4'>
+                                <div>
+                                  <p class='text-muted mb-0'>
+                                    <span class='text-dark'>Experience :</span>{" "}
+                                    2 - 3 years
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-lg-2 col-md-3'>
+                                <div class='text-start text-md-end'>
+                                  <Link
+                                    to='#applyNow'
+                                    data-bs-toggle='modal'
+                                    class='primary-link'
+                                  >
+                                    Apply Now{" "}
+                                    <i class='mdi mdi-chevron-double-right'></i>
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    : allJobs && Array.isArray(allJobs)
+                    ? allJobs.map((allJob) => (
+                        <div key={allJob.id} class='job-box card mt-5'>
+                          <div class='bookmark-label text-center'>
+                            <Link to='' class='align-middle text-white'>
+                              <i class='mdi mdi-star'></i>
+                            </Link>
+                          </div>
+                          <div class='p-4'>
+                            <div class='row align-items-center'>
+                              <div class='col-md-2'>
+                                <div class='text-center mb-4 mb-lg-0'>
+                                  <Link to='company-details.php'>
+                                    <img
+                                      src='assets/images/featured-job/img-01.png'
+                                      alt=''
+                                      class='img-fluid rounded-3'
+                                    />
+                                  </Link>
+                                </div>
+                              </div>
+
+                              <div class='col-md-3'>
+                                <div class='mb-2 mb-md-0'>
+                                  <h5 class='fs-18 mb-0'>
+                                    {" "}
+                                    <Link to='/job-detail' class='text-dark'>
+                                      {allJob.job_title}
+                                    </Link>
+                                  </h5>
+                                  <p class='text-muted fs-14 mb-0'>
+                                    Creative Agency
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-3'>
+                                <div class='d-flex mb-2'>
+                                  <div class='flex-shrink-0'>
+                                    <i class='mdi mdi-map-marker text-primary me-1'></i>
+                                  </div>
+                                  <p class='text-muted'>
+                                    {" "}
+                                    Escondido,California
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-2'>
+                                <div class='d-flex mb-0'>
+                                  <div class='flex-shrink-0'>
+                                    <i class='uil uil-clock-three text-primary me-1'></i>
+                                  </div>
+                                  <p class='text-muted mb-0'> 3 min ago</p>
+                                </div>
+                              </div>
+
+                              <div class='col-md-2'>
+                                <div>
+                                  <span class='badge bg-success-subtle text-success fs-13 mt-1'>
+                                    Full Time
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class='p-3 bg-light'>
+                            <div class='row justify-content-between'>
+                              <div class='col-md-4'>
+                                <div>
+                                  <p class='text-muted mb-0'>
+                                    <span class='text-dark'>Experience :</span>{" "}
+                                    2 - 3 years
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div class='col-lg-2 col-md-3'>
+                                <div class='text-start text-md-end'>
+                                  <Link
+                                    to='#applyNow'
+                                    data-bs-toggle='modal'
+                                    class='primary-link'
+                                  >
+                                    Apply Now{" "}
+                                    <i class='mdi mdi-chevron-double-right'></i>
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    : searchedResults && Array.isArray(searchedResults)
                     ? searchedResults.map((searched) => (
                         <div key={searched.id} class='job-box card mt-5'>
                           <div class='bookmark-label text-center'>
@@ -307,99 +500,6 @@ export default function Jobs() {
                                     <span class='text-dark'>Experience :</span>{" "}
                                     {searched.experience_id &&
                                       searched.experience_id.year}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div class='col-lg-2 col-md-3'>
-                                <div class='text-start text-md-end'>
-                                  <Link
-                                    to='#applyNow'
-                                    data-bs-toggle='modal'
-                                    class='primary-link'
-                                  >
-                                    Apply Now{" "}
-                                    <i class='mdi mdi-chevron-double-right'></i>
-                                  </Link>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    : Array.isArray(allJobs)
-                    ? allJobs.map((allJob) => (
-                        <div key={allJob.id} class='job-box card mt-5'>
-                          <div class='bookmark-label text-center'>
-                            <Link to='' class='align-middle text-white'>
-                              <i class='mdi mdi-star'></i>
-                            </Link>
-                          </div>
-                          <div class='p-4'>
-                            <div class='row align-items-center'>
-                              <div class='col-md-2'>
-                                <div class='text-center mb-4 mb-lg-0'>
-                                  <Link to='company-details.php'>
-                                    <img
-                                      src='assets/images/featured-job/img-01.png'
-                                      alt=''
-                                      class='img-fluid rounded-3'
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-
-                              <div class='col-md-3'>
-                                <div class='mb-2 mb-md-0'>
-                                  <h5 class='fs-18 mb-0'>
-                                    {" "}
-                                    <Link to='/job-detail' class='text-dark'>
-                                      {allJob.job_title}
-                                    </Link>
-                                  </h5>
-                                  <p class='text-muted fs-14 mb-0'>
-                                    Creative Agency
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div class='col-md-3'>
-                                <div class='d-flex mb-2'>
-                                  <div class='flex-shrink-0'>
-                                    <i class='mdi mdi-map-marker text-primary me-1'></i>
-                                  </div>
-                                  <p class='text-muted'>
-                                    {" "}
-                                    Escondido,California
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div class='col-md-2'>
-                                <div class='d-flex mb-0'>
-                                  <div class='flex-shrink-0'>
-                                    <i class='uil uil-clock-three text-primary me-1'></i>
-                                  </div>
-                                  <p class='text-muted mb-0'> 3 min ago</p>
-                                </div>
-                              </div>
-
-                              <div class='col-md-2'>
-                                <div>
-                                  <span class='badge bg-success-subtle text-success fs-13 mt-1'>
-                                    Full Time
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class='p-3 bg-light'>
-                            <div class='row justify-content-between'>
-                              <div class='col-md-4'>
-                                <div>
-                                  <p class='text-muted mb-0'>
-                                    <span class='text-dark'>Experience :</span>{" "}
-                                    2 - 3 years
                                   </p>
                                 </div>
                               </div>

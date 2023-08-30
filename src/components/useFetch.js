@@ -10,8 +10,6 @@ function useFetch(endpoint) {
     const fetchData = async () => {
       try {
         const response = await ApiService(endpoint, "GET", null, false);
-        console.log(response.data);
-        console.log("Entry");
         if (response.data.status_code === 200) {
           const res = response.data.data;
           setData(res);
@@ -21,7 +19,6 @@ function useFetch(endpoint) {
           setError("Error fetching data");
         }
       } catch (error) {
-        console.log(error);
         setError("An error occurred while fetching data");
       }
     };
