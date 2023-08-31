@@ -31,6 +31,7 @@ import JobSeekerSignUp from "./components/jobseeker/JobSeekerSignUp";
 import PrivateRoute from "./Routes/PrivateRoutes";
 import ForgetPassword from "./components/ForgetPassword";
 import ResetPassword from "./components/ResetPassword";
+import VerifyOtp from "./components/employer/VerifyOtp";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path='/jobseeker-signup' element={<JobSeekerSignUp />}></Route>
           <Route path='/forget-password' element={<ForgetPassword />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
+          <Route path='/verify-otp' element={<VerifyOtp />} />
           {/* <Route path="/jobseeker-signup" element={<JobSeekerSignup />} /> */}
 
           <Route path='/employer-signup' element={<CompanySignup />} />
