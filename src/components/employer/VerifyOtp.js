@@ -112,9 +112,9 @@ export default function VerifyOtp() {
                           <h5>Verify your OTP</h5>
                           <p className='text-white-70'>
                             {" "}
-                            We send an OTP to your mail, Don't share your OTP to
-                            anyone. If you didn't get your OTP click the
-                            resendOTP and get your OTP again.
+                            We send an OTP to your mobile number, Don't share
+                            your OTP to anyone. If you didn't get your OTP click
+                            the resendOTP and get your OTP again.
                           </p>
                         </div>
                         <form onSubmit={verifyOtp} className='auth-form'>
@@ -152,19 +152,39 @@ export default function VerifyOtp() {
                             </button>
                           </div>
                         </form>
-                        <div className='text-center mt-3'>
+                        <div
+                          className='text-center mt-3'
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <button
+                            style={{
+                              backgroundColor: "transparent",
+                              border: "none",
+                              color: "#fff",
+                              opacity: timerActive ? "50%" : "",
+                              textDecoration: "none",
+                              cursor: timerActive ? "not-allowed" : "pointer",
+                            }}
+                            onClick={handleResendOtp}
+                            disabled={timerActive}
+                          >
+                            ResendOTP
+                          </button>
                           {timerActive ? (
-                            <p className='text-white'>
-                              Resend OTP in {countDown} seconds
-                            </p>
-                          ) : (
                             <button
-                              className='btn btn-link text-white'
-                              onClick={handleResendOtp}
+                              style={{
+                                color: "white",
+                                backgroundColor: "transparent",
+                                border: "none",
+                              }}
                             >
-                              Resend OTP
+                              Resend OTP in {countDown} seconds
                             </button>
-                          )}
+                          ) : null}
                         </div>
                         <div className=''></div>
                         <div className='mt-4 text-center'>
