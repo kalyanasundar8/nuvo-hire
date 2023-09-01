@@ -118,7 +118,10 @@ export default function ResetPassword() {
                             allow you to choose a new one.
                           </p>
                         </div>
-                        <form onSubmit={sendResetLink} className='auth-form'>
+                        <form
+                          onSubmit={formik.handleSubmit}
+                          className='auth-form'
+                        >
                           <div className='mb-3'>
                             <label for='usernameInput' className='form-label'>
                               Email

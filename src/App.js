@@ -49,6 +49,8 @@ function App() {
           <Route path='/forget-password' element={<ForgetPassword />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/verify-otp' element={<VerifyOtp />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+
           {/* <Route path="/jobseeker-signup" element={<JobSeekerSignup />} /> */}
 
           <Route path='/employer-signup' element={<CompanySignup />} />

@@ -36,7 +36,7 @@ export default function CompanySignup() {
     initialValues: {
       company_name: "",
       first_name: "",
-    //   last_name: "",
+      //   last_name: "",
       email: "",
       mobile_no: "",
       password: "",
@@ -46,8 +46,8 @@ export default function CompanySignup() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-        console.log(values)
-        employerSignUp(values)
+      console.log(values);
+      employerSignUp(values);
     },
   });
 
@@ -86,8 +86,12 @@ export default function CompanySignup() {
         payload,
         false
       );
-      navigate("/");
-      console.log(response);
+      if (response.status === 200) {
+        navigate("/verify-otp");
+        console.log(response);
+      } else {
+        console.log("Something went wrong");
+      }
     } catch (error) {
       console.log("Error:", error);
     }
@@ -157,7 +161,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.company_name &&
                                 formik.errors.company_name && (
-                                  <span className="error">{formik.errors.company_name}</span>
+                                  <span className='error'>
+                                    {formik.errors.company_name}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -181,7 +187,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.first_name &&
                                 formik.errors.first_name && (
-                                  <span className="error">{formik.errors.first_name}</span>
+                                  <span className='error'>
+                                    {formik.errors.first_name}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -205,7 +213,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.last_name &&
                                 formik.errors.last_name && (
-                                  <span className="error">{formik.errors.last_name}</span>
+                                  <span className='error'>
+                                    {formik.errors.last_name}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -231,7 +241,9 @@ export default function CompanySignup() {
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.email && formik.errors.email && (
-                                <span className="error">{formik.errors.email}</span>
+                                <span className='error'>
+                                  {formik.errors.email}
+                                </span>
                               )}
                             </div>
                           </div>
@@ -258,7 +270,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.mobile_no &&
                                 formik.errors.mobile_no && (
-                                  <span className="error">{formik.errors.mobile_no}</span>
+                                  <span className='error'>
+                                    {formik.errors.mobile_no}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -282,7 +296,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.password &&
                                 formik.errors.password && (
-                                  <span className="error">{formik.errors.password}</span>
+                                  <span className='error'>
+                                    {formik.errors.password}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -306,7 +322,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.password_confirmation &&
                                 formik.errors.password_confirmation && (
-                                  <span className="error">
+                                  <span className='error'>
                                     {formik.errors.password_confirmation}
                                   </span>
                                 )}
@@ -331,7 +347,9 @@ export default function CompanySignup() {
                               />
                               {formik.touched.address &&
                                 formik.errors.address && (
-                                  <span className="error">{formik.errors.address}</span>
+                                  <span className='error'>
+                                    {formik.errors.address}
+                                  </span>
                                 )}
                             </div>
                           </div>
@@ -359,7 +377,9 @@ export default function CompanySignup() {
                               </label>
                             </div>
                             {formik.errors.terms && (
-                              <span className="error">{formik.errors.terms}</span>
+                              <span className='error'>
+                                {formik.errors.terms}
+                              </span>
                             )}
                           </div>
                           <div class='text-center'>
@@ -377,7 +397,7 @@ export default function CompanySignup() {
                         <p class='mb-0'>
                           Already a member ?{" "}
                           <Link
-                            to='/company-signin'
+                            to='/employer-signin'
                             class='fw-medium text-white text-decoration-underline'
                           >
                             {" "}

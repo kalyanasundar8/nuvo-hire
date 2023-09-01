@@ -1,15 +1,21 @@
-import React, { useState, useNavigate, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import useScrollToTop from "../../hooks/useScrollToTop";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ApiService from "../../services/ApiService";
 
 export default function VerifyOtp() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const mobileNumber = searchParams.get("mobile_no");
+
   const [otp, setOtp] = useState("");
   const [countDown, setCountDown] = useState(60);
   const [timerActive, setTimerActive] = useState(true);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   //   Schema for validation
   const validationSchema = Yup.object({
@@ -22,6 +28,10 @@ export default function VerifyOtp() {
       otp: "",
     },
     validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      verifyOtp(values);
+    },
   });
 
   //   CountDown timer
@@ -52,20 +62,27 @@ export default function VerifyOtp() {
   };
 
   //   Verify OTP
-  const verifyOtp = async () => {
+  const verifyOtp = async (values) => {
     try {
       const payload = {
-        otp: otp,
+        otp: values.otp,
+        mobile_no: mobileNumber,
       };
+
+      setLoading(true);
 
       const response = await ApiService("verify-otp", "POST", payload, false);
 
       if (response.status === 200) {
+        setLoading(false);
         console.log("Successfully verified");
+        navigate("/dashboard");
       } else {
-        console.log("Wrong OTP");
+        setLoading(false);
+        console.log("Something went wrong");
       }
     } catch (error) {
+      setLoading(false);
       setError("Invalid OTP");
     }
   };
@@ -117,7 +134,10 @@ export default function VerifyOtp() {
                             the resendOTP and get your OTP again.
                           </p>
                         </div>
-                        <form onSubmit={verifyOtp} className='auth-form'>
+                        <form
+                          onSubmit={formik.handleSubmit}
+                          className='auth-form'
+                        >
                           <div className='mb-3'>
                             <label for='usernameInput' className='form-label'>
                               Your OTP
@@ -137,7 +157,9 @@ export default function VerifyOtp() {
                             />
                             {formik.touched.otp && formik.errors.otp && (
                               <div className='invalid-feedback'>
-                                {formik.errors.otp}
+                                <span className='error'>
+                                  {formik.errors.otp}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -145,10 +167,12 @@ export default function VerifyOtp() {
                           <div className='text-center'>
                             <button
                               type='submit'
-                              className='btn btn-white btn-hover w-100'
-                              disabled={!formik.isValid || formik.isSubmitting}
+                              className={`btn btn-white btn-hover w-100 ${
+                                loading ? "disabled" : ""
+                              }`}
+                              disabled={loading || !formik.isValid}
                             >
-                              {formik.isSubmitting ? "Verifying..." : "Verify"}
+                              {loading ? "Verifying..." : "verify"}
                             </button>
                           </div>
                         </form>
