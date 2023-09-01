@@ -10,33 +10,33 @@ export default function CompanySignup() {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    company_name: Yup.string().required("Company name is required"),
-    first_name: Yup.string().required("First name is required"),
-    last_name: Yup.string().required("Last name is required"),
+    company_name: Yup.string().required("Please enter the company name"),
+    first_name: Yup.string().required("Please enter the first name"),
+    // last_name: Yup.string().required("Last name is required"),
     email: Yup.string()
       .email("Invalid email address")
-      .required("Email is required"),
+      .required("Please enter the email"),
     mobile_no: Yup.string()
       .matches(/^[0-9]+$/, "Must be only digits")
       .min(10, "Must be at least 10 digits")
-      .required("Mobile number is required"),
+      .required("Please enter the mobile number"),
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
+      .required("Please enter the password"),
     password_confirmation: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Password confirmation is required"),
-    address: Yup.string().required("Work status is required"),
+      .required("Please enter the confirm password"),
+    address: Yup.string().required("Please enter the address"),
     terms: Yup.boolean()
-      .oneOf([true], "You must accept the terms and conditions")
-      .required("You must accept the terms and conditions"),
+      .oneOf([true], "Please accept the terms and conditions")
+      .required("Please accept the terms and conditions"),
   });
 
   const formik = useFormik({
     initialValues: {
       company_name: "",
       first_name: "",
-      last_name: "",
+    //   last_name: "",
       email: "",
       mobile_no: "",
       password: "",
@@ -46,7 +46,8 @@ export default function CompanySignup() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
+        console.log(values)
+        employerSignUp(values)
     },
   });
 
@@ -65,18 +66,18 @@ export default function CompanySignup() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [address, setAddress] = useState("");
 
-  const employerSignUp = async (e) => {
-    e.preventDefault();
+  const employerSignUp = async (values) => {
+    // e.preventDefault();
 
     const payload = {
-      company_name: companyName,
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-      password: password,
-      password_confirmation: confirmPassword,
-      mobile_no: mobileNumber,
-      address: address,
+      company_name: values.company_name,
+      first_name: values.first_name,
+      last_name: values.last_name,
+      email: values.email,
+      password: values.password,
+      password_confirmation: values.password_confirmation,
+      mobile_no: values.mobile_no,
+      address: values.address,
     };
     try {
       const response = await ApiService(
@@ -134,7 +135,7 @@ export default function CompanySignup() {
                           Hire
                         </p>
                       </div>
-                      <form onSubmit={employerSignUp} class='auth-form'>
+                      <form onSubmit={formik.handleSubmit} class='auth-form'>
                         <div className='row'>
                           <div className='col-lg-12'>
                             <div className='mb-3'>
@@ -156,7 +157,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.company_name &&
                                 formik.errors.company_name && (
-                                  <span>{formik.errors.company_name}</span>
+                                  <span className="error">{formik.errors.company_name}</span>
                                 )}
                             </div>
                           </div>
@@ -180,7 +181,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.first_name &&
                                 formik.errors.first_name && (
-                                  <span>{formik.errors.first_name}</span>
+                                  <span className="error">{formik.errors.first_name}</span>
                                 )}
                             </div>
                           </div>
@@ -204,7 +205,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.last_name &&
                                 formik.errors.last_name && (
-                                  <span>{formik.errors.last_name}</span>
+                                  <span className="error">{formik.errors.last_name}</span>
                                 )}
                             </div>
                           </div>
@@ -230,7 +231,7 @@ export default function CompanySignup() {
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.email && formik.errors.email && (
-                                <span>{formik.errors.email}</span>
+                                <span className="error">{formik.errors.email}</span>
                               )}
                             </div>
                           </div>
@@ -257,7 +258,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.mobile_no &&
                                 formik.errors.mobile_no && (
-                                  <span>{formik.errors.mobile_no}</span>
+                                  <span className="error">{formik.errors.mobile_no}</span>
                                 )}
                             </div>
                           </div>
@@ -281,7 +282,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.password &&
                                 formik.errors.password && (
-                                  <span>{formik.errors.password}</span>
+                                  <span className="error">{formik.errors.password}</span>
                                 )}
                             </div>
                           </div>
@@ -305,7 +306,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.password_confirmation &&
                                 formik.errors.password_confirmation && (
-                                  <span>
+                                  <span className="error">
                                     {formik.errors.password_confirmation}
                                   </span>
                                 )}
@@ -330,7 +331,7 @@ export default function CompanySignup() {
                               />
                               {formik.touched.address &&
                                 formik.errors.address && (
-                                  <span>{formik.errors.address}</span>
+                                  <span className="error">{formik.errors.address}</span>
                                 )}
                             </div>
                           </div>
@@ -358,7 +359,7 @@ export default function CompanySignup() {
                               </label>
                             </div>
                             {formik.errors.terms && (
-                              <span>{formik.errors.terms}</span>
+                              <span className="error">{formik.errors.terms}</span>
                             )}
                           </div>
                           <div class='text-center'>
