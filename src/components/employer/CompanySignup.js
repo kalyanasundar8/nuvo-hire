@@ -6,8 +6,12 @@ import "./CompanySignup.css";
 import * as Yup from "yup";
 import ApiService from "../../services/ApiService";
 
+import { setIsAuthenticated } from "../../redux/actions/AuthAction";
+import { useDispatch, useSelector } from "react-redux";
+
 export default function CompanySignup() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
     company_name: Yup.string().required("Please enter the company name"),
@@ -66,6 +70,10 @@ export default function CompanySignup() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [address, setAddress] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+
   const employerSignUp = async (values) => {
     // e.preventDefault();
 
@@ -87,10 +95,12 @@ export default function CompanySignup() {
         false
       );
       if (response.status === 200) {
-        navigate("/verify-otp");
+        navigate("/verify-otp", { state: values.mobile_no });
         console.log(response);
       } else {
-        console.log("Something went wrong");
+        console.log(response?.response?.data?.message);
+        setError(response?.response?.data?.message);
+        setAlertMessage(response?.response?.data?.message);
       }
     } catch (error) {
       console.log("Error:", error);
@@ -140,6 +150,11 @@ export default function CompanySignup() {
                         </p>
                       </div>
                       <form onSubmit={formik.handleSubmit} class='auth-form'>
+                        {alertMessage && (
+                          <div className='alert alert-danger mt-4' role='alert'>
+                            {alertMessage}
+                          </div>
+                        )}
                         <div className='row'>
                           <div className='col-lg-12'>
                             <div className='mb-3'>
@@ -386,9 +401,11 @@ export default function CompanySignup() {
                             <button
                               type='submit'
                               disabled={!formik.isValid}
-                              class='btn btn-white btn-hover w-100'
+                              class={`btn btn-white btn-hover w-100 ${
+                                loading ? "disabled" : ""
+                              }`}
                             >
-                              Sign Up
+                              {loading ? "Signing Up..." : "Sign Up"}
                             </button>
                           </div>
                         </div>

@@ -5,11 +5,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import ApiService from "../../services/ApiService";
 
+import { setIsAuthenticated } from "../../redux/actions/AuthAction";
+import { useDispatch, useSelector } from "react-redux";
+
 export default function VerifyOtp() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const mobileNumber = searchParams.get("mobile_no");
+  // const mobileNumber = searchParams.get("mobile_no");
+  const mobileNumber = location.state;
 
   const [otp, setOtp] = useState("");
   const [countDown, setCountDown] = useState(60);
@@ -19,7 +25,10 @@ export default function VerifyOtp() {
 
   //   Schema for validation
   const validationSchema = Yup.object({
-    otp: Yup.string().required("OTP is required"),
+    otp: Yup.string()
+      .min(6, "OTP was min 6 digits")
+      .max(6, "OTP was max 6 digits")
+      .required("OTP is required"),
   });
 
   // Initialize validation
@@ -75,6 +84,8 @@ export default function VerifyOtp() {
 
       if (response.status === 200) {
         setLoading(false);
+        dispatch(setIsAuthenticated(true));
+        localStorage.setItem("user", JSON.stringify(response.data.data));
         console.log("Successfully verified");
         navigate("/dashboard");
       } else {
