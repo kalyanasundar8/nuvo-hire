@@ -31,9 +31,7 @@ export default function CompanySignup() {
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Please enter the confirm password"),
     address: Yup.string().required("Please enter the address"),
-    terms: Yup.boolean()
-      .oneOf([true], "Please accept the terms and conditions")
-      .required("Please accept the terms and conditions"),
+    terms: Yup.boolean().oneOf([true], 'Please accept the terms and conditions').required(),
   });
 
   const formik = useFormik({

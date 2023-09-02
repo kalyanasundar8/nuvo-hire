@@ -5,30 +5,31 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import GoogleSignInBtn from "../atoms/GoogleSignIn/GoogleSignInBtn";
 import useScrollToTop from "../../hooks/useScrollToTop";
+import ApiService from "../../services/ApiService";
 import './JobSeeker.css';
 
 export default function JobSeekerSignUp() {
 
     const navigate = useNavigate();
 
-    const [resume, setResume] = useState("");
+    // const [resume, setResume] = useState("");
 
-    const changeResumeHandler = (event) => {
-        setResume(event.target.files[0]);
-    };
+    // const changeResumeHandler = (event) => {
+    //     setResume(event.target.files[0]);
+    // };
 
     const validationSchema = Yup.object({
-        jobseeker_type: Yup.string().required('Job seeker is required'),
-        first_name: Yup.string().required('First name is required'),
-        last_name: Yup.string().required('Last name is required'),
-        email: Yup.string().email('Invalid email address').required('Email is required'),
-        mobile_no: Yup.string().matches(/^[0-9]+$/, 'Must be only digits').min(10, 'Must be at least 10 digits').required('Mobile number is required'),
-        password: Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
+        jobseeker_type: Yup.string().required('Please choose you are worker (or) professional'),
+        first_name: Yup.string().required('Please enter the first name'),
+        // last_name: Yup.string().required('Please enter the last name'),
+        email: Yup.string().email('Please enter the valid email address').required('Please enter the email'),
+        mobile_no: Yup.string().matches(/^[0-9]+$/, 'Must be only digits').min(10, 'Must be at least 10 digits').required('Please enter the mobile number'),
+        password: Yup.string().min(8, 'Password must be at least 8 characters').required('Please enter the password'),
         password_confirmation: Yup.string()
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
-            .required('Password confirmation is required'),
-        work_status: Yup.string().required('Work status is required'),
-        terms: Yup.boolean().oneOf([true], 'You must accept the terms and conditions').required(),
+            .oneOf([Yup.ref('password'), null], 'Password and Confirm password must be equal')
+            .required('Please enter the confirm password'),
+        work_status: Yup.string().required('Please choose work status'),
+        terms: Yup.boolean().oneOf([true]).required('Please accept the terms and conditions'),
         // resume: Yup.string().required('Resume is required'),
     });
 
@@ -51,9 +52,43 @@ export default function JobSeekerSignUp() {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
+            // jobseekerSignUp(values);
             console.log(values);
+            return false;
         },
     });
+
+    const jobseekerSignUp = async (values) => {
+        // e.preventDefault();
+    
+        const payload = {
+            jobseeker_type: values.jobseeker_type,
+            first_name: values.first_name,
+            last_name: values.last_name,
+            email: values.email,
+            password: values.password,
+            password_confirmation: values.password_confirmation,
+            mobile_no: values.mobile_no,
+            resume: values.file,
+        };
+        try {
+          const response = await ApiService(
+            "signup-as-jobseeker",
+            "POST",
+            payload,
+            false
+          );
+          if (response.status === 200) {
+            navigate("/verify-otp", { state: values.mobile_no });
+            console.log(response);
+          } else {
+            console.log("Something went wrong");
+          }
+        } catch (error) {
+          console.log("Error:", error);
+        }
+      };
+
     useScrollToTop();
 
     return (
@@ -83,6 +118,7 @@ export default function JobSeekerSignUp() {
                                             </div>
                                             <form onSubmit={formik.handleSubmit} class="auth-form">
                                                 <div className="row">
+                                                    
                                                     <div className="col-md-6">
                                                         <div class="mb-3">
                                                             <input
@@ -107,7 +143,7 @@ export default function JobSeekerSignUp() {
                                                             <label for="Professional"> I am a Professional</label>
                                                         </div>
                                                     </div>
-                                                    {formik.errors.jobseeker_type && <span className="error">{formik.errors.jobseeker_type}</span>}
+                                                    {formik.errors.jobseeker_type && <div className="error">{formik.errors.jobseeker_type}</div>}
                                                     <div className="col-lg-6">
                                                         <div className="mb-3">
                                                             <label htmlFor="nameInput" className="form-label">First Name *</label>
@@ -120,7 +156,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.first_name && formik.errors.first_name && <span className="error">{formik.errors.first_name}</span>}
+                                                            {formik.touched.first_name && formik.errors.first_name && <div className="error">{formik.errors.first_name}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="col-lg-6">
@@ -135,7 +171,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.last_name && formik.errors.last_name && <span className="error">{formik.errors.last_name}</span>}
+                                                            {formik.touched.last_name && formik.errors.last_name && <div className="error">{formik.errors.last_name}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -150,7 +186,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.email && formik.errors.email && <span className="error">{formik.errors.email}</span>}
+                                                            {formik.touched.email && formik.errors.email && <div className="error">{formik.errors.email}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -165,7 +201,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.mobile_no && formik.errors.mobile_no && <span className="error">{formik.errors.mobile_no}</span>}
+                                                            {formik.touched.mobile_no && formik.errors.mobile_no && <div className="error">{formik.errors.mobile_no}</div>}
                                                         </div>
                                                     </div>
 
@@ -181,7 +217,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.password && formik.errors.password && <span className="error">{formik.errors.password}</span>}
+                                                            {formik.touched.password && formik.errors.password && <div className="error">{formik.errors.password}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-6">
@@ -196,7 +232,7 @@ export default function JobSeekerSignUp() {
                                                                 onChange={formik.handleChange}
                                                                 onBlur={formik.handleBlur}
                                                             />
-                                                            {formik.touched.password_confirmation && formik.errors.password_confirmation && <span className="error">{formik.errors.password_confirmation}</span>}
+                                                            {formik.touched.password_confirmation && formik.errors.password_confirmation && <div className="error">{formik.errors.password_confirmation}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="col-md-12">
@@ -219,7 +255,7 @@ export default function JobSeekerSignUp() {
                                                             />
                                                             <label for="Experienced">Experienced</label>
                                                         </div>
-                                                        {formik.errors.work_status && <span className="error">{formik.errors.work_status}</span>}
+                                                        {formik.errors.work_status && <div className="error">{formik.errors.work_status}</div>}
                                                     </div>
                                                     <div className="col-lg-12">
                                                         <div className="mb-3 blockContent">
@@ -228,7 +264,10 @@ export default function JobSeekerSignUp() {
                                                                 type="file"
                                                                 id="resume"
                                                                 name="resume"
-                                                                onChange={changeResumeHandler}
+                                                                onChange={(event) => {
+                                                                    formik.setFieldValue('file', event.currentTarget.files[0]);
+                                                                  }}
+                                                                  onBlur={formik.handleBlur}
                                                             />
                                                         </div>
                                                     </div>
@@ -244,7 +283,7 @@ export default function JobSeekerSignUp() {
                                                             />
                                                             <label class="form-check-label" for="terms">I agree to the <a href="" class="text-white text-decoration-underline">Terms and conditions</a></label>
                                                         </div>
-                                                        {formik.errors.terms && <span className="error">{formik.errors.terms}</span>}
+                                                        {formik.errors.terms && <div className="error">{formik.errors.terms}</div>}
                                                     </div>
                                                     <div class="text-center">
                                                         <button disabled={!formik.isValid} type="submit" class="btn btn-white btn-hover w-100">Sign Up</button>
