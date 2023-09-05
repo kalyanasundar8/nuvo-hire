@@ -83,7 +83,7 @@ export default function VerifyOtp() {
     try {
       const payload = {
         otp: values.otp,
-        mobile_no: "8248952135",
+        mobile_no: mobileNumber,
       };
 
       setLoading(true);

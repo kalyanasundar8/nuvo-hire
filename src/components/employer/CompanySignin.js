@@ -60,7 +60,7 @@ export default function CompanySignin() {
       );
 
       if (response?.response?.data?.is_otp_verified == false) {
-        navigate("/verify-otp");
+        navigate("/verify-otp", { state: response?.response?.data?.phone_no });
       }
 
       if (response?.data?.status_code == 200) {
