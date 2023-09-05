@@ -1,10 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import useScrollToTop from "../hooks/useScrollToTop";
+
 export default function About() {
+
+    useScrollToTop();
   
     return (
 
-
+       
 
  <div className="page-content">
 

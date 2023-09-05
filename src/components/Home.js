@@ -2,7 +2,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import { useEffect, useState } from "react";
 import ApiService from "../services/ApiService";
+import useScrollToTop from "../hooks/useScrollToTop";
 import "./Home.css";
+
 export default function Home() {
   const navigate = useNavigate();
   // Job searching => countries
@@ -89,6 +91,8 @@ export default function Home() {
   const HandleTabChange = async (tabId) => {
     setActiveTab(tabId);
   };
+
+  useScrollToTop();
 
   return (
     <div className='main-content'>

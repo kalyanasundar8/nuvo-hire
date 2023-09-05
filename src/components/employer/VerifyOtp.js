@@ -28,7 +28,7 @@ export default function VerifyOtp() {
     otp: Yup.string()
       .min(6, "OTP was min 6 digits")
       .max(6, "OTP was max 6 digits")
-      .required("OTP is required"),
+      .required("Please enter the OTP"),
   });
 
   // Initialize validation
@@ -62,7 +62,10 @@ export default function VerifyOtp() {
       setTimerActive(true);
 
       try {
-        const response = await ApiService("resend-otp", "POST", null, false);
+        const payload = {
+          mobile_no: mobileNumber,
+        };
+        const response = await ApiService("resend-otp", "POST", payload, false);
         console.log(response);
       } catch (error) {
         console.log("Error", error);
@@ -87,7 +90,12 @@ export default function VerifyOtp() {
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response.data.data));
         console.log("Successfully verified");
-        navigate("/dashboard");
+
+          if ( response.data.data.user_type === "JobSeeker" ) {
+            navigate("/");
+          } else {
+            navigate("/dashboard");
+          }
       } else {
         setLoading(false);
         console.log("Something went wrong");
