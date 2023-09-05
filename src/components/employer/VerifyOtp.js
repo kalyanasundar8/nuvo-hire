@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ApiService from "../../services/ApiService";
+import { Alert } from "react-bootstrap";
 
 import { setIsAuthenticated } from "../../redux/actions/AuthAction";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,15 +14,18 @@ export default function VerifyOtp() {
   const dispatch = useDispatch();
 
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  // const searchParams = new URLSearchParams(location.search);
   // const mobileNumber = searchParams.get("mobile_no");
   const mobileNumber = location.state;
+  const pathName = location.pathname;
 
   const [otp, setOtp] = useState("");
   const [countDown, setCountDown] = useState(60);
   const [timerActive, setTimerActive] = useState(true);
+
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   //   Schema for validation
   const validationSchema = Yup.object({
@@ -45,6 +49,10 @@ export default function VerifyOtp() {
 
   //   CountDown timer
   useEffect(() => {
+    if (pathName === "/employer-signin") {
+      handleResendOtp();
+    }
+
     if (countDown > 0 && timerActive) {
       const timer = setTimeout(() => {
         setCountDown(countDown - 1);
@@ -53,7 +61,7 @@ export default function VerifyOtp() {
     } else if (countDown === 0) {
       setTimerActive(false);
     }
-  }, [countDown, timerActive]);
+  }, [countDown, timerActive, location.pathname]);
 
   //   Handle resend OTP
   const handleResendOtp = async () => {
@@ -75,7 +83,7 @@ export default function VerifyOtp() {
     try {
       const payload = {
         otp: values.otp,
-        mobile_no: mobileNumber,
+        mobile_no: "8248952135",
       };
 
       setLoading(true);
@@ -87,13 +95,20 @@ export default function VerifyOtp() {
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response.data.data));
         console.log("Successfully verified");
+        setAlertMessage(
+          <Alert variant='success'>{response?.response?.data?.message}</Alert>
+        );
         navigate("/dashboard");
       } else {
         setLoading(false);
         console.log("Something went wrong");
+        setAlertMessage(
+          <Alert variant='danger'>{response?.response?.data?.message}</Alert>
+        );
       }
     } catch (error) {
       setLoading(false);
+      setAlertMessage("Invalid OTP");
       setError("Invalid OTP");
     }
   };
@@ -145,6 +160,7 @@ export default function VerifyOtp() {
                             the resendOTP and get your OTP again.
                           </p>
                         </div>
+                        {alertMessage && <div role='alert'>{alertMessage}</div>}
                         <form
                           onSubmit={formik.handleSubmit}
                           className='auth-form'
