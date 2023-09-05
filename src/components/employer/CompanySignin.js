@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import ApiService from "../../services/ApiService";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { Alert } from "react-bootstrap";
 
 import { setIsAuthenticated } from "../../redux/actions/AuthAction";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,6 +41,7 @@ export default function CompanySignin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // console.log(isAuth);
 
@@ -65,11 +67,16 @@ export default function CompanySignin() {
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response.data.data));
         setError("");
+        setAlertMessage(
+          <Alert variant='success'>{response?.response?.data?.message}</Alert>
+        );
         navigate("/");
         window.location.reload();
       } else {
-        console.log(response?.response?.data?.message);
         setError(response?.response?.data?.message);
+        setAlertMessage(
+          <Alert variant='danger'>{response?.response?.data?.message}</Alert>
+        );
       }
       //   setJobDetails(responseData);
     } catch (error) {
@@ -157,6 +164,7 @@ export default function CompanySignin() {
                             Sign in to continue to Nuvo Hire.
                           </p>
                         </div>
+                        {alertMessage && <div role='alert'>{alertMessage}</div>}
                         <form
                           onSubmit={formik.handleSubmit}
                           className='auth-form'
@@ -227,13 +235,6 @@ export default function CompanySignin() {
                                 Remember me
                               </label>
                             </div>
-                            {error ? (
-                              <div className='text-left mt-4'>
-                                <span className='error'>{error}</span>
-                              </div>
-                            ) : (
-                              ""
-                            )}
                           </div>
 
                           <div className='text-center'>
