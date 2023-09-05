@@ -14,7 +14,6 @@ function Header() {
     JSON.parse(localStorage.getItem("isAuthenticated"));
 
   const [user, setUser] = useState();
-  
 
   useEffect(() => {
     if (isAuth && localStorage.getItem("user")) {
@@ -28,6 +27,7 @@ function Header() {
     localStorage.removeItem("user");
     dispatch(setIsAuthenticated(false));
     window.location.reload();
+    navigate("/");
   };
 
   //    const jobSeekerSignup = () => {
