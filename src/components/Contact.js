@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import useScrollToTop from "../hooks/useScrollToTop";
+
 export default function Contact() {
 
     const iFramStyle = {
@@ -7,6 +9,7 @@ export default function Contact() {
         width: "100%"
       };
   
+      useScrollToTop();
     return (
 
         <div class="page-content">

@@ -52,9 +52,9 @@ export default function JobSeekerSignUp() {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            // jobseekerSignUp(values);
-            console.log(values);
-            return false;
+            jobseekerSignUp(values);
+            // console.log(values);
+            // return false;
         },
     });
 
@@ -69,6 +69,7 @@ export default function JobSeekerSignUp() {
             password: values.password,
             password_confirmation: values.password_confirmation,
             mobile_no: values.mobile_no,
+            work_status: values.work_status,
             resume: values.file,
         };
         try {

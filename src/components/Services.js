@@ -1,6 +1,12 @@
 import React from 'react'
 //import{UimObjectUngroup, UimTelegramAlt, UimAirplay, UimRocket, UimHistory, UimBookmark, UimLayersAlt, UimAnchor, UimGraphBar } from 'react-icons'
+
+import useScrollToTop from "../hooks/useScrollToTop";
+
 export default function Services() {
+
+    useScrollToTop();
+    
   return (
     <div className="page-content">
 

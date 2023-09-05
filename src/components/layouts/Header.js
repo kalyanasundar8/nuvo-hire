@@ -14,13 +14,15 @@ function Header() {
     JSON.parse(localStorage.getItem("isAuthenticated"));
 
   const [user, setUser] = useState();
-  console.log(isAuth);
+  
 
   useEffect(() => {
     if (isAuth && localStorage.getItem("user")) {
       setUser(JSON.parse(localStorage.getItem("user")));
     }
   }, [isAuth]);
+
+  console.log(user);
 
   const logOut = () => {
     localStorage.removeItem("user");
