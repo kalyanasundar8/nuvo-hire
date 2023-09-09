@@ -32,6 +32,7 @@ import PrivateRoute from "./Routes/PrivateRoutes";
 import ForgetPassword from "./components/ForgetPassword";
 import ResetPassword from "./components/ResetPassword";
 import VerifyOtp from "./components/employer/VerifyOtp";
+import CreateNewJobs from "./components/employer/CreateNewJobs";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
           <Route path='/sub-categories/:id' element={<JobCategories />} />
           <Route path='/job-detail/:id' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
+          <Route path='/create-new-job' element={<CreateNewJobs />} />
           <Route path='/manage-jobs-post' element={<JobPost />} />
           <Route path='/bookmark-jobs' element={<BookmarkJobs />} />
           <Route path='/profile' element={<MyProfile />} />

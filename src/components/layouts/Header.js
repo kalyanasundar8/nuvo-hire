@@ -544,6 +544,11 @@ function Header() {
                     aria-labelledby='userdropdown'
                   >
                     <li>
+                      <Link className='dropdown-item' to='/create-new-job'>
+                        Create new Jobs
+                      </Link>
+                    </li>
+                    <li>
                       <Link className='dropdown-item' to='/manage-jobs'>
                         Manage Jobs
                       </Link>

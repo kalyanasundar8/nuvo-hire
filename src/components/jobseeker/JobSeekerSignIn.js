@@ -196,9 +196,12 @@ export default function JobSeekerSignIn() {
                           <div className='text-center'>
                             <button
                               type='submit'
-                              className='btn btn-white btn-hover w-100'
+                              disabled={!formik.isValid}
+                              className={`btn btn-white btn-hover w-100 ${
+                                loading ? "disabled" : ""
+                              }`}
                             >
-                              Sign In
+                              {loading ? "Sign In..." : "Sign In"}
                             </button>
                           </div>
                         </form>

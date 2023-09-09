@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { Alert } from "react-bootstrap";
 import GoogleSignInBtn from "../atoms/GoogleSignIn/GoogleSignInBtn";
 import useScrollToTop from "../../hooks/useScrollToTop";
 import ApiService from "../../services/ApiService";
@@ -71,6 +72,8 @@ export default function JobSeekerSignUp() {
     },
   });
 
+  const [alertMessage, setAlertMessage] = useState("");
+
   const jobseekerSignUp = async (values) => {
     // e.preventDefault();
 
@@ -97,6 +100,9 @@ export default function JobSeekerSignUp() {
         navigate("/verify-otp", { state: values.mobile_no });
         console.log(response);
       } else {
+        setAlertMessage(
+          <Alert variant='danger'>{response?.response?.data?.message}</Alert>
+        );
         console.log("Something went wrong");
       }
     } catch (error) {
@@ -148,6 +154,7 @@ export default function JobSeekerSignUp() {
                           Hire
                         </p>
                       </div>
+                      {alertMessage && <div>{alertMessage}</div>}
                       <form onSubmit={formik.handleSubmit} class='auth-form'>
                         <div className='row'>
                           <div className='col-md-6'>
