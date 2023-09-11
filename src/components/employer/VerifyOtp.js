@@ -103,12 +103,12 @@ export default function VerifyOtp() {
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
         );
 
-        if ( response.data.data.user_type === "JobSeeker" ) {
+        if (response.data.data.user_type === "JobSeeker") {
           navigate("/");
         } else {
-          navigate("/dashboard");
+          navigate("/manage-jobs");
         }
-        
+
         // navigate("/dashboard");
       } else {
         setLoading(false);

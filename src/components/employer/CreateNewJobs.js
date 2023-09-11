@@ -108,6 +108,8 @@ export default function CreateNewJobs() {
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
   const [zipcode, setZipCode] = useState("");
+  const [tags, setTags] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
   const [postLater, setPostLater] = useState(0);
   const [buttonClicked, setButtonClicked] = useState(false);
 
@@ -220,6 +222,38 @@ export default function CreateNewJobs() {
 
   const skillsValue = selectedSkill.map((option) => option.value);
 
+  // Tags
+  const tagsData = useFetch("tags", "GET", null, false);
+  const tag = tagsData.data;
+
+  const tagsOptions = Array.isArray(tag)
+    ? tag.map((tagsList) => ({
+        value: tagsList.id,
+        label: tagsList.name,
+      }))
+    : null;
+
+  const handleTagSelect = (tagsOptions) => {
+    // Extract the id values of selected options
+    const selectedTagIds = tagsOptions.map((option) => option.value);
+
+    // Set the selected options in the state
+    setSelectedTags(tagsOptions);
+
+    // Now you can use selectedIds in your payload or wherever needed
+    console.log(selectedTagIds);
+
+    const filteredOptions = tagsOptions.filter(
+      (option) =>
+        !tagsOptions.some((selected) => selected.value === option.value)
+    );
+
+    // Update the options in the dropdown
+    setTags(filteredOptions);
+  };
+
+  const tagsValue = selectedTags.map((option) => option.value);
+
   // Post later
   const handleButtonClick = () => {
     const postLaterData = buttonClicked ? 0 : 1;
@@ -233,7 +267,7 @@ export default function CreateNewJobs() {
       job_title: values.jobtitle,
       job_description: values.jobdescription,
       category_id: values.categories,
-      subCategory_id: values.subcategories,
+      subcategory_id: values.subcategories,
       job_type: values.jobtype,
       designation_id: values.designation,
       responsibilities: values.responsibilities,
@@ -253,11 +287,12 @@ export default function CreateNewJobs() {
       state_id: values.state,
       city_id: values.city,
       zipcode: values.zipcode,
+      tags_id: tagsValue,
       is_post_later: postLater,
     };
     console.log(payload);
     try {
-      const response = await ApiService("post-new-job", "POST", payload, false);
+      const response = await ApiService("post-new-job", "POST", payload, true);
       console.log(response);
     } catch (error) {
       console.log("Error ", error);
@@ -489,32 +524,29 @@ export default function CreateNewJobs() {
                       )}
                   </div>
                 </div>
-                <div class='col-lg-12'>
-                  <div class='mb-4'>
+                <div class='col-lg-12 mb-4'>
+                  <div style={{ marginBottom: "3rem" }}>
                     <label for='responsibilities' class='form-label'>
                       Responsibilities
                     </label>
-                    <textarea
-                      class='form-control'
-                      id='responsibilities'
+                    <ReactQuill
+                      modules={modules}
+                      formats={formats}
+                      value={formik.values.responsibilities}
+                      onChange={(value) =>
+                        formik.setFieldValue("responsibilities", value)
+                      }
+                      style={{ height: "200px" }}
                       name='responsibilities'
-                      rows='3'
-                      placeholder='Enter Job Responsibilities'
-                      value={responsibilities}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setResponsibilities(e.target.value);
-                      }}
                     />
-                    {formik.touched.responsibilities &&
-                      formik.errors.responsibilities && (
-                        <span className='error'>
-                          {formik.errors.responsibilities}
-                        </span>
-                      )}
                   </div>
+                  {formik.touched.responsibilities &&
+                    formik.errors.responsibilities && (
+                      <span className='error'>
+                        {formik.errors.responsibilities}
+                      </span>
+                    )}
                 </div>
-
                 <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='salary' class='form-label'>
@@ -782,7 +814,7 @@ export default function CreateNewJobs() {
                     )}
                   </div>
                 </div>
-                <div class='col-lg-12'>
+                <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='vacancy' class='form-label'>
                       Vacancy
@@ -803,7 +835,7 @@ export default function CreateNewJobs() {
                     )}
                   </div>
                 </div>
-                <div class='col-lg-12'>
+                <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='vacancy' class='form-label'>
                       FeaturedJob
@@ -821,7 +853,7 @@ export default function CreateNewJobs() {
                     />
                   </div>
                 </div>
-                <div class='col-lg-12'>
+                <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='lastdate' class='form-label'>
                       Application Deadline Date
@@ -954,6 +986,25 @@ export default function CreateNewJobs() {
                     />
                     {formik.touched.zipcode && formik.errors.zipcode && (
                       <span className='error'>{formik.errors.zipcode}</span>
+                    )}
+                  </div>
+                </div>
+                <div class='col-lg-6'>
+                  <div class='mb-4'>
+                    <label for='skills' class='form-label'>
+                      Tags
+                    </label>
+                    <Select
+                      options={tagsOptions}
+                      value={selectedTags}
+                      onChange={handleTagSelect}
+                      isMulti={true}
+                      name='tags'
+                    />
+                    {formik.touched.tags && formik.errors.tags && (
+                      <div className='invalid-feedback'>
+                        {formik.errors.tags}
+                      </div>
                     )}
                   </div>
                 </div>

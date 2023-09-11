@@ -1,9 +1,15 @@
-import axios from 'axios';
+import axios from "axios";
 
 const ApiService = async (url_end_point, type, data, isToken) => {
   let token = null;
   if (isToken) {
-    token = JSON.parse(localStorage.getItem('user'))?.stsTokenManager?.accessToken;
+    if (localStorage.getItem("user")) {
+      token = JSON.parse(localStorage.getItem("user"))?.token;
+      console.log("Token");
+      console.log(token);
+    } else {
+      console.log("Token not found");
+    }
   }
   const apiObj = (url_end_point, type, data) => {
     const baseUrl = process.env.REACT_APP_API_URL;
@@ -12,7 +18,7 @@ const ApiService = async (url_end_point, type, data, isToken) => {
       method: type,
       headers: {
         Authorization: `Bearer ${token}`,
-        'Access-Control-Allow-Origin': '*',
+        "Access-Control-Allow-Origin": "*",
       },
       data: data,
     };

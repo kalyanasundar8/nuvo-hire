@@ -536,7 +536,7 @@ function Header() {
                     aria-expanded='false'
                   >
                     <span className='d-none d-md-inline-block fw-medium'>
-                      Hi, {user ? user?.name : "Guest"}
+                      Hi, {user ? user?.data?.name : "Guest"}
                     </span>
                   </a>
                   <ul
@@ -546,6 +546,11 @@ function Header() {
                     <li>
                       <Link className='dropdown-item' to='/create-new-job'>
                         Create new Jobs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className='dropdown-item' to='/my-tickets'>
+                        My Tickets
                       </Link>
                     </li>
                     <li>

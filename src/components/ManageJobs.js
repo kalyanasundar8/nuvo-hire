@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useFetch from "./useFetch";
 
 export default function ManageJobs() {
-  const manageJobsData = useFetch("jobs");
+  const manageJobsData = useFetch("jobs", "GET", null, false);
   const manageJobs = manageJobsData.data;
   console.log(manageJobsData.data);
 

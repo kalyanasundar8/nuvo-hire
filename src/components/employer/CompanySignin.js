@@ -65,7 +65,7 @@ export default function CompanySignin() {
 
       if (response?.data?.status_code == 200) {
         dispatch(setIsAuthenticated(true));
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("user", JSON.stringify(response.data));
         setError("");
         setAlertMessage(
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
