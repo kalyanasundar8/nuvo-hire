@@ -17,7 +17,7 @@ const ApiService = async (url_end_point, type, data, isToken) => {
       url: `${baseUrl}/${url_end_point}`,
       method: type,
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token && { Authorization: `Bearer ${token}` }),
         "Access-Control-Allow-Origin": "*",
       },
       data: data,

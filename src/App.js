@@ -34,6 +34,8 @@ import ResetPassword from "./components/ResetPassword";
 import VerifyOtp from "./components/employer/VerifyOtp";
 import CreateNewJobs from "./components/employer/CreateNewJobs";
 import MyTickets from "./components/tickets/MyTickets";
+import RaiseNewTicket from "./components/tickets/RaiseNewTicket";
+import ViewTickets from "./components/tickets/ViewTickets";
 
 function App() {
   return (
@@ -73,7 +75,10 @@ function App() {
           <Route path='/candidate-grid' element={<CandidateGrid />} />
           <Route path='/privacy-policy' element={<PrivacyPolicy />} />
           <Route path='/pricing-plans' element={<Pricing />} />
+
           <Route path='/my-tickets' element={<MyTickets />} />
+          <Route path='/raise-new-ticket' element={<RaiseNewTicket />} />
+          <Route path='/view-tickets/:id' element={<ViewTickets />} />
         </Routes>
         <Footer />
       </BrowserRouter>

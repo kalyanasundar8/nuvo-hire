@@ -55,85 +55,55 @@ const MyTickets = () => {
       {/*START MANAGE-JOBS */}
       <section class='section'>
         <div class='container'>
-          <div class='row align-items-center'>
-            <div class='col-lg-8'>
-              <div class='mb-4 mb-lg-0'>
-                <h6 class='mb-0'> My Ticket List </h6>
+          <div className='row'>
+            <div className='col-lg-8'>
+              <div className='mb-4 mb-lg-0'>
+                <h6 className='mb-0'>My Ticket List</h6>
               </div>
             </div>
-            {/*end col*/}
+            {/* Left-aligned column */}
+            <div className='col-lg-4 text-lg-end'>
+              {/* Right-aligned content */}
+              <Link to='/raise-new-ticket' className='btn btn-primary'>
+                Raise New Ticket
+              </Link>
+            </div>
           </div>
+
           {/*end row*/}
 
           <div className='row'>
             {Array.isArray(tickets) &&
               tickets.map((ticket) => (
-                <div key={ticket.id} className='col-md-12'>
-                  <div className='job-box card mt-4'>
-                    <div className='bookmark-label text-center'>
-                      <Link
-                        to='/javascript:void(0)'
-                        className='text-white align-middle'
-                      >
-                        <i className='mdi mdi-star'></i>
-                      </Link>
-                    </div>
-                    <div className='p-4'>
-                      <div className='row align-items-center'>
-                        <div className='col-md-4'>
-                          <div className='text-center mb-4 mb-md-0'>
-                            <Link to='/company-details.php'>
-                              <img
-                                src='assets/images/featured-job/img-01.png'
-                                alt=''
-                                className='img-fluid rounded-3'
-                              />
-                            </Link>
-                          </div>
+                <div key={ticket.id} className='col-md-12 mt-4'>
+                  <Link
+                    to={`/view-tickets/${ticket.id}`}
+                    className='primary-link'
+                  >
+                    <div className='card mb-4'>
+                      <div className='card-body d-flex justify-content-between align-items-center'>
+                        <div>
+                          <h5 className='card-title'>{ticket.title}</h5>
                         </div>
-
-                        <div className='col-md-8'>
-                          <div className='mb-2 mb-md-0'>
-                            <h5 className='fs-18 mb-1'>
-                              <Link
-                                to={`/ticket/${ticket.id}`}
-                                className='text-dark'
-                              >
-                                {ticket.title}
-                              </Link>
-                            </h5>
-                            <p className='text-muted fs-14 mb-0'>
-                              {ticket.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='p-3 bg-light'>
-                      <div className='row'>
-                        <div className='text-start text-md-end'>
+                        <h6 className='card-text'>Status: {ticket.status}</h6>
+                        <div>
                           <Link
-                            to={`/ticket/${ticket.id}`}
+                            to={`/edit-ticket/${ticket.id}`}
                             className='primary-link'
                           >
-                            View Ticket{" "}
-                            <i className='mdi mdi-chevron-double-right'></i>
+                            Edit <i className='mdi mdi-pencil'></i>
                           </Link>
-                        </div>
-
-                        <div className='col-md-6'>
-                          <div className='col-md-6'>
-                            <div>
-                              <p className='text-muted mb-0'>
-                                <span className='text-dark'>Details :</span>{" "}
-                                {ticket.details}
-                              </p>
-                            </div>
-                          </div>
+                          <span className='mx-2'>|</span>
+                          <Link
+                            to={`/delete-ticket/${ticket.id}`}
+                            className='primary-link'
+                          >
+                            Delete <i className='mdi mdi-delete'></i>
+                          </Link>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
           </div>
