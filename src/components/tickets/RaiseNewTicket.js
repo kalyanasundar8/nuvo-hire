@@ -100,7 +100,7 @@ const RaiseNewTicket = () => {
           </div>
           {/*end row*/}
           <div className='row mt-4'>
-            <div className='col-lg-8'>
+            <div className='col-lg-12'>
               <form onSubmit={formik.handleSubmit}>
                 <div className='mb-3'>
                   <label htmlFor='title' className='form-label'>

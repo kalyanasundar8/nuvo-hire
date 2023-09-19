@@ -1,91 +1,18 @@
-import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import Select from "react-select";
 // Validations
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import useFetch from "../useFetch";
-import ApiService from "../../services/ApiService";
+import useFetch from "./useFetch";
+import ApiService from "../services/ApiService";
 
 // Editor
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-// ValidationSchema
-
-const validationSchema = Yup.object({
-  jobtitle: Yup.string()
-    .required("Job Title is required")
-    .min(1, "Job title is required"),
-  jobdescription: Yup.string().required("Job Description is required"),
-  categories: Yup.string().required("Categories is required"),
-  subcategories: Yup.string().required("Subcategories is required"),
-  jobtype: Yup.string().required("Job type is required"),
-  designation: Yup.string().required("Designation is required"),
-  responsibilities: Yup.string().required("Responsibilities is required"),
-  salary: Yup.string().required("Salary is required"),
-  experience: Yup.string().required("Experience is required"),
-  workmode: Yup.string().required("Workmode is required"),
-  employment: Yup.string().required("Employment is required"),
-  industry: Yup.string().required("Industry is required"),
-  degree: Yup.string().required("Degree is required"),
-  course: Yup.string().required("Course is required"),
-  education: Yup.string().required("Education is required"),
-  skills: Yup.array()
-    .required("Skills is required")
-    .min(1, "Select at least one skill"),
-  vacancy: Yup.number()
-    .required("Vacancy is required")
-    .typeError("Vacancy must be a number"),
-  lastdate: Yup.string().required("LastDate is required"),
-  country: Yup.string().required("Country is required"),
-  state: Yup.string().required("state is required"),
-  city: Yup.string().required("City is required"),
-  zipcode: Yup.string().required("ZipCode is required"),
-});
-
-export default function CreateNewJobs() {
-  const formik = useFormik({
-    initialValues: {
-      jobtitle: "",
-      jobdescription: "",
-      categories: "",
-      subCategories: "",
-      jobtype: "",
-      designation: "",
-      responsibilities: "",
-      salary: "",
-      experience: "",
-      workmode: "",
-      employment: "",
-      industry: "",
-      degree: "",
-      course: "",
-      education: "",
-      skills: [],
-      vacancy: "",
-      featuredJob: "",
-      lastdate: "",
-      country: "",
-      state: "",
-      city: "",
-      zipcode: "",
-      postLater: false,
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-      createJobPost(values);
-    },
-  });
-
-  // // Custom validation for jobDescription
-  // const validateJobDescription = (value) => {
-  //   if (!value || value.trim() === "") {
-  //     return "Job Description is required";
-  //   }
-  //   return undefined; // No validation error
-  // };
+export default function EditJobPost() {
+  const { id } = useParams();
 
   const [jobtitle, setJobTitle] = useState("");
   const [jobdescription, setJobDescription] = useState("");
@@ -131,6 +58,14 @@ export default function CreateNewJobs() {
 
   const handleJobDescription = (value) => {
     setJobDescription(value);
+  };
+
+  const onEditorStateChange = (value) => {
+    formik.setFieldValue("jobdescription", value);
+  };
+
+  const responsibilitiesEditorChange = (value) => {
+    formik.setFieldValue("responsibilities", value);
   };
 
   // API integration
@@ -258,49 +193,202 @@ export default function CreateNewJobs() {
   const tagsValue = selectedTags.map((option) => option.value);
 
   // Post later
-  const handleButtonClick = () => {
-    const postLaterData = buttonClicked ? 0 : 1;
-    setPostLater(postLaterData);
-    setButtonClicked(!buttonClicked);
-  };
+  // const handleButtonClick = () => {
+  //   const postLaterData = buttonClicked ? 0 : 1;
+  //   setPostLater(postLaterData);
+  //   setButtonClicked(!buttonClicked);
+  // };
+
+  const formik = useFormik({
+    initialValues: {
+      jobtitle: "",
+      jobdescription: "",
+      categories: "",
+      subCategories: "",
+      jobtype: "",
+      designation: "",
+      responsibilities: "",
+      salary: "",
+      experience: "",
+      workmode: "",
+      employment: "",
+      industry: "",
+      degree: "",
+      course: "",
+      education: "",
+      skills: "",
+      vacancy: "",
+      featuredJob: "",
+      lastdate: "",
+      country: "",
+      state: "",
+      city: "",
+      zipcode: "",
+    },
+    // validationSchema: Yup.object({
+    //   jobtitle: Yup.string().required("Job title is required"),
+    //   jobdescription: Yup.string()
+    //     .required("Enter a valid description")
+    //     .min(11, "Content must be at least 11 characters"),
+    //   categories: Yup.string().required("Select a category"),
+    //   subCategories: Yup.string().required("Select a Subcategory"),
+    //   jobtype: Yup.string().required("Job Type is required"),
+    //   designation: Yup.string().required("Designation is required"),
+    //   responsibilities: Yup.string().required("Responsibilities is required"),
+    //   salary: Yup.string().required("Select a Salary"),
+    //   experience: Yup.string().required("Select an experience"),
+    //   workmode: Yup.string().required("Select a workmode"),
+    //   employment: Yup.string().required("Select a employment"),
+    //   industry: Yup.string().required("Select a industry"),
+    //   degree: Yup.string().required("Select a degree"),
+    //   course: Yup.string().required("Select a course"),
+    //   education: Yup.string().required("Select a education"),
+    //   skills: Yup.string().required("Select a skills"),
+    //   vacancy: Yup.number()
+    //     .required("Enter a vacancy")
+    //     .typeError("Vacancy must be in number"),
+    //   lastdate: Yup.date().required("Select a date for apply"),
+    //   country: Yup.string().required("Select a country"),
+    //   state: Yup.string().required("Select a state"),
+    //   city: Yup.string().required("Select a city"),
+    //   zipcode: Yup.string()
+    //     .required("Enter a zipcode")
+    //     .min(6, "Zipcode must have 6 numbers"),
+    // }),
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+
+  //   Fetch jobDetails
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        const response = await ApiService(
+          `jobposts?id=${id}`,
+          "GET",
+          null,
+          true
+        );
+        const data = response?.data?.data?.response;
+        console.log(data);
+
+        formik.setValues({
+          jobtitle: data.job_title,
+          jobdescription: data.job_description,
+          categories:
+            data.category_id === null
+              ? ""
+              : data.category_id.name && data.category_id.id,
+          subCategories:
+            data.subcategory_id === null
+              ? ""
+              : data.subcategory_id.name && data.subcategory_id.id,
+          jobtype: data.job_type === null ? "" : data.job_type,
+          designation:
+            data.designation_id === null
+              ? ""
+              : data.designation_id.name && data.designation_id.id,
+          responsibilities:
+            data.responsibilities === null ? "" : data.responsibilities,
+          salary:
+            data.salary_id === null
+              ? ""
+              : data.salary_id.name && data.salary_id.id,
+          experience:
+            data.experience_id === null
+              ? ""
+              : data.experience_id.year && data.experience_id.id,
+          workmode:
+            data.work_mode_id === null
+              ? ""
+              : data.work_mode_id.name && data.work_mode_id.id,
+          employment:
+            data.employment_type_id === null
+              ? ""
+              : data.employment_type_id.name && data.employment_type_id.id,
+          industry:
+            data.industry_id === null
+              ? ""
+              : data.industry_id.name && data.industry_id.id,
+          degree:
+            data.degree_id === null
+              ? ""
+              : data.degree_id.name && data.degree_id.id,
+          course:
+            data.course_id === null
+              ? ""
+              : data.course_id.name && data.course_id.id,
+          education:
+            data.education_id === null
+              ? ""
+              : data.education_id.name && data.education_id.id,
+          vacancy: data.vacancy === null ? "" : data.vacancy,
+          lastdate:
+            data.application_deadline_date === null
+              ? ""
+              : data.application_deadline_date,
+          country:
+            data.course_id === null
+              ? ""
+              : data.country_id.name && data.country_id.id,
+          state:
+            data.state_id === null
+              ? ""
+              : data.state_id.name && data.state_id.id,
+          city:
+            data.city_id === null ? "" : data.city_id.name && data.city_id.id,
+          zipcode: data.zipcode === null ? "" : data.zipcode,
+        });
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+
+    fetchJobDetails();
+  }, []);
+
+  //   formik.setValues({
+  //     categories: categories ? categories : "",
+  //   });
 
   // Create a jobPost
-  const createJobPost = async (values) => {
-    const payload = {
-      job_title: values.jobtitle,
-      job_description: values.jobdescription,
-      category_id: values.categories,
-      subcategory_id: values.subcategories,
-      job_type: values.jobtype,
-      designation_id: values.designation,
-      responsibilities: values.responsibilities,
-      salary_id: values.salary,
-      experience_id: values.experience,
-      work_mode_id: values.workmode,
-      employment_type_id: values.employment,
-      industry_id: values.industry,
-      degree_id: values.degree,
-      course_id: values.course,
-      education_id: values.education,
-      skills_id: skillsValue,
-      vacancy: values.vacancy,
-      is_featured_job: featuredJob,
-      application_deadline_date: values.lastdate,
-      country_id: values.country,
-      state_id: values.state,
-      city_id: values.city,
-      zipcode: values.zipcode,
-      tags_id: tagsValue,
-      is_post_later: postLater,
-    };
-    console.log(payload);
-    try {
-      const response = await ApiService("post-new-job", "POST", payload, true);
-      console.log(response);
-    } catch (error) {
-      console.log("Error ", error);
-    }
-  };
+  //   const createJobPost = async (values) => {
+  //     const payload = {
+  //       job_title: values.jobtitle,
+  //       job_description: values.jobdescription,
+  //       category_id: values.categories,
+  //       subcategory_id: values.subcategories,
+  //       job_type: values.jobtype,
+  //       designation_id: values.designation,
+  //       responsibilities: values.responsibilities,
+  //       salary_id: values.salary,
+  //       experience_id: values.experience,
+  //       work_mode_id: values.workmode,
+  //       employment_type_id: values.employment,
+  //       industry_id: values.industry,
+  //       degree_id: values.degree,
+  //       course_id: values.course,
+  //       education_id: values.education,
+  //       skills_id: skillsValue,
+  //       vacancy: values.vacancy,
+  //       is_featured_job: featuredJob,
+  //       application_deadline_date: values.lastdate,
+  //       country_id: values.country,
+  //       state_id: values.state,
+  //       city_id: values.city,
+  //       zipcode: values.zipcode,
+  //       tags_id: tagsValue,
+  //       is_post_later: postLater,
+  //     };
+  //     console.log(payload);
+  //     try {
+  //       const response = await ApiService("post-new-job", "POST", payload, true);
+  //       console.log(response);
+  //     } catch (error) {
+  //       console.log("Error ", error);
+  //     }
+  //   };
 
   return (
     <div class='page-content'>
@@ -309,7 +397,7 @@ export default function CreateNewJobs() {
           <div class='row justify-content-center'>
             <div class='col-md-6'>
               <div class='text-center text-white'>
-                <h3 class='mb-4'>Create Jobs</h3>
+                <h3 class='mb-4'>Edit Jobs</h3>
                 <div class='page-next'>
                   {/* <nav
                     class='d-inline-block'
@@ -352,7 +440,7 @@ export default function CreateNewJobs() {
           <div class='row'>
             <div class='col-lg-12'>
               <div class='primary-bg-subtle p-3'>
-                <h5 class='mb-0 fs-17'>Post a New Job!</h5>
+                <h5 class='mb-0 fs-17'>Edit Job!</h5>
               </div>
             </div>
           </div>
@@ -373,16 +461,17 @@ export default function CreateNewJobs() {
                       class='form-control'
                       id='jobtitle'
                       name='jobtitle'
-                      placeholder='Title'
-                      value={jobtitle}
+                      // placeholder={jobtitle}
+                      value={formik.values.jobtitle}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setJobTitle(e.target.value);
                       }}
+                      onBlur={formik.handleBlur}
                     />
-                    {formik.touched.jobtitle && formik.errors.jobtitle && (
+                    {formik.touched.jobtitle && formik.errors.jobtitle ? (
                       <span className='error'>{formik.errors.jobtitle}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-12 mb-4'>
@@ -392,22 +481,19 @@ export default function CreateNewJobs() {
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
                     <ReactQuill
-                      modules={modules}
-                      formats={formats}
+                      theme='snow'
                       value={formik.values.jobdescription}
-                      onChange={(value) =>
-                        formik.setFieldValue("jobdescription", value)
-                      }
+                      onChange={onEditorStateChange}
                       style={{ height: "200px" }}
                       name='jobdescription'
                     />
                   </div>
                   {formik.touched.jobdescription &&
-                    formik.errors.jobdescription && (
-                      <span className='error'>
-                        {formik.errors.jobdescription}
-                      </span>
-                    )}
+                  formik.errors.jobdescription ? (
+                    <span className='error'>
+                      {formik.errors.jobdescription}
+                    </span>
+                  ) : null}
                 </div>
                 <div class='col-lg-6'>
                   <div class='mb-4'>
@@ -421,13 +507,14 @@ export default function CreateNewJobs() {
                       name='categories'
                       id='choices-single-categories'
                       aria-label='Default select example'
-                      value={categories}
+                      placeholder={formik.values.categories}
+                      value={formik.values.categories}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setCategories(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={categories.id}>{categories.name}</option>
                       {Array.isArray(category)
                         ? category.map((cat) => (
                             <option key={cat.id} value={cat.id}>
@@ -436,9 +523,13 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.categories && formik.errors.categories && (
-                      <span className='error'>{formik.errors.categories}</span>
-                    )}
+                    <div className='Error'>
+                      {formik.touched.categories && formik.errors.categories ? (
+                        <span className='error'>
+                          {formik.errors.categories}
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -468,11 +559,11 @@ export default function CreateNewJobs() {
                         ))}
                     </select>
                     {formik.touched.subCategories &&
-                      formik.errors.subCategories && (
-                        <span className='error'>
-                          {formik.errors.subCategories}
-                        </span>
-                      )}
+                    formik.errors.subCategories ? (
+                      <span className='error'>
+                        {formik.errors.subCategories}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -487,15 +578,15 @@ export default function CreateNewJobs() {
                       id='jobtype'
                       name='jobtype'
                       placeholder='Job type'
-                      value={jobtype}
+                      value={formik.values.jobtype}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setJobType(e.target.value);
                       }}
                     />
-                    {formik.touched.jobtype && formik.errors.jobtype && (
+                    {formik.touched.jobtype && formik.errors.jobtype ? (
                       <span className='error'>{formik.errors.jobtype}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -510,13 +601,13 @@ export default function CreateNewJobs() {
                       name='designation'
                       id='designation'
                       aria-label='Default select example'
-                      value={designation}
+                      value={formik.values.designation}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setDesignation(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={designation.id}>{designation.name}</option>
                       {Array.isArray(designations)
                         ? designations.map((designation) => (
                             <option key={designation.id} value={designation.id}>
@@ -525,12 +616,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.designation &&
-                      formik.errors.designation && (
-                        <span className='error'>
-                          {formik.errors.designation}
-                        </span>
-                      )}
+                    {formik.touched.designation && formik.errors.designation ? (
+                      <span className='error'>{formik.errors.designation}</span>
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-12 mb-4'>
@@ -540,22 +628,19 @@ export default function CreateNewJobs() {
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
                     <ReactQuill
-                      modules={modules}
-                      formats={formats}
+                      theme='snow'
                       value={formik.values.responsibilities}
-                      onChange={(value) =>
-                        formik.setFieldValue("responsibilities", value)
-                      }
+                      onChange={responsibilitiesEditorChange}
                       style={{ height: "200px" }}
                       name='responsibilities'
                     />
                   </div>
                   {formik.touched.responsibilities &&
-                    formik.errors.responsibilities && (
-                      <span className='error'>
-                        {formik.errors.responsibilities}
-                      </span>
-                    )}
+                  formik.errors.responsibilities ? (
+                    <span className='error'>
+                      {formik.errors.responsibilities}
+                    </span>
+                  ) : null}
                 </div>
                 <div class='col-lg-6'>
                   <div class='mb-4'>
@@ -569,13 +654,13 @@ export default function CreateNewJobs() {
                       name='salary'
                       id='salary'
                       aria-label='Default select example'
-                      value={salary}
+                      value={formik.values.salary}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setSalary(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={salary.id}>{salary.name}</option>
                       {Array.isArray(salaries)
                         ? salaries.map((salary) => (
                             <option key={salary.id} value={salary.id}>
@@ -584,9 +669,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.salary && formik.errors.salary && (
+                    {formik.touched.salary && formik.errors.salary ? (
                       <span className='error'>{formik.errors.salary}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -601,13 +686,13 @@ export default function CreateNewJobs() {
                       name='experience'
                       id='experience'
                       aria-label='Default select example'
-                      value={experience}
+                      value={formik.values.experience}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setExperience(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={experience.id}>{experience.name}</option>
                       {Array.isArray(experiences)
                         ? experiences.map((experience) => (
                             <option key={experience.id} value={experience.id}>
@@ -616,9 +701,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.experience && formik.errors.experience && (
+                    {formik.touched.experience && formik.errors.experience ? (
                       <span className='error'>{formik.errors.experience}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -633,13 +718,13 @@ export default function CreateNewJobs() {
                       name='workmode'
                       id='workmode'
                       aria-label='Default select example'
-                      value={workmode}
+                      value={formik.values.workmode}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setWorkMode(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={workmode.id}>{workmode.name}</option>
                       {Array.isArray(workModes)
                         ? workModes.map((workmode) => (
                             <option key={workmode.id} value={workmode.id}>
@@ -648,9 +733,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.workmode && formik.errors.workmode && (
+                    {formik.touched.workmode && formik.errors.workmode ? (
                       <span className='error'>{formik.errors.workmode}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -665,13 +750,13 @@ export default function CreateNewJobs() {
                       name='employment'
                       id='employment'
                       aria-label='Default select example'
-                      value={employment}
+                      value={formik.values.employment}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setEmployment(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={employment.id}>{employment.name}</option>
                       {Array.isArray(employmentTypes)
                         ? employmentTypes.map((employment) => (
                             <option key={employment.id} value={employment.id}>
@@ -680,9 +765,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.employment && formik.errors.employment && (
+                    {formik.touched.employment && formik.errors.employment ? (
                       <span className='error'>{formik.errors.employment}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -697,13 +782,13 @@ export default function CreateNewJobs() {
                       name='industry'
                       id='industry'
                       aria-label='Default select example'
-                      value={industry}
+                      value={formik.values.industry}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setIndustry(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={industry.id}>{industry.name}</option>
                       {Array.isArray(industries)
                         ? industries.map((industry) => (
                             <option key={industry.id} value={industry.id}>
@@ -712,9 +797,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.industry && formik.errors.industry && (
+                    {formik.touched.industry && formik.errors.industry ? (
                       <span className='error'>{formik.errors.industry}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -729,13 +814,13 @@ export default function CreateNewJobs() {
                       name='degree'
                       id='degree'
                       aria-label='Default select example'
-                      value={degree}
+                      value={formik.values.degree}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setDegree(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={degree.id}>{degree.name}</option>
                       {Array.isArray(degrees)
                         ? degrees.map((degree) => (
                             <option key={degree.id} value={degree.id}>
@@ -744,9 +829,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.degree && formik.errors.degree && (
+                    {formik.touched.degree && formik.errors.degree ? (
                       <span className='error'>{formik.errors.degree}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -761,13 +846,17 @@ export default function CreateNewJobs() {
                       name='course'
                       id='course'
                       aria-label='Default select example'
-                      value={course}
+                      value={formik.values.course}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setCourse(e.target.value);
                       }}
                     >
-                      <option></option>
+                      {course === null ? (
+                        <option value=''>Select</option>
+                      ) : (
+                        <option value={course.id}>{course.name}</option>
+                      )}
                       {Array.isArray(courses)
                         ? courses.map((courseList) => (
                             <option key={courseList.id} value={courseList.id}>
@@ -776,9 +865,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.course && formik.errors.course && (
+                    {formik.touched.course && formik.errors.course ? (
                       <span className='error'>{formik.errors.course}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -793,13 +882,13 @@ export default function CreateNewJobs() {
                       name='education'
                       id='education'
                       aria-label='Default select example'
-                      value={education}
+                      value={formik.values.education}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setEducation(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={education.id}>{education.name}</option>
                       {Array.isArray(educations)
                         ? educations.map((education) => (
                             <option key={education.id} value={education.id}>
@@ -808,9 +897,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.education && formik.errors.education && (
+                    {formik.touched.education && formik.errors.education ? (
                       <span className='error'>{formik.errors.education}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -826,11 +915,11 @@ export default function CreateNewJobs() {
                       isMulti={true}
                       name='skills'
                     />
-                    {formik.touched.skills && formik.errors.skills && (
+                    {formik.touched.skills && formik.errors.skills ? (
                       <div className='invalid-feedback'>
                         {formik.errors.skills}
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -844,15 +933,15 @@ export default function CreateNewJobs() {
                       class='form-control'
                       id='vacancy'
                       name='vacancy'
-                      value={vacancy}
+                      value={formik.values.vacancy}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setVacancy(e.target.value);
                       }}
                     />
-                    {formik.touched.vacancy && formik.errors.vacancy && (
+                    {formik.touched.vacancy && formik.errors.vacancy ? (
                       <span className='error'>{formik.errors.vacancy}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -885,15 +974,15 @@ export default function CreateNewJobs() {
                       class='form-control'
                       id='lastdate'
                       name='lastdate'
-                      value={lastdate}
+                      value={formik.values.lastdate}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setLastDate(e.target.value);
                       }}
                     />
-                    {formik.touched.lastdate && formik.errors.lastdate && (
+                    {formik.touched.lastdate && formik.errors.lastdate ? (
                       <span className='error'>{formik.errors.lastdate}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -908,13 +997,13 @@ export default function CreateNewJobs() {
                       name='country'
                       id='country'
                       aria-label='Default select example'
-                      value={country}
+                      value={formik.values.country}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setCountry(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={country.id}>{country.name}</option>
                       {Array.isArray(countries)
                         ? countries.map((country) => (
                             <option key={country.id} value={country.id}>
@@ -923,9 +1012,9 @@ export default function CreateNewJobs() {
                           ))
                         : null}
                     </select>
-                    {formik.touched.country && formik.errors.country && (
+                    {formik.touched.country && formik.errors.country ? (
                       <span className='error'>{formik.errors.country}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -940,13 +1029,13 @@ export default function CreateNewJobs() {
                       name='state'
                       id='state'
                       aria-label='Default select example'
-                      value={state}
+                      value={formik.values.state}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setState(e.target.value);
                       }}
                     >
-                      <option></option>
+                      <option value={state.id}>{state.name}</option>
                       {Array.isArray(statesData.data) &&
                         statesData.data.map((states) => (
                           <option key={states.id} value={states.id}>
@@ -954,9 +1043,9 @@ export default function CreateNewJobs() {
                           </option>
                         ))}
                     </select>
-                    {formik.touched.state && formik.errors.state && (
+                    {formik.touched.state && formik.errors.state ? (
                       <span className='error'>{formik.errors.state}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -971,14 +1060,14 @@ export default function CreateNewJobs() {
                       name='city'
                       id='city'
                       aria-label='Default select example'
-                      value={city}
+                      value={formik.values.city}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setCity(e.target.value);
                       }}
                     >
-                      <option value='' disabled selected>
-                        City
+                      <option value={city.id} disabled selected>
+                        {city.name}
                       </option>
                       {Array.isArray(cityData.data) &&
                         cityData.data.map((cities) => (
@@ -987,9 +1076,9 @@ export default function CreateNewJobs() {
                           </option>
                         ))}
                     </select>
-                    {formik.touched.city && formik.errors.city && (
+                    {formik.touched.city && formik.errors.city ? (
                       <span className='error'>{formik.errors.city}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-3'>
@@ -1004,21 +1093,22 @@ export default function CreateNewJobs() {
                       id='zipcode'
                       name='zipcode'
                       placeholder='ZipCode'
-                      value={zipcode}
+                      value={formik.values.zipcode}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setZipCode(e.target.value);
                       }}
                     />
-                    {formik.touched.zipcode && formik.errors.zipcode && (
+                    {formik.touched.zipcode && formik.errors.zipcode ? (
                       <span className='error'>{formik.errors.zipcode}</span>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='skills' class='form-label'>
                       Tags
+                      <span className='text-danger font-weight-bold'>*</span>
                     </label>
                     <Select
                       options={tagsOptions}
@@ -1027,11 +1117,11 @@ export default function CreateNewJobs() {
                       isMulti={true}
                       name='tags'
                     />
-                    {formik.touched.tags && formik.errors.tags && (
+                    {formik.touched.tags && formik.errors.tags ? (
                       <div className='invalid-feedback'>
                         {formik.errors.tags}
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </div>
                 <div class='col-lg-12'>
@@ -1039,13 +1129,6 @@ export default function CreateNewJobs() {
                     <a href='' class='btn btn-success mx-1'>
                       Back
                     </a>
-                    <button
-                      type='submit'
-                      className='btn btn-primary mx-1'
-                      onClick={handleButtonClick}
-                    >
-                      Save
-                    </button>
                     <button type='submit' class='btn btn-primary mx-1'>
                       Post Now <i class='mdi mdi-send'></i>
                     </button>

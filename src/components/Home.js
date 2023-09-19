@@ -316,6 +316,15 @@ export default function Home() {
                         <div className='popu-category-content mt-4'>
                           <Link
                             to={`/sub-categories/${category.id}`}
+                            style={
+                              category.jobs_count === 0
+                                ? {
+                                    pointerEvents: "none",
+                                    color: "#007bff",
+                                    textDecoration: "none",
+                                  }
+                                : { color: "inherit" }
+                            }
                             className='text-dark stretched-link'
                           >
                             <h5 className='fs-18'>{category.name}</h5>

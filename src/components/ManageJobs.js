@@ -180,7 +180,7 @@ export default function ManageJobs() {
                                 title='Edit'
                               >
                                 <Link
-                                  to='/manage-jobs-post'
+                                  to={`/edit-jobs-post/${manage.id}`}
                                   class='avatar-sm success-bg-subtle d-inline-block text-center rounded-circle fs-18'
                                 >
                                   <i class='uil uil-edit'></i>

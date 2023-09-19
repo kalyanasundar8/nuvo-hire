@@ -16,7 +16,6 @@ import Jobs from "./components/Jobs";
 import JobDetail from "./components/JobDetail";
 import Contact from "./components/Contact";
 import ManageJobs from "./components/ManageJobs";
-import JobPost from "./components/JobPost";
 import BookmarkJobs from "./components/BookmarkJobs";
 import JobCategories from "./components/JobCategories";
 import MyProfile from "./components/MyProfile";
@@ -36,6 +35,7 @@ import CreateNewJobs from "./components/employer/CreateNewJobs";
 import MyTickets from "./components/tickets/MyTickets";
 import RaiseNewTicket from "./components/tickets/RaiseNewTicket";
 import ViewTickets from "./components/tickets/ViewTickets";
+import EditJobPost from "./components/EditJobPost";
 
 function App() {
   return (
@@ -67,7 +67,7 @@ function App() {
           <Route path='/job-detail/:id' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
           <Route path='/create-new-job' element={<CreateNewJobs />} />
-          <Route path='/manage-jobs-post' element={<JobPost />} />
+          <Route path='/edit-jobs-post/:id' element={<EditJobPost />} />
           <Route path='/bookmark-jobs' element={<BookmarkJobs />} />
           <Route path='/profile' element={<MyProfile />} />
           <Route path='/candidates' element={<Candidates />} />

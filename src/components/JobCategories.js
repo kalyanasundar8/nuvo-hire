@@ -70,183 +70,83 @@ export default function JobCategories() {
             </div>
           </div>
           <div class='row'>
-            {Array.isArray(jobCategory)
-              ? jobCategory.map((jobCat) => (
-                  <div key={jobCat.id} class='col-lg-4'>
-                    <div class='card job-Categories-box bg-light border-0'>
-                      <div class='card-body p-4'>
-                        <ul class='list-unstyled job-Categories-list mb-0'>
-                          <li>
-                            <Link
-                              to={`/jobs?subcategory_id=${jobCat.id}`}
-                              style={
-                                jobCat.jobs_count === 0
-                                  ? {
-                                      pointerEvents: "none",
-                                      color: "#007bff",
-                                      textDecoration: "none",
-                                    }
-                                  : { color: "inherit" }
-                              }
-                              class='primary-link'
-                            >
-                              {jobCat.name}{" "}
-                              <span class='badge bg-info-subtle text-info float-end'>
-                                {jobCat.jobs_count}
-                              </span>
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
+            {Array.isArray(jobCategory) &&
+              jobCategory.slice(0, 8).map((jobCat) => (
+                <div key={jobCat.id} class='col-lg-4'>
+                  <div class='card job-Categories-box bg-light border-0'>
+                    <div class='card-body p-4'>
+                      <ul class='list-unstyled job-Categories-list mb-0'>
+                        <li>
+                          <Link
+                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            style={
+                              jobCat.jobs_count === 0
+                                ? {
+                                    pointerEvents: "none",
+                                    color: "#007bff",
+                                    textDecoration: "none",
+                                  }
+                                : { color: "inherit" }
+                            }
+                            class='primary-link'
+                          >
+                            {jobCat.name}{" "}
+                            <span class='badge bg-info-subtle text-info float-end'>
+                              {jobCat.jobs_count}
+                            </span>
+                          </Link>
+                        </li>
+                      </ul>
                     </div>
                   </div>
-                ))
-              : null}
-
-            <div class='col-lg-4'>
-              <div class='card job-Categories-box bg-light border-0'>
-                <div class='card-body p-4'>
-                  <ul class='list-unstyled job-Categories-list mb-0'>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Government Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          120
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Defence Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          73
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Teaching Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          88
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Retail & Customer Services{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          10
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Diploma Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          55
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Health Care Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          99
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Manufacturing & production{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          27
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Performing arts & media{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          11
-                        </span>
-                      </Link>
-                    </li>
-                  </ul>
+                </div>
+              ))}
+            {Array.isArray(jobCategory) && jobCategory.length > 8 && (
+              <div class='col-lg-4'>
+                <div class='card job-Categories-box bg-light border-0'>
+                  <div class='card-body p-4'>
+                    <ul class='list-unstyled job-Categories-list mb-0'>
+                      {jobCategory.slice(8).map((jobCat) => (
+                        <li key={jobCat.id}>
+                          <Link
+                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            class='primary-link'
+                          >
+                            {jobCat.name}{" "}
+                            <span class='badge bg-info-subtle text-info float-end'>
+                              {jobCat.jobs_count}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class='col-lg-4'>
-              <div class='card job-Categories-box bg-light border-0'>
-                <div class='card-body p-4'>
-                  <ul class='list-unstyled job-Categories-list mb-0'>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        It / Software Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          175
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Logistics / Transportation{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          60
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Sports Jobs{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          42
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Forest Worker{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          30
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Animal Care Worker{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          120
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Digital Marketing{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          88
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Administrative Officer{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          04
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to='/jobs' class='primary-link'>
-                        Garage services{" "}
-                        <span class='badge bg-info-subtle text-info float-end'>
-                          75
-                        </span>
-                      </Link>
-                    </li>
-                  </ul>
+            )}
+            {Array.isArray(jobCategory) && jobCategory.length > 16 && (
+              <div class='col-lg-4'>
+                <div class='card job-Categories-box bg-light border-0'>
+                  <div class='card-body p-4'>
+                    <ul class='list-unstyled job-Categories-list mb-0'>
+                      {jobCategory.slice(8).map((jobCat) => (
+                        <li key={jobCat.id}>
+                          <Link
+                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            class='primary-link'
+                          >
+                            {jobCat.name}{" "}
+                            <span class='badge bg-info-subtle text-info float-end'>
+                              {jobCat.jobs_count}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

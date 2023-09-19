@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,11 +12,11 @@ import "./JobSeeker.css";
 export default function JobSeekerSignUp() {
   const navigate = useNavigate();
 
-  // const [resume, setResume] = useState("");
+  const [supportDocs, setSupportDocs] = useState("");
 
-  // const changeResumeHandler = (event) => {
-  //     setResume(event.target.files[0]);
-  // };
+  const handleSupportDocsChange = (files) => {
+    setSupportDocs(files);
+  };
 
   const validationSchema = Yup.object({
     jobseeker_type: Yup.string().required(
@@ -72,6 +72,8 @@ export default function JobSeekerSignUp() {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
 
   const jobseekerSignUp = async (values) => {
@@ -86,7 +88,7 @@ export default function JobSeekerSignUp() {
       password_confirmation: values.password_confirmation,
       mobile_no: values.mobile_no,
       work_status: values.work_status,
-      resume: "text",
+      resume: resumeFile,
     };
     console.log(payload);
     try {
@@ -107,6 +109,32 @@ export default function JobSeekerSignUp() {
       }
     } catch (error) {
       console.log("Error:", error);
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    setLoading(true);
+    event.preventDefault();
+
+    const file = event.target.files[0];
+
+    if (!file) {
+      setLoading(false);
+      return;
+    }
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("type", "resume");
+
+    try {
+      const response = await ApiService("resume-upload", "POST", data, false);
+      console.log("Resume uploaded successfully");
+      setResumeFile(response.data.path);
+    } catch (error) {
+      console.error("Error uploading resume: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -365,15 +393,10 @@ export default function JobSeekerSignUp() {
                               </label>
                               <input
                                 type='file'
+                                className='form-control'
                                 id='resume'
                                 name='resume'
-                                onChange={(event) => {
-                                  formik.setFieldValue(
-                                    "file",
-                                    event.currentTarget.files[0]
-                                  );
-                                }}
-                                onBlur={formik.handleBlur}
+                                onChange={handleFileChange}
                               />
                             </div>
                           </div>

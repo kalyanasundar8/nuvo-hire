@@ -529,7 +529,7 @@ function Header() {
               {isAuth === true ? (
                 <div>
                   <a
-                    href=''
+                    href='javascript:void(0)'
                     className='header-item'
                     id='userdropdown'
                     data-bs-toggle='dropdown'
