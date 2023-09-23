@@ -543,28 +543,50 @@ function Header() {
                     className='dropdown-menu dropdown-menu-end'
                     aria-labelledby='userdropdown'
                   >
+                    {isAuth === true &&
+                      user?.data?.user_type === "Employer" && (
+                        <>
+                          <li>
+                            <Link
+                              className='dropdown-item'
+                              to='/create-new-job'
+                            >
+                              Create new Jobs
+                            </Link>
+                          </li>
+                          <li>
+                            <Link className='dropdown-item' to='/my-tickets'>
+                              My Tickets
+                            </Link>
+                          </li>
+                          <li>
+                            <Link className='dropdown-item' to='/manage-jobs'>
+                              My Jobs
+                            </Link>
+                          </li>
+                        </>
+                      )}
+
+                    {isAuth === true &&
+                      user?.data?.user_type === "JobSeeker" && (
+                        <>
+                          <li>
+                            <Link className='dropdown-item' to='/my-jobs'>
+                              My Jobs
+                            </Link>
+                          </li>
+                          <li>
+                            <Link className='dropdown-item' to='/bookmark-jobs'>
+                              Bookmarks Jobs
+                            </Link>
+                          </li>
+                        </>
+                      )}
                     <li>
-                      <Link className='dropdown-item' to='/create-new-job'>
-                        Create new Jobs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className='dropdown-item' to='/my-tickets'>
-                        My Tickets
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className='dropdown-item' to='/manage-jobs'>
-                        Manage Jobs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className='dropdown-item' to='/bookmark-jobs'>
-                        Bookmarks Jobs
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className='dropdown-item' to='/profile'>
+                      <Link
+                        className='dropdown-item'
+                        to={`/profile/${user?.data?.id}`}
+                      >
                         My Profile
                       </Link>
                     </li>

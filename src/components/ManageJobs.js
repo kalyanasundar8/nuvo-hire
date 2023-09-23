@@ -1,11 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useFetch from "./useFetch";
+import { fetchEmployeeMyJobs } from "../services/JobService";
+import {
+  FaBuilding,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
 
 export default function ManageJobs() {
-  const manageJobsData = useFetch("jobs", "GET", null, false);
-  const manageJobs = manageJobsData.data;
-  console.log(manageJobsData.data);
+  const [manageJobs, setManageJobs] = useState("");
+  useEffect(() => {
+    const fetchMyJobs = async () => {
+      try {
+        const response = await fetchEmployeeMyJobs();
+        console.log(response.data);
+        setManageJobs(response.data.data);
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+
+    fetchMyJobs();
+  }, []);
 
   return (
     <div class='page-content'>
@@ -15,8 +33,9 @@ export default function ManageJobs() {
           <div class='row justify-content-center'>
             <div class='col-md-6'>
               <div class='text-center text-white'>
-                <h3 class='mb-4'>Manage Jobs</h3>
-                <div class='page-next'>
+                <h3 class='mb-4'>My Jobs</h3>
+                <p class=''>(Created jobs)</p>
+                {/* <div class='page-next'>
                   <nav
                     class='d-inline-block'
                     aria-label='breadcrumb text-center'
@@ -30,11 +49,11 @@ export default function ManageJobs() {
                       </li>
                       <li class='breadcrumb-item active' aria-current='page'>
                         {" "}
-                        Manage Jobs{" "}
+                        My Jobs{" "}
                       </li>
                     </ol>
                   </nav>
-                </div>
+                </div> */}
               </div>
             </div>
             {/*end col*/}
@@ -124,18 +143,27 @@ export default function ManageJobs() {
                         <div key={manage.id} class='row'>
                           <div class='col-lg-1'>
                             <Link to='company-details.php'>
-                              <img
-                                src='assets/images/featured-job/img-01.png'
-                                alt=''
-                                class='img-fluid rounded-3'
-                              />
+                              {manage.company_logo ? (
+                                <img
+                                  src={manage.company_logo}
+                                  alt=''
+                                  className='img-fluid rounded-3'
+                                />
+                              ) : (
+                                <div style={{ color: "grey" }}>
+                                  <FaBuilding size={32} />
+                                </div> // Replace this with your desired icon
+                              )}
                             </Link>
                           </div>
                           {/*end col*/}
                           <div class='col-lg-9'>
                             <div class='mt-3 mt-lg-0'>
                               <h5 class='fs-17 mb-1'>
-                                <Link to='/job-detail' class='text-dark'>
+                                <Link
+                                  to={`/job-detail/${manage.id}`}
+                                  class='text-dark'
+                                >
                                   {manage.job_title}
                                 </Link>
                               </h5>
@@ -172,7 +200,7 @@ export default function ManageJobs() {
                           </div>
                           {/*end col*/}
                           <div class='col-lg-2 align-self-center'>
-                            <ul class='list-inline mt-3 mb-0'>
+                            <ul class='list-inline d-flex align-items-center mt-3 mb-0'>
                               <li
                                 class='list-inline-item'
                                 data-bs-toggle='tooltip'
@@ -200,6 +228,17 @@ export default function ManageJobs() {
                                 >
                                   <i class='uil uil-trash-alt'></i>
                                 </Link>
+                              </li>
+                              <li className='list-inline-item'>
+                                {manage.status === "Active" ? (
+                                  <FaExclamationCircle
+                                    style={{ color: "orange" }}
+                                  />
+                                ) : manage.status === "Approved" ? (
+                                  <FaCheckCircle style={{ color: "green" }} />
+                                ) : (
+                                  <FaTimesCircle style={{ color: "red" }} />
+                                )}
                               </li>
                             </ul>
                           </div>

@@ -1,14 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
+import {
+  fetchAllSubCategories,
+  fetchSingleSubCategories,
+} from "../services/JobService";
 
 export default function JobCategories() {
   // Create a state for job-categories
 
   const { id } = useParams();
 
-  const jobCategoryData = useFetch(`sub-categories?category_id=${id}`);
-  const jobCategory = jobCategoryData.data;
+  const [jobCategory, setJobCategory] = useState("");
+
+  useEffect(() => {
+    const fetchingSubCategories = async () => {
+      if (id === "all") {
+        await fetchAllSubCategories().then((data) => {
+          console.log(data);
+          setJobCategory(data);
+        });
+      } else {
+        await fetchSingleSubCategories(id).then((data) => {
+          console.log(data);
+          setJobCategory(data);
+        });
+      }
+    };
+
+    fetchingSubCategories();
+  }, [id]);
 
   return (
     <div class='page-content'>
@@ -70,17 +91,20 @@ export default function JobCategories() {
             </div>
           </div>
           <div class='row'>
-            {Array.isArray(jobCategory) &&
-              jobCategory.slice(0, 8).map((jobCat) => (
-                <div key={jobCat.id} class='col-lg-4'>
-                  <div class='card job-Categories-box bg-light border-0'>
-                    <div class='card-body p-4'>
-                      <ul class='list-unstyled job-Categories-list mb-0'>
+            <div class='col-lg-4'>
+              <div class='card job-Categories-box bg-light border-0'>
+                <div class='card-body p-4'>
+                  {Array.isArray(jobCategory) &&
+                    jobCategory.slice(0, 8).map((allCat) => (
+                      <ul
+                        key={allCat.id}
+                        class='list-unstyled job-Categories-list mb-3'
+                      >
                         <li>
                           <Link
-                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            to={`/jobs?subcategory_id=${allCat.id}`}
                             style={
-                              jobCat.jobs_count === 0
+                              allCat.jobs_count === 0
                                 ? {
                                     pointerEvents: "none",
                                     color: "#007bff",
@@ -90,63 +114,65 @@ export default function JobCategories() {
                             }
                             class='primary-link'
                           >
-                            {jobCat.name}{" "}
+                            {allCat.name}{" "}
                             <span class='badge bg-info-subtle text-info float-end'>
-                              {jobCat.jobs_count}
+                              {allCat.jobs_count}
                             </span>
                           </Link>
                         </li>
                       </ul>
-                    </div>
-                  </div>
+                    ))}
                 </div>
-              ))}
-            {Array.isArray(jobCategory) && jobCategory.length > 8 && (
-              <div class='col-lg-4'>
-                <div class='card job-Categories-box bg-light border-0'>
-                  <div class='card-body p-4'>
+              </div>
+            </div>
+
+            <div class='col-lg-4'>
+              <div class='card job-Categories-box bg-light border-0'>
+                <div class='card-body p-4'>
+                  {Array.isArray(jobCategory) && jobCategory.length > 8 && (
                     <ul class='list-unstyled job-Categories-list mb-0'>
-                      {jobCategory.slice(8).map((jobCat) => (
-                        <li key={jobCat.id}>
+                      {jobCategory.slice(8).map((allCat) => (
+                        <li key={allCat.id}>
                           <Link
-                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            to={`/jobs?subcategory_id=${allCat.id}`}
                             class='primary-link'
                           >
-                            {jobCat.name}{" "}
+                            {allCat.name}{" "}
                             <span class='badge bg-info-subtle text-info float-end'>
-                              {jobCat.jobs_count}
+                              {allCat.jobs_count}
                             </span>
                           </Link>
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  )}
                 </div>
               </div>
-            )}
-            {Array.isArray(jobCategory) && jobCategory.length > 16 && (
-              <div class='col-lg-4'>
-                <div class='card job-Categories-box bg-light border-0'>
-                  <div class='card-body p-4'>
+            </div>
+
+            <div class='col-lg-4'>
+              <div class='card job-Categories-box bg-light border-0'>
+                <div class='card-body p-4'>
+                  {Array.isArray(jobCategory) && jobCategory.length > 16 && (
                     <ul class='list-unstyled job-Categories-list mb-0'>
-                      {jobCategory.slice(8).map((jobCat) => (
-                        <li key={jobCat.id}>
+                      {jobCategory.slice(8).map((allCat) => (
+                        <li key={allCat.id}>
                           <Link
-                            to={`/jobs?subcategory_id=${jobCat.id}`}
+                            to={`/jobs?subcategory_id=${allCat.id}`}
                             class='primary-link'
                           >
-                            {jobCat.name}{" "}
+                            {allCat.name}{" "}
                             <span class='badge bg-info-subtle text-info float-end'>
-                              {jobCat.jobs_count}
+                              {allCat.jobs_count}
                             </span>
                           </Link>
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>

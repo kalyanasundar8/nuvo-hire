@@ -61,7 +61,7 @@ export default function JobSeekerSignIn() {
 
       if (response?.data?.status_code == 200) {
         dispatch(setIsAuthenticated(true));
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("user", JSON.stringify(response.data));
         setError("");
         navigate("/");
         window.location.reload();

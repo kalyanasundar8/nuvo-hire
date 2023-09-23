@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import useFetch from "../useFetch";
 import ApiService from "../../services/ApiService";
+import { Badge } from "react-bootstrap";
 
 // Editor
 import ReactQuill from "react-quill";
@@ -26,10 +27,10 @@ const validationSchema = Yup.object({
   salary: Yup.string().required("Salary is required"),
   experience: Yup.string().required("Experience is required"),
   workmode: Yup.string().required("Workmode is required"),
-  employment: Yup.string().required("Employment is required"),
+  // employment: Yup.string().required("Employment is required"),
   industry: Yup.string().required("Industry is required"),
-  degree: Yup.string().required("Degree is required"),
-  course: Yup.string().required("Course is required"),
+  // degree: Yup.string().required("Degree is required"),
+  // course: Yup.string().required("Course is required"),
   education: Yup.string().required("Education is required"),
   skills: Yup.array()
     .required("Skills is required")
@@ -69,6 +70,7 @@ export default function CreateNewJobs() {
       country: "",
       state: "",
       city: "",
+      joblocation: [],
       zipcode: "",
       postLater: false,
     },
@@ -78,14 +80,6 @@ export default function CreateNewJobs() {
       createJobPost(values);
     },
   });
-
-  // // Custom validation for jobDescription
-  // const validateJobDescription = (value) => {
-  //   if (!value || value.trim() === "") {
-  //     return "Job Description is required";
-  //   }
-  //   return undefined; // No validation error
-  // };
 
   const [jobtitle, setJobTitle] = useState("");
   const [jobdescription, setJobDescription] = useState("");
@@ -97,19 +91,37 @@ export default function CreateNewJobs() {
   const [workmode, setWorkMode] = useState("");
   const [salary, setSalary] = useState("");
   const [experience, setExperience] = useState("");
+  // Employment state
   const [employment, setEmployment] = useState("");
+  const [selectedEmployment, setSelectedEmployment] = useState([]);
   const [industry, setIndustry] = useState("");
+  // Degree state
   const [degree, setDegree] = useState("");
+  const [selectedDegree, setSelectedDegree] = useState([]);
+  // Course state
   const [course, setCourse] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState([]);
+  // Education state
   const [education, setEducation] = useState("");
+  const [selectedEducation, setSelectedEducation] = useState([]);
+  // Skills state
   const [skills, setSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState([]);
+
   const [vacancy, setVacancy] = useState("");
   const [featuredJob, setFeaturedJob] = useState("");
   const [lastdate, setLastDate] = useState("");
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
+  // location state
+  const [locations, setLocations] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState([]);
+
+  // JobLocation state
+  const [jobLocations, setJobLocations] = useState([]);
+  const [locationInput, setLocationInput] = useState("");
+
   const [zipcode, setZipCode] = useState("");
   const [tags, setTags] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
@@ -177,6 +189,36 @@ export default function CreateNewJobs() {
   const employmentData = useFetch("employment-types", "GET", null, false);
   const employmentTypes = employmentData.data;
 
+  const employmentOptions = Array.isArray(employmentTypes)
+    ? employmentTypes.map((employmentList) => ({
+        value: employmentList.id,
+        label: employmentList.name,
+      }))
+    : null;
+
+  const handleEmploymentSelect = (employmentOptions) => {
+    // Extract the id values of selected options
+    const selectedEmploymentIds = employmentOptions.map(
+      (option) => option.value
+    );
+
+    // Set the selected options in the state
+    setSelectedEmployment(employmentOptions);
+
+    // Now you can use selectedIds in your payload or wherever needed
+    console.log(selectedEmploymentIds);
+
+    const filteredOptions = employmentOptions.filter(
+      (option) =>
+        !employmentOptions.some((selected) => selected.value === option.value)
+    );
+
+    // Update the options in the dropdown
+    setEmployment(filteredOptions);
+  };
+
+  const employmentValue = selectedEmployment.map((option) => option.value);
+
   // Industry
   const industryData = useFetch("industries", "GET", null, false);
   const industries = industryData.data;
@@ -185,13 +227,97 @@ export default function CreateNewJobs() {
   const courseData = useFetch("courses", "GET", null, false);
   const courses = courseData.data;
 
+  const courseOptions = Array.isArray(courses)
+    ? courses.map((courseList) => ({
+        value: courseList.id,
+        label: courseList.name,
+      }))
+    : null;
+
+  const handleCourseSelect = (courseOptions) => {
+    // Extract the id values of selected options
+    const selectedCourseIds = courseOptions.map((option) => option.value);
+
+    // Set the selected options in the state
+    setSelectedCourse(courseOptions);
+
+    // Now you can use selectedIds in your payload or wherever needed
+    console.log(selectedCourseIds);
+
+    const filteredOptions = courseOptions.filter(
+      (option) =>
+        !courseOptions.some((selected) => selected.value === option.value)
+    );
+
+    // Update the options in the dropdown
+    setCourse(filteredOptions);
+  };
+
+  const courseValue = selectedCourse.map((option) => option.value);
+
   // Degree
   const degreeData = useFetch("degrees", "GET", null, false);
   const degrees = degreeData.data;
 
+  const degreeOptions = Array.isArray(degrees)
+    ? degrees.map((degreesList) => ({
+        value: degreesList.id,
+        label: degreesList.name,
+      }))
+    : null;
+
+  const handleDegreeSelect = (degreeOptions) => {
+    // Extract the id values of selected options
+    const selectedDegreeIds = degreeOptions.map((option) => option.value);
+
+    // Set the selected options in the state
+    setSelectedDegree(degreeOptions);
+
+    // Now you can use selectedIds in your payload or wherever needed
+    console.log(selectedDegreeIds);
+
+    const filteredOptions = degreeOptions.filter(
+      (option) =>
+        !degreeOptions.some((selected) => selected.value === option.value)
+    );
+
+    // Update the options in the dropdown
+    setDegree(filteredOptions);
+  };
+
+  const degreeValue = selectedDegree.map((option) => option.value);
+
   // Education
   const educationData = useFetch("educations", "GET", null, false);
   const educations = educationData.data;
+
+  const educationOptions = Array.isArray(educations)
+    ? educations.map((educationList) => ({
+        value: educationList.id,
+        label: educationList.name,
+      }))
+    : null;
+
+  const handleEducationSelect = (educationOptions) => {
+    // Extract the id values of selected options
+    const selectedEducationIds = educationOptions.map((option) => option.value);
+
+    // Set the selected options in the state
+    setSelectedEducation(educationOptions);
+
+    // Now you can use selectedIds in your payload or wherever needed
+    console.log(selectedEducationIds);
+
+    const filteredOptions = educationOptions.filter(
+      (option) =>
+        !educationOptions.some((selected) => selected.value === option.value)
+    );
+
+    // Update the options in the dropdown
+    setEducation(filteredOptions);
+  };
+
+  const educationValue = selectedEducation.map((option) => option.value);
 
   // Skills
   const skillsData = useFetch("skills", "GET", null, false);
@@ -257,6 +383,25 @@ export default function CreateNewJobs() {
 
   const tagsValue = selectedTags.map((option) => option.value);
 
+  // JobLocation
+  const handleInputChange = (e) => {
+    setLocationInput(e.target.value);
+  };
+
+  const handleInputKeyPress = (e) => {
+    if (e.key === " " && locationInput.trim() !== "") {
+      setJobLocations([...jobLocations, locationInput.trim()]);
+      setLocationInput("");
+    }
+  };
+
+  const handleLocationRemove = (locationToRemove) => {
+    const updatedLocations = jobLocations.filter(
+      (location) => location !== locationToRemove
+    );
+    setJobLocations(updatedLocations);
+  };
+
   // Post later
   const handleButtonClick = () => {
     const postLaterData = buttonClicked ? 0 : 1;
@@ -277,11 +422,11 @@ export default function CreateNewJobs() {
       salary_id: values.salary,
       experience_id: values.experience,
       work_mode_id: values.workmode,
-      employment_type_id: values.employment,
+      employment_type_id: employmentValue,
       industry_id: values.industry,
-      degree_id: values.degree,
-      course_id: values.course,
-      education_id: values.education,
+      degree_id: degreeValue,
+      course_id: courseValue,
+      education_id: educationValue,
       skills_id: skillsValue,
       vacancy: values.vacancy,
       is_featured_job: featuredJob,
@@ -289,17 +434,18 @@ export default function CreateNewJobs() {
       country_id: values.country,
       state_id: values.state,
       city_id: values.city,
+      job_location: jobLocations,
       zipcode: values.zipcode,
       tags_id: tagsValue,
       is_post_later: postLater,
     };
     console.log(payload);
-    try {
-      const response = await ApiService("post-new-job", "POST", payload, true);
-      console.log(response);
-    } catch (error) {
-      console.log("Error ", error);
-    }
+    // try {
+    //   const response = await ApiService("post-new-job", "POST", payload, true);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log("Error ", error);
+    // }
   };
 
   return (
@@ -309,7 +455,7 @@ export default function CreateNewJobs() {
           <div class='row justify-content-center'>
             <div class='col-md-6'>
               <div class='text-center text-white'>
-                <h3 class='mb-4'>Create Jobs</h3>
+                <h3 class='mb-4'>Create New Job</h3>
                 <div class='page-next'>
                   {/* <nav
                     class='d-inline-block'
@@ -352,7 +498,7 @@ export default function CreateNewJobs() {
           <div class='row'>
             <div class='col-lg-12'>
               <div class='primary-bg-subtle p-3'>
-                <h5 class='mb-0 fs-17'>Post a New Job!</h5>
+                <h5 class='mb-0 fs-17'>Create a New Job!</h5>
               </div>
             </div>
           </div>
@@ -659,27 +805,13 @@ export default function CreateNewJobs() {
                       Employment
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
-                    <select
-                      class='form-select'
-                      data-trigger=''
-                      name='employment'
-                      id='employment'
-                      aria-label='Default select example'
-                      value={employment}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setEmployment(e.target.value);
-                      }}
-                    >
-                      <option></option>
-                      {Array.isArray(employmentTypes)
-                        ? employmentTypes.map((employment) => (
-                            <option key={employment.id} value={employment.id}>
-                              {employment.name}
-                            </option>
-                          ))
-                        : null}
-                    </select>
+                    <Select
+                      options={employmentOptions}
+                      value={selectedEmployment}
+                      onChange={handleEmploymentSelect}
+                      isMulti={true}
+                      name='degree'
+                    />
                     {formik.touched.employment && formik.errors.employment && (
                       <span className='error'>{formik.errors.employment}</span>
                     )}
@@ -723,27 +855,13 @@ export default function CreateNewJobs() {
                       Degree
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
-                    <select
-                      class='form-select'
-                      data-trigger=''
+                    <Select
+                      options={degreeOptions}
+                      value={selectedDegree}
+                      onChange={handleDegreeSelect}
+                      isMulti={true}
                       name='degree'
-                      id='degree'
-                      aria-label='Default select example'
-                      value={degree}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setDegree(e.target.value);
-                      }}
-                    >
-                      <option></option>
-                      {Array.isArray(degrees)
-                        ? degrees.map((degree) => (
-                            <option key={degree.id} value={degree.id}>
-                              {degree.name}
-                            </option>
-                          ))
-                        : null}
-                    </select>
+                    />
                     {formik.touched.degree && formik.errors.degree && (
                       <span className='error'>{formik.errors.degree}</span>
                     )}
@@ -755,27 +873,13 @@ export default function CreateNewJobs() {
                       Course
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
-                    <select
-                      class='form-select'
-                      data-trigger=''
+                    <Select
+                      options={courseOptions}
+                      value={selectedCourse}
+                      onChange={handleCourseSelect}
+                      isMulti={true}
                       name='course'
-                      id='course'
-                      aria-label='Default select example'
-                      value={course}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setCourse(e.target.value);
-                      }}
-                    >
-                      <option></option>
-                      {Array.isArray(courses)
-                        ? courses.map((courseList) => (
-                            <option key={courseList.id} value={courseList.id}>
-                              {courseList.name}
-                            </option>
-                          ))
-                        : null}
-                    </select>
+                    />
                     {formik.touched.course && formik.errors.course && (
                       <span className='error'>{formik.errors.course}</span>
                     )}
@@ -787,30 +891,13 @@ export default function CreateNewJobs() {
                       Education
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
-                    <select
-                      class='form-select'
-                      data-trigger=''
+                    <Select
+                      options={educationOptions}
+                      value={selectedEducation}
+                      onChange={handleEducationSelect}
+                      isMulti={true}
                       name='education'
-                      id='education'
-                      aria-label='Default select example'
-                      value={education}
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        setEducation(e.target.value);
-                      }}
-                    >
-                      <option></option>
-                      {Array.isArray(educations)
-                        ? educations.map((education) => (
-                            <option key={education.id} value={education.id}>
-                              {education.name}
-                            </option>
-                          ))
-                        : null}
-                    </select>
-                    {formik.touched.education && formik.errors.education && (
-                      <span className='error'>{formik.errors.education}</span>
-                    )}
+                    />
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -1010,6 +1097,51 @@ export default function CreateNewJobs() {
                         setZipCode(e.target.value);
                       }}
                     />
+                    {formik.touched.zipcode && formik.errors.zipcode && (
+                      <span className='error'>{formik.errors.zipcode}</span>
+                    )}
+                  </div>
+                </div>
+                <div class='col-lg-6'>
+                  <div class='mb-4'>
+                    <label for='joblocation' class='form-label'>
+                      JobLocation
+                      <span className='text-danger font-weight-bold'>*</span>
+                    </label>
+                    <input
+                      type='text'
+                      class='form-control'
+                      id='joblocation'
+                      name='joblocation'
+                      placeholder='Enter Locations...'
+                      value={locationInput}
+                      onChange={handleInputChange}
+                      onKeyPress={handleInputKeyPress}
+                    />
+                    <div>
+                      {jobLocations.map((jobLocation) => (
+                        <Badge
+                          key={jobLocation}
+                          variant='light'
+                          className='tag-badge mt-2'
+                        >
+                          {jobLocation}
+                          <span
+                            className='badge-remove'
+                            onClick={() => handleLocationRemove(jobLocation)}
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "bold",
+                              marginLeft: "5px",
+                              cursor: "pointer",
+                              color: "red",
+                            }}
+                          >
+                            &nbsp;x
+                          </span>
+                        </Badge>
+                      ))}
+                    </div>
                     {formik.touched.zipcode && formik.errors.zipcode && (
                       <span className='error'>{formik.errors.zipcode}</span>
                     )}

@@ -36,6 +36,7 @@ import MyTickets from "./components/tickets/MyTickets";
 import RaiseNewTicket from "./components/tickets/RaiseNewTicket";
 import ViewTickets from "./components/tickets/ViewTickets";
 import EditJobPost from "./components/EditJobPost";
+import MyJobs from "./components/jobseeker/MyJobs";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path='/services' element={<Services />}></Route>
           <Route path='/jobseeker-signin' element={<JobSeekerSignIn />}></Route>
           <Route path='/jobseeker-signup' element={<JobSeekerSignUp />}></Route>
+          <Route path='/my-jobs' element={<MyJobs />}></Route>
           <Route path='/forget-password' element={<ForgetPassword />} />
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/verify-otp' element={<VerifyOtp />} />
@@ -61,15 +63,15 @@ function App() {
           <Route path='/employer-signin' element={<CompanySignin />} />
           <Route path='/faqs' element={<Faq />} />
           <Route path='/blog' element={<Blog />} />
-          <Route path='/jobs' element={<Jobs />} />
+          <Route path='/jobs/:id?' element={<Jobs />} />
           <Route path='/contact-us' element={<Contact />} />
-          <Route path='/sub-categories/:id' element={<JobCategories />} />
+          <Route path='/sub-categories/:id?' element={<JobCategories />} />
           <Route path='/job-detail/:id' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
           <Route path='/create-new-job' element={<CreateNewJobs />} />
           <Route path='/edit-jobs-post/:id' element={<EditJobPost />} />
           <Route path='/bookmark-jobs' element={<BookmarkJobs />} />
-          <Route path='/profile' element={<MyProfile />} />
+          <Route path='/profile/:id' element={<MyProfile />} />
           <Route path='/candidates' element={<Candidates />} />
           <Route path='/candidate-detail' element={<CandidateDetail />} />
           <Route path='/candidate-grid' element={<CandidateGrid />} />

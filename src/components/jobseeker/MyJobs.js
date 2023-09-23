@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchBookmarkJob } from "../services/JobService";
+import Apiservice from "../../services/ApiService";
+import { fetchAppliedJobs } from "../../services/JobService";
 
-export default function BookmarkJobs() {
-  const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+export default function MyJobs() {
+  const [appliedJobs, setAppliedJobs] = useState("");
 
   useEffect(() => {
-    const fetchBookmarkedJobs = async () => {
+    const fetchJobsData = async () => {
       try {
-        const response = await fetchBookmarkJob();
+        const response = await fetchAppliedJobs();
         console.log(response.data.data);
-        setBookmarkedJobs(response.data.data);
+        setAppliedJobs(response.data.data);
       } catch (error) {
-        console.log("Error: ", error);
+        console.log(error);
       }
     };
 
-    fetchBookmarkedJobs();
+    fetchJobsData();
   }, []);
 
   return (
@@ -129,9 +130,9 @@ export default function BookmarkJobs() {
           {/*end row*/}
           <div class='row'>
             <div class='col-lg-12'>
-              {Array.isArray(bookmarkedJobs) &&
-                bookmarkedJobs.map((bookmarkedJob) => (
-                  <div key={bookmarkedJob.id} class='job-box card mt-4'>
+              {Array.isArray(appliedJobs) &&
+                appliedJobs.map((appliedJob) => (
+                  <div key={appliedJob.job_id} class='job-box card mt-4'>
                     <div class='card-body p-4'>
                       <div class='row'>
                         <div class='col-lg-1'>
@@ -148,31 +149,27 @@ export default function BookmarkJobs() {
                           <div class='mt-3 mt-lg-0'>
                             <h5 class='fs-17 mb-1'>
                               <Link
-                                to={`/job-detail/${bookmarkedJob.id}`}
+                                to={`/job-detail/${appliedJob.job_id}`}
                                 class='text-dark'
                               >
-                                {bookmarkedJob.job_title}
+                                {appliedJob.job_title}
                               </Link>
                             </h5>
                             <ul class='list-inline mb-0'>
                               <li class='list-inline-item'>
                                 <p class='text-muted fs-14 mb-0'>
-                                  {bookmarkedJob.company_name}
+                                  {appliedJob.company_name}
                                 </p>
                               </li>
                               <li class='list-inline-item'>
                                 <p class='text-muted fs-14 mb-0'>
-                                  <i class='mdi mdi-map-marker'></i>{" "}
-                                  {bookmarkedJob.city_id &&
-                                    bookmarkedJob.city_id.name}
+                                  <i class='mdi mdi-map-marker'></i> California
                                 </p>
                               </li>
                               <li class='list-inline-item'>
                                 <p class='text-muted fs-14 mb-0'>
-                                  <i class='uil uil-wallet'></i> $
-                                  {bookmarkedJob.salary_id &&
-                                    bookmarkedJob.salary_id.name}{" "}
-                                  / month
+                                  <i class='uil uil-wallet'></i> $250 - $800 /
+                                  month
                                 </p>
                               </li>
                             </ul>

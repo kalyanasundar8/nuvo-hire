@@ -40,7 +40,7 @@ export default function CompanySignup() {
     initialValues: {
       company_name: "",
       first_name: "",
-      //   last_name: "",
+      last_name: "",
       email: "",
       mobile_no: "",
       password: "",
@@ -61,15 +61,6 @@ export default function CompanySignup() {
 
   // Signup form integration
 
-  const [companyName, setCompanyName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [address, setAddress] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
@@ -87,6 +78,7 @@ export default function CompanySignup() {
       mobile_no: values.mobile_no,
       address: values.address,
     };
+    console.log(payload);
     try {
       const response = await ApiService(
         "signup-as-employer",
@@ -106,10 +98,6 @@ export default function CompanySignup() {
       console.log("Error:", error);
     }
   };
-
-  useEffect(() => {
-    employerSignUp();
-  }, []);
 
   return (
     <section class='bg-auth'>
@@ -162,7 +150,10 @@ export default function CompanySignup() {
                         <div className='row'>
                           <div className='col-lg-12'>
                             <div className='mb-3'>
-                              <label htmlFor='nameInput' className='form-label'>
+                              <label
+                                htmlFor='company_name'
+                                className='form-label'
+                              >
                                 Company Name *
                               </label>
                               <input
@@ -171,11 +162,7 @@ export default function CompanySignup() {
                                 id='company_name'
                                 className='form-control'
                                 placeholder='Enter your company name'
-                                value={companyName}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setCompanyName(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.company_name &&
@@ -197,11 +184,7 @@ export default function CompanySignup() {
                                 id='first_name'
                                 className='form-control'
                                 placeholder='Enter your first name'
-                                value={firstName}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setFirstName(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.first_name &&
@@ -223,11 +206,7 @@ export default function CompanySignup() {
                                 id='last_name'
                                 className='form-control'
                                 placeholder='Enter your last name'
-                                value={lastName}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setLastName(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.last_name &&
@@ -252,11 +231,7 @@ export default function CompanySignup() {
                                 id='email'
                                 name='email'
                                 placeholder='Enter your email'
-                                value={email}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setEmail(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.email && formik.errors.email && (
@@ -280,11 +255,7 @@ export default function CompanySignup() {
                                 id='mobile-no'
                                 name='mobile_no'
                                 placeholder='Enter your mobile no'
-                                value={mobileNumber}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setMobileNumber(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.mobile_no &&
@@ -306,11 +277,7 @@ export default function CompanySignup() {
                                 id='password'
                                 name='password'
                                 placeholder='Enter your password'
-                                value={password}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setPassword(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.password &&
@@ -332,11 +299,7 @@ export default function CompanySignup() {
                                 id='password_confirmation'
                                 name='password_confirmation'
                                 placeholder='Re-enter your password'
-                                value={confirmPassword}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setConfirmPassword(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.password_confirmation &&
@@ -357,11 +320,7 @@ export default function CompanySignup() {
                                 id='address'
                                 name='address'
                                 placeholder='Enter your company address'
-                                value={address}
-                                onChange={(e) => {
-                                  formik.handleChange(e);
-                                  setAddress(e.target.value);
-                                }}
+                                onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                               />
                               {formik.touched.address &&

@@ -3,8 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import ApiService from "../services/ApiService";
 
+// Popups for the apply message
+import { Modal, Button } from "react-bootstrap";
+
 export default function JobDetail() {
   const { id } = useParams();
+  console.log(id);
 
   // Fetch job-details
   const [jobDetails, setJobDetails] = useState([]);
@@ -41,8 +45,78 @@ export default function JobDetail() {
     fetchData();
   }, []);
 
+  // Apply jobs
+
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [showPopUpMessage, setShowPopUpMessage] = useState("");
+
+  const handleApplyJob = async () => {
+    const jobId = id;
+    const payload = {
+      manage_job_id: jobId,
+    };
+    console.log(payload);
+    try {
+      const response = await ApiService("apply-jobs", "POST", payload, true);
+      console.log(response);
+      if (response.response.data.status === true) {
+        setShowPopUpMessage(response.response.data.message);
+      } else {
+        setShowPopUpMessage(response.response.data.message);
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+
+    setShowPopUp(true);
+  };
+
+  const handleClosePopUp = () => {
+    setShowPopUp(false);
+  };
+
+  // Bookmark job
+  const handleJobBookMark = async (jobId) => {
+    const payload = {
+      manage_job_id: jobId,
+    };
+
+    try {
+      const response = await ApiService(
+        "add-to-bookmark",
+        "POST",
+        payload,
+        true
+      );
+      console.log(response.data.message);
+      if (response.status === true) {
+        setShowPopUpMessage(response.data.message);
+      } else {
+        setShowPopUpMessage(response.data.message);
+      }
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+
+    setShowPopUp(true);
+  };
+
   return (
     <div class='page-content'>
+      {/* PopUp Model */}
+      <Modal show={showPopUp} onHide={handleClosePopUp}>
+        <Modal.Header closeButton>
+          <Modal.Title>Application Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{showPopUpMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant='primary' onClick={handleClosePopUp}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* PopUp model end */}
+
       {/* Start home  */}
       <section class='page-title-box'>
         <div class='container'>
@@ -164,11 +238,10 @@ export default function JobDetail() {
                       </div>
                       <div class='col-lg-3'>
                         <div class='border p-3'>
-                          <p class='text-muted fs-13 mb-0'>Employee type</p>
-                          <p class='fw-medium mb-0'>
-                            {jobDetails.employment_type_id &&
-                              jobDetails.employment_type_id.name}
+                          <p class='text-muted fs-13 mb-0'>
+                            Application Deadline
                           </p>
+                          {jobOverView.application_deadline_date}
                         </div>
                       </div>
                       <div class='col-lg-3'>
@@ -196,74 +269,36 @@ export default function JobDetail() {
                   <div class='mt-4'>
                     <h5 class='mb-3'>Job Description</h5>
                     <div class='job-detail-desc'>
-                      <p class='text-muted mb-0'>
-                        {jobDetails.job_description}
-                      </p>
+                      <div
+                        class='text-muted mb-0'
+                        dangerouslySetInnerHTML={{
+                          __html: jobDetails.job_description,
+                        }}
+                      ></div>
                     </div>
                   </div>
 
                   <div class='mt-4'>
                     <h5 class='mb-3'>Responsibilities</h5>
                     <div class='job-detail-desc mt-2'>
-                      <p class='text-muted'>{jobDetails.responsibilities}</p>
+                      <div
+                        class='text-muted'
+                        dangerouslySetInnerHTML={{
+                          __html: jobDetails.responsibilities,
+                        }}
+                      ></div>
                     </div>
                   </div>
 
                   <div class='mt-4'>
-                    <h5 class='mb-3'>Qualification </h5>
-                    <div class='job-detail-desc mt-2'>
-                      <ul class='job-detail-list list-unstyled mb-0 text-muted'>
-                        <li>
-                          <i class='uil uil-circle'></i> B.C.A / M.C.A under
-                          National University course complete.
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> 3 or more years of
-                          professional design experience
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> have already graduated
-                          or are currently in any year of study
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Advanced degree or
-                          equivalent experience in graphic and web design
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div class='mt-4'>
-                    <h5 class='mb-3'>Skill & Experience</h5>
                     <div class='job-details-desc'>
-                      <ul class='job-detail-list list-unstyled mb-0 text-muted'>
-                        <li>
-                          <i class='uil uil-circle'></i> Understanding of key
-                          Design Principal
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Proficiency With HTML,
-                          CSS, Bootstrap
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Wordpress: 1 year
-                          (Required)
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> Experience designing
-                          and developing responsive design websites
-                        </li>
-                        <li>
-                          <i class='uil uil-circle'></i> web designing: 1 year
-                          (Preferred)
-                        </li>
-                      </ul>
                       <div class='mt-4'>
-                        <span class='badge bg-primary'>PHP</span>
-                        <span class='badge bg-primary'>JS</span>
-                        <span class='badge bg-primary'>Marketing</span>
-                        <span class='badge bg-primary'>REACT</span>
-                        <span class='badge bg-primary'>PHOTOSHOP</span>
+                        {Array.isArray(jobDetails.tags) &&
+                          jobDetails.tags.map((tag) => (
+                            <span key={tag.tag_id} class='badge bg-primary'>
+                              {tag.tag}
+                            </span>
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -439,8 +474,22 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Location</h6>
                             <p class='text-muted mb-0'>
-                              {jobDetails.city_id && jobDetails.city_id.name}
+                              {jobOverView.job_locations}
                             </p>
+                          </div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class='d-flex mt-4'>
+                          <i className='bi bi-wrench icon bg-primary-subtle text-primary'></i>
+                          <div class='ms-3'>
+                            <h6 class='fs-14 mb-2'>Skills</h6>
+                            {Array.isArray(jobOverView.skills) &&
+                              jobOverView.skills.map((skill) => (
+                                <p key={skill.id} class='text-muted mb-0'>
+                                  {skill.skill}
+                                </p>
+                              ))}
                           </div>
                         </div>
                       </li>
@@ -451,8 +500,8 @@ export default function JobDetail() {
                             <h6 class='fs-14 mb-2'>Offered Salary</h6>
                             <p class='text-muted mb-0'>
                               $
-                              {jobDetails.salary_id &&
-                                jobDetails.salary_id.name}
+                              {jobOverView.salary_id &&
+                                jobOverView.salary_id.name}
                             </p>
                           </div>
                         </div>
@@ -462,10 +511,12 @@ export default function JobDetail() {
                           <i class='uil uil-graduation-cap icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Qualification</h6>
-                            <p class='text-muted mb-0'>
-                              {jobDetails.degree_id &&
-                                jobDetails.degree_id.name}
-                            </p>
+                            {Array.isArray(jobOverView.education_id) &&
+                              jobOverView.education_id.map((education) => (
+                                <p key={education.id} class='text-muted mb-0'>
+                                  {education.education}
+                                </p>
+                              ))}
                           </div>
                         </div>
                       </li>
@@ -486,22 +537,26 @@ export default function JobDetail() {
                           <i class='uil uil-history icon bg-primary-subtle text-primary'></i>
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Date Posted</h6>
-                            <p class='text-muted mb-0'>Posted 2 hrs ago</p>
+                            <p class='text-muted mb-0'>
+                              {jobOverView.created_at}
+                            </p>
                           </div>
                         </div>
                       </li>
                     </ul>
                     <div class='mt-3'>
                       <Link
-                        to='#applyNow'
+                        to=''
                         data-bs-toggle='modal'
                         class='btn btn-primary btn-hover w-100 mt-2'
+                        onClick={handleApplyJob}
                       >
                         Apply Now <i class='uil uil-arrow-right'></i>
                       </Link>
                       <Link
-                        to='bookmark-jobs.php'
+                        to=''
                         class='btn btn-soft-warning btn-hover w-100 mt-2'
+                        onClick={() => handleJobBookMark(id)}
                       >
                         <i class='uil uil-bookmark'></i> Add Bookmark
                       </Link>
@@ -598,7 +653,7 @@ export default function JobDetail() {
         </div>
       </section>
 
-      <div
+      {/* <div
         class='modal fade'
         id='applyNow'
         tabindex='-1'
@@ -666,7 +721,7 @@ export default function JobDetail() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

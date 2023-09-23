@@ -12,7 +12,8 @@ export default function Home() {
   const countries = countriesData.data;
   const [countryId, setCountryId] = useState("101");
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    e.preventDefault();
     try {
       const searchResults = await ApiService(
         `job-search?value=${encodeURIComponent(query)}&country_id=${countryId}`
@@ -92,6 +93,73 @@ export default function Home() {
     setActiveTab(tabId);
   };
 
+  const handleJobBookMark = async (jobId) => {
+    const payload = {
+      manage_job_id: jobId,
+    };
+
+    try {
+      const response = await ApiService(
+        "add-to-bookmark",
+        "POST",
+        payload,
+        true
+      );
+      console.log(response);
+    } catch (error) {
+      console.log("Error: " + error);
+    }
+  };
+
+  const renderSuggestions = () => {
+    const filteredJobs = jobList.filter((jobs) =>
+      jobs.job_title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filteredJobs.length === 0) {
+      return null;
+    }
+
+    return (
+      <ul
+        style={{
+          width: 300,
+          position: "absolute",
+          top: "105%",
+          zIndex: 2,
+          left: 10,
+          listStyleType: "none",
+          backgroundColor: "#fff",
+          borderRadius: "0 0 8px 8px",
+          padding: 20,
+          margin: 0,
+          boxShadow: "0 20px 20px rgba(0, 0, 0, 0.1)",
+          maxHeight: "150px", // Set a max height for scroll
+          overflowY: "auto", // Enable scroll when needed
+        }}
+      >
+        {filteredJobs.map((jobs, index) => (
+          <li
+            key={index}
+            style={{
+              padding: "8px",
+              cursor: "pointer",
+            }}
+            onClick={() => handleSuggestionClick(jobs.job_title)}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#f0f0f0"; // Change background on hover
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "initial"; // Reset background when not hovering
+            }}
+          >
+            {jobs.job_title}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   useScrollToTop();
 
   return (
@@ -131,53 +199,7 @@ export default function Home() {
                             autoComplete='off'
                           />
                         </div>
-                        {showSuggestion && (
-                          <ul
-                            style={{
-                              width: 300,
-                              position: "absolute",
-                              top: "105%",
-                              zIndex: 2,
-                              left: 10,
-                              listStyleType: "none",
-                              backgroundColor: "#fff",
-                              borderRadius: "0 0 8px 8px",
-                              padding: 20,
-                              margin: 0,
-                              boxShadow: "0 20px 20px rgba(0, 0, 0, 0.1)",
-                            }}
-                          >
-                            {Array.isArray(jobList)
-                              ? query &&
-                                jobList
-                                  .filter((jobs) =>
-                                    jobs.job_title.toLowerCase().includes(query)
-                                  )
-                                  .map((jobs, index) => (
-                                    <li
-                                      key={index}
-                                      style={{
-                                        padding: "8px",
-                                        cursor: "pointer",
-                                      }}
-                                      onClick={() =>
-                                        handleSuggestionClick(jobs.job_title)
-                                      }
-                                      onMouseEnter={(e) => {
-                                        e.target.style.backgroundColor =
-                                          "#f0f0f0"; // Change background on hover
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.target.style.backgroundColor =
-                                          "initial"; // Reset background when not hovering
-                                      }}
-                                    >
-                                      {jobs.job_title}
-                                    </li>
-                                  ))
-                              : null}
-                          </ul>
-                        )}
+                        {showSuggestion && renderSuggestions()}
                       </div>
 
                       <div className='col-md-4'>
@@ -343,7 +365,7 @@ export default function Home() {
               <div className='col-lg-12'>
                 <div className='mt-5 text-center'>
                   <Link
-                    to='/job-categories'
+                    to='/sub-categories/all'
                     className='btn btn-primary btn-hover'
                   >
                     Browse All Categories{" "}
@@ -480,8 +502,9 @@ export default function Home() {
                           <div key={recent.id} className='job-box card mt-4'>
                             <div className='bookmark-label text-center'>
                               <Link
-                                to='/javascript:void(0)'
+                                to=''
                                 className='text-white align-middle'
+                                onClick={() => handleJobBookMark(recent.id)}
                               >
                                 <i className='mdi mdi-star'></i>
                               </Link>
@@ -575,7 +598,7 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                <div className='col-lg-2 col-md-3'>
+                                {/* <div className='col-lg-2 col-md-3'>
                                   <div className='text-start text-md-end'>
                                     <Link
                                       to='/#applyNow'
@@ -586,7 +609,7 @@ export default function Home() {
                                       <i className='mdi mdi-chevron-double-right'></i>
                                     </Link>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -619,8 +642,9 @@ export default function Home() {
                           >
                             <div className='bookmark-label text-center'>
                               <Link
-                                to='/javascript:void(0)'
+                                to=''
                                 className='text-white'
+                                onClick={() => handleJobBookMark(feature.id)}
                               >
                                 <i className='mdi mdi-star'></i>
                               </Link>
@@ -718,7 +742,7 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                <div className='col-lg-2 col-md-3'>
+                                {/* <div className='col-lg-2 col-md-3'>
                                   <div className='text-start text-md-end'>
                                     <Link
                                       to='/#applyNow'
@@ -729,7 +753,7 @@ export default function Home() {
                                       <i className='mdi mdi-chevron-double-right'></i>
                                     </Link>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -759,8 +783,9 @@ export default function Home() {
                           <div key={freelance.id} className='job-box card mt-4'>
                             <div className='bookmark-label text-center'>
                               <Link
-                                to='/javascript:void(0)'
+                                to=''
                                 className='text-white align-middle'
+                                onClick={() => handleJobBookMark(freelance.id)}
                               >
                                 <i className='mdi mdi-star'></i>
                               </Link>
@@ -851,7 +876,7 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                <div className='col-lg-2 col-md-3'>
+                                {/* <div className='col-lg-2 col-md-3'>
                                   <div className='text-start text-md-end'>
                                     <Link
                                       to='/#applyNow'
@@ -862,7 +887,7 @@ export default function Home() {
                                       <i className='mdi mdi-chevron-double-right'></i>
                                     </Link>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -896,8 +921,9 @@ export default function Home() {
                           >
                             <div className='bookmark-label text-center'>
                               <Link
-                                to='/javascript:void(0)'
+                                to=''
                                 className='text-white align-middle'
+                                onClick={() => handleJobBookMark(parTime.id)}
                               >
                                 <i className='mdi mdi-star'></i>
                               </Link>
@@ -986,7 +1012,7 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                <div className='col-lg-2 col-md-3'>
+                                {/* <div className='col-lg-2 col-md-3'>
                                   <div className='text-start text-md-end'>
                                     <Link
                                       to='/#applyNow'
@@ -997,7 +1023,7 @@ export default function Home() {
                                       <i className='mdi mdi-chevron-double-right'></i>
                                     </Link>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -1031,8 +1057,9 @@ export default function Home() {
                           >
                             <div className='bookmark-label text-center'>
                               <Link
-                                to='/javascript:void(0)'
+                                to=''
                                 className='text-white align-middle'
+                                onClick={() => handleJobBookMark(fullTime.id)}
                               >
                                 <i className='mdi mdi-star'></i>
                               </Link>
@@ -1123,7 +1150,7 @@ export default function Home() {
                                   </div>
                                 </div>
 
-                                <div className='col-lg-2 col-md-3'>
+                                {/* <div className='col-lg-2 col-md-3'>
                                   <div className='text-start text-md-end'>
                                     <Link
                                       to='/#applyNow'
@@ -1134,7 +1161,7 @@ export default function Home() {
                                       <i className='mdi mdi-chevron-double-right'></i>
                                     </Link>
                                   </div>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
