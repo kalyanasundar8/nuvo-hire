@@ -126,7 +126,7 @@ export default function Home() {
           width: 300,
           position: "absolute",
           top: "105%",
-          zIndex: 2,
+          zIndex: 1000,
           left: 10,
           listStyleType: "none",
           backgroundColor: "#fff",

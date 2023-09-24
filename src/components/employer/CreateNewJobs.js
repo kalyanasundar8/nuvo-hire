@@ -11,6 +11,7 @@ import { Badge } from "react-bootstrap";
 // Editor
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { createJobPostService } from "../../services/JobService";
 
 // ValidationSchema
 
@@ -20,7 +21,7 @@ const validationSchema = Yup.object({
     .min(1, "Job title is required"),
   jobdescription: Yup.string().required("Job Description is required"),
   categories: Yup.string().required("Categories is required"),
-  subcategories: Yup.string().required("Subcategories is required"),
+  // subcategories: Yup.string().required("Subcategories is required"),
   jobtype: Yup.string().required("Job type is required"),
   designation: Yup.string().required("Designation is required"),
   responsibilities: Yup.string().required("Responsibilities is required"),
@@ -28,21 +29,21 @@ const validationSchema = Yup.object({
   experience: Yup.string().required("Experience is required"),
   workmode: Yup.string().required("Workmode is required"),
   // employment: Yup.string().required("Employment is required"),
-  industry: Yup.string().required("Industry is required"),
-  // degree: Yup.string().required("Degree is required"),
-  // course: Yup.string().required("Course is required"),
-  education: Yup.string().required("Education is required"),
-  skills: Yup.array()
-    .required("Skills is required")
-    .min(1, "Select at least one skill"),
-  vacancy: Yup.number()
-    .required("Vacancy is required")
-    .typeError("Vacancy must be a number"),
-  lastdate: Yup.string().required("LastDate is required"),
-  country: Yup.string().required("Country is required"),
-  state: Yup.string().required("state is required"),
-  city: Yup.string().required("City is required"),
-  zipcode: Yup.string().required("ZipCode is required"),
+  // industry: Yup.string().required("Industry is required"),
+  // // degree: Yup.string().required("Degree is required"),
+  // // course: Yup.string().required("Course is required"),
+  // education: Yup.string().required("Education is required"),
+  // skills: Yup.array()
+  //   .required("Skills is required")
+  //   .min(1, "Select at least one skill"),
+  // vacancy: Yup.number()
+  //   .required("Vacancy is required")
+  //   .typeError("Vacancy must be a number"),
+  // lastdate: Yup.string().required("LastDate is required"),
+  // country: Yup.string().required("Country is required"),
+  // state: Yup.string().required("state is required"),
+  // city: Yup.string().required("City is required"),
+  // zipcode: Yup.string().required("ZipCode is required"),
 });
 
 export default function CreateNewJobs() {
@@ -58,7 +59,7 @@ export default function CreateNewJobs() {
       salary: "",
       experience: "",
       workmode: "",
-      employment: "",
+      employment: [],
       industry: "",
       degree: "",
       course: "",
@@ -197,6 +198,13 @@ export default function CreateNewJobs() {
     : null;
 
   const handleEmploymentSelect = (employmentOptions) => {
+    formik.setFieldValue("employment", selectedEmployment);
+
+    if (selectedEmployment.length === 0) {
+      formik.setFieldError("employment", "Employment is required");
+    } else {
+      formik.setFieldError("employment", "");
+    }
     // Extract the id values of selected options
     const selectedEmploymentIds = employmentOptions.map(
       (option) => option.value
@@ -440,12 +448,12 @@ export default function CreateNewJobs() {
       is_post_later: postLater,
     };
     console.log(payload);
-    // try {
-    //   const response = await ApiService("post-new-job", "POST", payload, true);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.log("Error ", error);
-    // }
+    try {
+      const response = await createJobPostService(payload);
+      console.log(response);
+    } catch (error) {
+      console.log("Error ", error);
+    }
   };
 
   return (
@@ -624,21 +632,25 @@ export default function CreateNewJobs() {
                 <div class='col-lg-6'>
                   <div class='mb-4'>
                     <label for='jobtype' class='form-label'>
-                      Job Type
+                      JobType
                       <span className='text-danger font-weight-bold'>*</span>
                     </label>
-                    <input
-                      type='text'
-                      class='form-control'
-                      id='jobtype'
+                    <select
+                      class='form-select'
+                      data-trigger=''
                       name='jobtype'
-                      placeholder='Job type'
+                      id='jobtype'
+                      aria-label='Default select example'
                       value={jobtype}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setJobType(e.target.value);
                       }}
-                    />
+                    >
+                      <option disabled></option>
+                      <option>Professional</option>
+                      <option>Worker</option>
+                    </select>
                     {formik.touched.jobtype && formik.errors.jobtype && (
                       <span className='error'>{formik.errors.jobtype}</span>
                     )}
@@ -810,7 +822,7 @@ export default function CreateNewJobs() {
                       value={selectedEmployment}
                       onChange={handleEmploymentSelect}
                       isMulti={true}
-                      name='degree'
+                      name='employment'
                     />
                     {formik.touched.employment && formik.errors.employment && (
                       <span className='error'>{formik.errors.employment}</span>

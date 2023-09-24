@@ -58,11 +58,11 @@ export default function JobDetail() {
     console.log(payload);
     try {
       const response = await ApiService("apply-jobs", "POST", payload, true);
-      console.log(response);
-      if (response.response.data.status === true) {
+      console.log(response.response.data.message);
+      if (response.response.data.status === false) {
         setShowPopUpMessage(response.response.data.message);
       } else {
-        setShowPopUpMessage(response.response.data.message);
+        setShowPopUpMessage(response.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);

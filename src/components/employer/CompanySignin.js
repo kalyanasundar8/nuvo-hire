@@ -59,7 +59,7 @@ export default function CompanySignin() {
         false
       );
 
-      if (response?.response?.data?.is_otp_verified == false) {
+      if (response?.response?.data?.is_otp_verified === false) {
         navigate("/verify-otp", { state: response?.response?.data?.phone_no });
       }
 

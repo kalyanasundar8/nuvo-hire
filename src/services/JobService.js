@@ -1,5 +1,15 @@
 import ApiService from "./ApiService";
 
+// Creating a new JobService
+export const createJobPostService = async (payload) => {
+  try {
+    const response = await ApiService("post-new-job", "POST", payload, true);
+    return response;
+  } catch (error) {
+    throw new Error("Error while creating a new Job");
+  }
+};
+
 // Fetching all jobs data service
 export const fetchAllJobs = async () => {
   try {
@@ -67,6 +77,21 @@ export const fetchProfiles = async (id) => {
     return response;
   } catch (error) {
     throw "Error while fetching profile";
+  }
+};
+
+// Update user profile service
+export const updateUserProfile = async (payload) => {
+  try {
+    const response = await ApiService(
+      "candidate-update",
+      "POST",
+      payload,
+      true
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Error while updating user profile");
   }
 };
 

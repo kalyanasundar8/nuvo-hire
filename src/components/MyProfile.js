@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { fetchProfiles } from "../services/JobService";
+import { fetchProfiles, updateUserProfile } from "../services/JobService";
+import { useFormik } from "formik";
+import { Badge } from "react-bootstrap";
 
 export default function MyProfile() {
   const { id } = useParams();
@@ -9,6 +11,7 @@ export default function MyProfile() {
   const [profile, setProfile] = useState("");
   const [overView, setOverView] = useState("");
   const [contact, setContact] = useState("");
+  const [skills, setSkills] = useState("");
 
   useEffect(() => {
     const fetchMyProfile = async () => {
@@ -18,6 +21,7 @@ export default function MyProfile() {
         console.log(response.data.data.profile);
         console.log(response.data.data.over_view);
         console.log(response.data.data.contact);
+        console.log(response.data.data.skills);
         setProfile(response.data.data.profile);
         setOverView(response.data.data.over_view);
         setContact(response.data.data.contact);
@@ -28,6 +32,134 @@ export default function MyProfile() {
 
     fetchMyProfile();
   }, [id]);
+
+  const formik = useFormik({
+    initialValues: {
+      first_name: "",
+      lastName: "",
+      password: "",
+      work_status: "",
+      jobseeker_type: "",
+      country_id: "",
+      state_id: "",
+      city_id: "",
+      address: "",
+      avatar: "",
+      resume: "",
+      passport: "",
+      pan_number: "",
+      pan_front: "",
+      pan_back: "",
+      aadhaar_front: "",
+      aadhaar_back: "",
+      aadhaar_number: "",
+
+      resume_title: "",
+      work_experience: "",
+      salary_range: "",
+      current_location: "",
+      preferred_location: "",
+      designation_id: "",
+      course_ug: "",
+      course_pg: "",
+      post_course_pg: "",
+      dob: "",
+      age: "",
+      marital_status: "",
+
+      college_id: "",
+
+      year_from: "",
+      year_to: "",
+      exp_designation: "",
+      exp_description: "",
+      project_title: "",
+
+      project_description: "",
+
+      skills: [],
+    },
+    onSubmit: (values) => {
+      // updateUserProfile(values);
+      handleUpdateProfile(values);
+      console.log(values);
+    },
+  });
+
+  const [updateSkills, setUpdateSkills] = useState([]);
+  const [skillsInput, setSkillsInput] = useState("");
+
+  const handleInputChange = (e) => {
+    setSkillsInput(e.target.value);
+  };
+
+  const handleInputKeyPress = (e) => {
+    if (e.key === " " && skillsInput.trim() !== "") {
+      setUpdateSkills([...updateSkills, skillsInput.trim()]);
+      setSkillsInput("");
+    }
+  };
+
+  const handleSkillsRemove = (skillsToRemove) => {
+    const updateSkills = skills.filter((skill) => skill !== skillsToRemove);
+    setSkills(updateSkills);
+  };
+
+  const handleUpdateProfile = (values) => {
+    const payload = {
+      name: values.first_name,
+      lastName: values.lastName,
+      password: values.password,
+      work_status: values.work_status,
+      jobseeker_type: values.jobseeker_type,
+      country_id: values.country_id,
+      state_id: values.state_id,
+      city_id: values.city_id,
+      address: values.address,
+      avatar: values.avatar,
+      resume: values.resume,
+      passport: values.passport,
+      pan_number: values.pan_number,
+      pan_front: values.pan_front,
+      pan_back: values.pan_back,
+      aadhaar_front: values.aadhaar_front,
+      aadhaar_back: values.aadhaar_back,
+      aadhaar_number: values.aadhaar_number,
+
+      resume_title: values.resume_title,
+      work_experience: values.work_experience,
+      salary_range: values.salary_range,
+      current_location: values.current_location,
+      preferred_location: values.preferred_location,
+      designation_id: values.designation_id,
+      course_ug: values.course_ug,
+      course_pg: values.course_pg,
+      post_course_pg: values.post_course_pg,
+      dob: values.dob,
+      age: values.age,
+      marital_status: values.marital_status,
+
+      college_id: values.college_id,
+
+      year_form: values.year_from,
+      year_to: values.year_to,
+      exp_designation: values.exp_designation,
+      exp_description: values.exp_description,
+      project_title: values.project_title,
+
+      project_description: values.project_description,
+
+      skills: updateSkills,
+    };
+    console.log(payload);
+
+    // try {
+    //   const response = updateUserProfile(payload);
+    //   console.log(response);
+    // } catch (error) {
+    //   console.log("Error: ", error);
+    // }
+  };
 
   return (
     <div className='page-content'>
@@ -98,7 +230,7 @@ export default function MyProfile() {
                         className='text-center pb-4 border-bottom'
                       >
                         <img
-                          src='assets/images/profile.jpg'
+                          src={profile.avatar}
                           alt=''
                           className='avatar-lg img-thumbnail rounded-circle mb-4'
                         />
@@ -493,39 +625,15 @@ export default function MyProfile() {
                           </div>
                         </div>
                       </div>
-                      <div className='mt-4'>
-                        <h5 className='fs-18 fw-bold'>Skills</h5>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          Cloud Management
-                        </span>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          Responsive Design
-                        </span>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          Network Architecture
-                        </span>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          PHP
-                        </span>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          Bootstrap
-                        </span>
-                        <span className='badge fs-13 bg-soft-blue mt-2'>
-                          UI & UX Designer
-                        </span>
-                      </div>
-                      <div className='mt-4'>
-                        <h5 className='fs-18 fw-bold'>Spoken languages</h5>
-                        <span className='badge fs-13 success-bg-subtle mt-2'>
-                          English
-                        </span>
-                        <span className='badge fs-13 success-bg-subtle mt-2'>
-                          German
-                        </span>
-                        <span className='badge fs-13 success-bg-subtle mt-2'>
-                          French
-                        </span>
-                      </div>
+                      <h5 className='fs-18 fw-bold'>Skills</h5>
+                      {Array.isArray(skills) &&
+                        skills.map((skill) => (
+                          <div key={skill.id} className='mt-4'>
+                            <span className='badge fs-13 bg-soft-blue mt-2'>
+                              Cloud Management
+                            </span>
+                          </div>
+                        ))}
                     </div>
                     <div
                       className='tab-pane fade'
@@ -533,338 +641,516 @@ export default function MyProfile() {
                       role='tabpanel'
                       aria-labelledby='settings-tab'
                     >
-                      <form action='#'>
-                        <div>
-                          <h5 className='fs-17 fw-semibold mb-3 mb-0'>
-                            My Account
-                          </h5>
-                          <div className='text-center'>
-                            <div className='mb-4 profile-user'>
-                              <img
-                                src='assets/images/user/img-02.jpg'
-                                className='rounded-circle img-thumbnail profile-img'
-                                id='profile-img'
-                                alt=''
-                              />
-                              <div className='p-0 rounded-circle profile-photo-edit'>
-                                <input
-                                  id='profile-img-file-input'
-                                  type='file'
-                                  className='profile-img-file-input'
-                                  onchange='previewImg()'
-                                />
-                                <label
-                                  for='profile-img-file-input'
-                                  className='profile-photo-edit avatar-xs'
-                                >
-                                  <i className='uil uil-edit'></i>
-                                </label>
-                              </div>
-                            </div>
+                      <form onSubmit={formik.handleSubmit}>
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Personal Information
+                        </h3>
+                        <div class='row'>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='first_name' class='form-label'>
+                              First Name
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='first_name'
+                              onChange={formik.handleChange}
+                            />
                           </div>
-                          <div className='row'>
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='firstName' className='form-label'>
-                                  First Name
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='firstName'
-                                  value='Jansh'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='lastName' className='form-label'>
-                                  Last Name
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='lastName'
-                                  value='Dickens'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label
-                                  for='choices-single-categories'
-                                  className='form-label'
-                                >
-                                  Account Type
-                                </label>
-                                <select
-                                  className='form-select'
-                                  data-trigger
-                                  name='choices-single-categories'
-                                  id='choices-single-categories'
-                                  aria-label='Default select example'
-                                >
-                                  <option value='4'>Accounting</option>
-                                  <option value='1'>IT & Software</option>
-                                  <option value='3'>Marketing</option>
-                                  <option value='5'>Banking</option>
-                                </select>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='email' className='form-label'>
-                                  Email
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='email'
-                                  value='Jansh@gmail.com'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
+                          <div class='col-lg-6 mb-3'>
+                            <label for='lastName' class='form-label'>
+                              Last Name
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='lastName'
+                              onChange={formik.handleChange}
+                            />
                           </div>
-                          {/*end row*/}
+                          <div class='col-lg-6 mb-3'>
+                            <label for='password' class='form-label'>
+                              Password
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='password'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='work_status' class='form-label'>
+                              WorkStatus
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='work_status'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='jobseeker_type' class='form-label'>
+                              JobseekerType
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='jobseeker_type'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
                         </div>
-                        {/*end account*/}
-                        <div className='mt-4'>
-                          <h5 className='fs-17 fw-semibold mb-3'>Profile</h5>
-                          <div className='row'>
-                            <div className='col-lg-12'>
-                              <div className='mb-3'>
-                                <label
-                                  for='exampleFormControlTextarea1'
-                                  className='form-label'
-                                >
-                                  Introduce Yourself
-                                </label>
-                                <textarea
-                                  className='form-control'
-                                  id='exampleFormControlTextarea1'
-                                  rows='5'
-                                >
-                                  Developer with over 5 years' experience
-                                  working in both the public and private
-                                  sectors. Diplomatic, personable, and adept at
-                                  managing sensitive situations. Highly
-                                  organized, self-motivated, and proficient with
-                                  computers. Looking to boost students’
-                                  satisfactions scores for International
-                                  University. Bachelor's degree in
-                                  communications.
-                                </textarea>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='languages' className='form-label'>
-                                  Languages
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='languages'
-                                  value='English, German, French'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label
-                                  for='choices-single-location'
-                                  className='form-label'
-                                >
-                                  Location
-                                </label>
-                                <select
-                                  className='form-select'
-                                  data-trigger
-                                  name='choices-single-location'
-                                  id='choices-single-location'
-                                  aria-label='Default select exam
-                                                                    ple'
-                                >
-                                  <option value='ME'>Montenegro</option>
-                                  <option value='MS'>Montserrat</option>
-                                  <option value='MA'>Morocco</option>
-                                  <option value='MZ'>Mozambique</option>
-                                </select>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-12'>
-                              <div className='mb-3'>
-                                <label
-                                  for='attachmentscv'
-                                  className='form-label'
-                                >
-                                  Attachments CV
-                                </label>
-                                <input
-                                  className='form-control'
-                                  type='file'
-                                  id='attachmentscv'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
+
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Location Information
+                        </h3>
+                        <div class='row'>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='country_id' class='form-label'>
+                              Country
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='country_id'
+                              onChange={formik.handleChange}
+                            />
                           </div>
-                          {/*end row*/}
-                        </div>
-                        {/*end profile*/}
-                        <div className='mt-4'>
-                          <h5 className='fs-17 fw-semibold mb-3'>
-                            Social Media
-                          </h5>
-                          <div className='row'>
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='facebook' className='form-label'>
-                                  Facebook
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='facebook'
-                                  value='https://www.facebook.com'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='twitter' className='form-label'>
-                                  Twitter
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='twitter'
-                                  value='https://www.twitter.com'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='linkedin' className='form-label'>
-                                  Linkedin
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='linkedin'
-                                  value='https://www.linkedin.com'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label for='whatsapp' className='form-label'>
-                                  Whatsapp
-                                </label>
-                                <input
-                                  type='text'
-                                  className='form-control'
-                                  id='whatsapp'
-                                  value='https://www.whatsapp.com'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
+                          <div class='col-lg-6 mb-3'>
+                            <label for='state_id' class='form-label'>
+                              State
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='state_id'
+                              onChange={formik.handleChange}
+                            />
                           </div>
-                          {/*end row*/}
-                        </div>
-                        {/*end socia-media*/}
-                        <div className='mt-4'>
-                          <h5 className='fs-17 fw-semibold mb-3 mb-3'>
-                            Change Password
-                          </h5>
-                          <div className='row'>
-                            <div className='col-lg-12'>
-                              <div className='mb-3'>
-                                <label
-                                  for='current-password-input'
-                                  className='form-label'
-                                >
-                                  Current password
-                                </label>
-                                <input
-                                  type='password'
-                                  className='form-control'
-                                  placeholder='Enter Current password'
-                                  id='current-password-input'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label
-                                  for='new-password-input'
-                                  className='form-label'
-                                >
-                                  New password
-                                </label>
-                                <input
-                                  type='password'
-                                  className='form-control'
-                                  placeholder='Enter new password'
-                                  id='new-password-input'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-6'>
-                              <div className='mb-3'>
-                                <label
-                                  for='confirm-password-input'
-                                  className='form-label'
-                                >
-                                  Confirm Password
-                                </label>
-                                <input
-                                  type='password'
-                                  className='form-control'
-                                  placeholder='Confirm Password'
-                                  id='confirm-password-input'
-                                />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div className='col-lg-12'>
-                              <div className='form-check'>
-                                <input
-                                  className='form-check-input'
-                                  type='checkbox'
-                                  value=''
-                                  id='verification'
-                                />
-                                <label
-                                  className='form-check-label'
-                                  for='verification'
-                                >
-                                  Enable Two-Step Verification via email
-                                </label>
-                              </div>
-                            </div>
-                            {/*end col*/}
+                          <div class='col-lg-6 mb-3'>
+                            <label for='city_id' class='form-label'>
+                              City
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='city_id'
+                              onChange={formik.handleChange}
+                            />
                           </div>
-                          {/*end row*/}
+                          <div class='col-lg-6 mb-3'>
+                            <label for='address' class='form-label'>
+                              Address
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='address'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
                         </div>
-                        {/*end Change-password*/}
-                        <div className='mt-4 text-end'>
-                          <a href='' className='btn btn-primary'>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>Uploads</h3>
+                        <div class='mb-3'>
+                          <label for='avatar' class='form-label'>
+                            Avatar
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='avatar'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='resume' class='form-label'>
+                            Resume
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='resume'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='passport' class='form-label'>
+                            Passport
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='passport'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>Identification</h3>
+                        <div class='row'>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='pan_number' class='form-label'>
+                              PAN Number
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='pan_number'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
+                          <div class='col-lg-6 mb-3'>
+                            <label for='aadhaar_number' class='form-label'>
+                              Aadhaar Number
+                            </label>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='aadhaar_number'
+                              onChange={formik.handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div class='mb-3'>
+                          <label for='pan_front' class='form-label'>
+                            PAN Front
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='pan_front'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='pan_back' class='form-label'>
+                            PAN Back
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='pan_back'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='aadhaar_front' class='form-label'>
+                            Aadhaar Front
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='aadhaar_front'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='aadhaar_back' class='form-label'>
+                            Aadhaar Back
+                          </label>
+                          <input
+                            class='form-control'
+                            type='file'
+                            id='aadhaar_back'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Resume Information
+                        </h3>
+                        <div class='mb-3'>
+                          <label for='resume_title' class='form-label'>
+                            Resume Title
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='resume_title'
+                            name='resume_title'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='work_experience' class='form-label'>
+                            Work Experience
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='work_experience'
+                            name='work_experience'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+
+                        <div class='mb-3'>
+                          <label for='salary_range' class='form-label'>
+                            Salary Range
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='salary_range'
+                            name='salary_range'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='current_location' class='form-label'>
+                            Current Location
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='current_location'
+                            name='current_location'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='preferred_location' class='form-label'>
+                            Preferred Location
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='preferred_location'
+                            name='preferred_location'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='designation_id' class='form-label'>
+                            Designation ID
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='designation_id'
+                            name='designation_id'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Education Information
+                        </h3>
+                        <div class='mb-3'>
+                          <label for='course_ug' class='form-label'>
+                            Course (UG)
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='course_ug'
+                            name='course_ug'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='course_pg' class='form-label'>
+                            Course (PG)
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            name='course_pg'
+                            id='course_pg'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='post_course_pg' class='form-label'>
+                            Post Course (PG)
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='post_course_pg'
+                            name='post_course_pg'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='dob' class='form-label'>
+                            Date of Birth
+                          </label>
+                          <input
+                            type='date'
+                            class='form-control'
+                            id='dob'
+                            name='dob'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='age' class='form-label'>
+                            Age
+                          </label>
+                          <input
+                            type='number'
+                            class='form-control'
+                            id='age'
+                            name='age'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='marital_status' class='form-label'>
+                            Marital Status
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='marital_status'
+                            name='marital_status'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Experience Information
+                        </h3>
+                        <div class='mb-3'>
+                          <label for='college_id' class='form-label'>
+                            College
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='college_id'
+                            name='college_id'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='year_from' class='form-label'>
+                            Year From
+                          </label>
+                          <input
+                            type='date'
+                            class='form-control'
+                            id='year_from'
+                            name='year_from'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='year_to' class='form-label'>
+                            Year To
+                          </label>
+                          <input
+                            type='date'
+                            class='form-control'
+                            id='year_to'
+                            name='year_to'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='exp_designation' class='form-label'>
+                            Experience Designation
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='exp_designation'
+                            name='exp_designation'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='exp_description' class='form-label'>
+                            Experience Description
+                          </label>
+                          <textarea
+                            class='form-control'
+                            id='exp_description'
+                            rows='5'
+                            onChange={formik.handleChange}
+                          ></textarea>
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>
+                          Project Information
+                        </h3>
+                        <div class='mb-3'>
+                          <label for='project_title' class='form-label'>
+                            Project Title
+                          </label>
+                          <input
+                            type='text'
+                            class='form-control'
+                            id='project_title'
+                            name='project_title'
+                            onChange={formik.handleChange}
+                          />
+                        </div>
+                        <div class='mb-3'>
+                          <label for='project_description' class='form-label'>
+                            Project Description
+                          </label>
+                          <textarea
+                            class='form-control'
+                            id='project_description'
+                            name='project_description'
+                            rows='5'
+                            onChange={formik.handleChange}
+                          ></textarea>
+                        </div>
+
+                        <h3 class='fs-17 fw-semibold mb-3'>Skills</h3>
+                        <div class='mb-3'>
+                          <label for='skills' class='form-label'>
+                            Skills
+                          </label>
+                          <div class='col-lg-6'>
+                            <input
+                              type='text'
+                              class='form-control'
+                              id='joblocation'
+                              name='joblocation'
+                              placeholder='Enter Locations...'
+                              value={skillsInput}
+                              onChange={handleInputChange}
+                              onKeyPress={handleInputKeyPress}
+                            />
+                            <div>
+                              {updateSkills.map((updateSkill) => (
+                                <Badge
+                                  key={updateSkill}
+                                  variant='light'
+                                  className='tag-badge mt-2'
+                                >
+                                  {updateSkill}
+                                  <span
+                                    className='badge-remove'
+                                    onClick={() =>
+                                      handleSkillsRemove(updateSkill)
+                                    }
+                                    style={{
+                                      fontSize: "15px",
+                                      fontWeight: "bold",
+                                      marginLeft: "5px",
+                                      cursor: "pointer",
+                                      color: "red",
+                                    }}
+                                  >
+                                    &nbsp;x
+                                  </span>
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class='mt-4 text-end'>
+                          <button type='submit' class='btn btn-primary'>
                             Update
-                          </a>
+                          </button>
                         </div>
                       </form>
                       {/*end form*/}

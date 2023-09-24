@@ -129,7 +129,7 @@ export default function JobSeekerSignUp() {
 
     try {
       const response = await ApiService("resume-upload", "POST", data, false);
-      console.log("Resume uploaded successfully");
+      console.log("Resume uploaded successfully", response.data.path);
       setResumeFile(response.data.path);
     } catch (error) {
       console.error("Error uploading resume: ", error);
