@@ -70,7 +70,7 @@ export default function CompanySignin() {
         setAlertMessage(
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
         );
-        navigate("/");
+        navigate("/dashboard");
         window.location.reload();
       } else {
         setError(response?.response?.data?.message);

@@ -22,4 +22,43 @@
     border-bottom: none;
   }
 
+  .centered-modal {
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatarContainer {
+    position: relative;
+  }
+  
+  .editIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  .avatarImage {
+    max-width: 100%;
+    height: auto;
+    transition: filter 0.2s ease-in-out;
+  }
+  
+  .editButton {
+    cursor: pointer;
+    color: #000;
+  }
+  
+  .avatarContainer:hover .avatarImage {
+    filter: brightness(80%); /* Adjust the brightness as desired */
+  }
+
+  .upload-button {
+    background-color: #f0f0f0; /* Muted color for background */
+    color: #007bff; /* Primary color for text */
+  }
   

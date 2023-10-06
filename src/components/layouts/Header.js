@@ -26,8 +26,8 @@ function Header() {
   const logOut = () => {
     localStorage.removeItem("user");
     dispatch(setIsAuthenticated(false));
-    window.location.reload();
     navigate("/");
+    window.location.reload();
   };
 
   //    const jobSeekerSignup = () => {
@@ -547,11 +547,24 @@ function Header() {
                       user?.data?.user_type === "Employer" && (
                         <>
                           <li>
+                            <Link className='dropdown-item' to='/dashboard'>
+                              Dashboard
+                            </Link>
+                          </li>
+                          <li>
                             <Link
                               className='dropdown-item'
                               to='/create-new-job'
                             >
                               Create new Jobs
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              className='dropdown-item'
+                              to={`/employer-profile/${user?.data?.id}`}
+                            >
+                              My Profile
                             </Link>
                           </li>
                           <li>
@@ -580,16 +593,16 @@ function Header() {
                               Bookmarks Jobs
                             </Link>
                           </li>
+                          <li>
+                            <Link
+                              className='dropdown-item'
+                              to={`/profile/${user?.data?.id}`}
+                            >
+                              My Profile
+                            </Link>
+                          </li>
                         </>
                       )}
-                    <li>
-                      <Link
-                        className='dropdown-item'
-                        to={`/profile/${user?.data?.id}`}
-                      >
-                        My Profile
-                      </Link>
-                    </li>
                     <li>
                       <Link className='dropdown-item' to='/' onClick={logOut}>
                         Logout

@@ -37,6 +37,7 @@ import RaiseNewTicket from "./components/tickets/RaiseNewTicket";
 import ViewTickets from "./components/tickets/ViewTickets";
 import EditJobPost from "./components/EditJobPost";
 import MyJobs from "./components/jobseeker/MyJobs";
+import EmployerProfile from "./components/employer/EmployerProfile";
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
 
           <Route path='/employer-signup' element={<CompanySignup />} />
           <Route path='/employer-signin' element={<CompanySignin />} />
+          <Route path='/employer-profile/:id' element={<EmployerProfile />} />
           <Route path='/faqs' element={<Faq />} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/jobs/:id?' element={<Jobs />} />
