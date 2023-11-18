@@ -104,4 +104,14 @@
     border-color: #027984;
     transition: border-color 0.3s ease-in-out;
   }
+
+  .sortlist-btn-hover:hover {
+    background-color: #C1FFC1; /* Change this to the desired hover color */
+    color: #2E7D32; /* Change this to the desired text color on hover */
+  }
+
+  .reject-btn-hover:hover {
+    background-color: #FFCCCC; /* Change this to the desired hover color */
+    color: #B71C1C; /* Change this to the desired text color on hover */
+  }
   

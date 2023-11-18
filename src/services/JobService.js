@@ -1,5 +1,19 @@
 import ApiService from "./ApiService";
 
+// Update a job details
+export const updateJob = async (payload, id) => {
+  try {
+    const response = await ApiService(
+      `update-job?id=${id}`, 
+      "POST", 
+      payload, 
+      true);
+    return response;
+  } catch (error) {
+    throw new Error("Error while updating a Job");
+  }
+};
+
 // Creating a new JobService
 export const createJobPostService = async (payload) => {
   try {
@@ -36,14 +50,63 @@ export const fetchCategoriesJob = async (subCategoryId) => {
 };
 
 // AppliedJobs Services
-export const fetchAppliedJobs = async () => {
+export const fetchAppliedJobs = async (id) => {
   try {
-    const response = await ApiService("view-applied-jobs", "GET", null, true);
+    const response = await ApiService(
+      `view-applied-candidates?manage_job_id=${id}`, 
+      "GET", 
+      null, 
+      true
+      );
     return response;
   } catch (error) {
     throw "Error while fetching AppliedJobs: " + error;
   }
 };
+
+export const fetchJoseekerAppliedJobs = async () => {
+  try {
+    const response = await ApiService(
+      "view-applied-jobs", 
+      "GET", 
+      null, 
+      true
+      );
+    return response;
+  } catch (error) {
+    throw "Error while fetching AppliedJobs: " + error;
+  }
+};
+
+
+
+export const addSorlistedCandidates = async (payload) => {
+  try {
+    const response = await ApiService(
+      "candidate-shortlist-create", 
+      "POST", 
+      payload, 
+      true
+      );
+    return response;
+  } catch (error) {
+    throw "Error while fetching AppliedJobs: " + error;
+  }
+};
+
+export const fetchApplicationDetails = async (payload) => {
+  try {
+    const response = await ApiService(
+      "view-shortlisted-candidates", 
+      "GET", 
+      payload, 
+      true
+      );
+    return response;
+  } catch (error) {
+    throw "Error while fetching AppliedJobs: " + error;
+  }
+}
 
 // BookmarkJob Services
 export const fetchBookmarkJob = async () => {

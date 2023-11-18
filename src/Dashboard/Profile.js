@@ -22,19 +22,19 @@ import {
 import { FaPencilAlt } from "react-icons/fa";
 
 // Services
-import AvatarUploader from "../../services/AvatarUploader";
+import AvatarUploader from "../services/AvatarUploader";
 import {
   companyStrength,
   getCompanyProfile,
   updateCompanyOverview,
   updateEmployerProfile,
-} from "../../services/ProfilePageService";
-import useFetch from "../useFetch";
+} from "../services/ProfilePageService";
+import useFetch from "../components/useFetch";
 import { useFormik } from "formik";
-import ErrorModel from "../layouts/ErrorModel";
-import SuccessModel from "../layouts/SuccessModel";
+import ErrorModel from "../components/layouts/ErrorModel";
+import SuccessModel from "../components/layouts/SuccessModel";
 
-function EmployerProfile() {
+function Profile() {
   const { id } = useParams();
 
   const [country, setCountry] = useState("");
@@ -286,55 +286,105 @@ function EmployerProfile() {
       className='page-content'
       style={{ marginBottom: "50px" }}
     >
-      {/*Start home */}
-      <section class='page-title-box'>
-        <div class='container'>
-          <div class='row justify-content-center'>
-            <div class='col-md-6'>
-              <div class='text-center text-white'>
-                <h3 class='mb-4'>Profile</h3>
-                {/* <div class='page-next'>
-                  <nav
-                    class='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol class='breadcrumb justify-content-center'>
-                      <li class='breadcrumb-item'>
-                        <Link to='/'>Home</Link>
-                      </li>
-                      <li class='breadcrumb-item'>
-                        <Link to=''>Profile</Link>
-                      </li>
-                      <li class='breadcrumb-item active' aria-current='page'>
-                        {" "}
-                        My Jobs{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div> */}
+        <div>
+        <div className="row mt-3">
+            <div className="col-xl-4 col-md-5 col-sm-6 mb-4">
+              <div
+                className="card text-white"
+                style={{ background: "#ADD8E6" }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title" style={{ color: "#1565C0" }}>
+                      Job applied
+                    </h5>
+                  </div>
+                  <div>
+                    <h1 className="card-text" style={{ color: "#1565C0" }}>
+                      8
+                    </h1>
+                  </div>
+                </div>
               </div>
             </div>
-            {/*end col*/}
+            <div className="col-xl-4 col-md-7 col-sm-6 mb-4">
+              <div
+                className="card text-white"
+                style={{ background: "#C1FFC1" }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title" style={{ color: "#2E7D32" }}>
+                      Approved jobs
+                    </h5>
+                  </div>
+                  <div>
+                    <h1 className="card-text" style={{ color: "#2E7D32" }}>
+                      8
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
+              <div
+                className="card text-white"
+                style={{ background: "#FFCCCC" }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title" style={{ color: "#B71C1C" }}>
+                      Not approved Jobs
+                    </h5>
+                  </div>
+                  <div>
+                    <h1 className="card-text" style={{ color: "#B71C1C" }}>
+                      8
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
+              <div
+                className="card text-white"
+                style={{ background: "#FFE4B5" }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title" style={{ color: "#E65100" }}>
+                      Approval pending Jobs
+                    </h5>
+                  </div>
+                  <div>
+                    <h1 className="card-text" style={{ color: "#E65100" }}>
+                      8
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
+              <div
+                className="card text-white"
+                style={{ background: "#FFF9C4" }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title" style={{ color: "#FBC02D" }}>
+                      Created Jobs
+                    </h5>
+                  </div>
+                  <div>
+                    <h1 className="card-text" style={{ color: "#FBC02D" }}>
+                      8
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          {/*end row*/}
         </div>
-        {/*end container*/}
-      </section>
-      {/*end home */}
-
-      {/*START SHAPE */}
-      <div class='position-relative' style={{ zIndex: 1 }}>
-        <div class='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
-            <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
-            ></path>
-          </svg>
-        </div>
-      </div>
-      {/*END SHAPE */}
       {/* All forms */}
       {/* ---------------- */}
       {/* Profile form */}
@@ -951,4 +1001,4 @@ function EmployerProfile() {
   );
 }
 
-export default EmployerProfile;
+export default Profile;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Apiservice from "../../services/ApiService";
-import { fetchAppliedJobs } from "../../services/JobService";
+import { fetchJoseekerAppliedJobs } from "../../services/JobService";
+
 
 export default function MyJobs() {
   const [appliedJobs, setAppliedJobs] = useState("");
@@ -9,7 +10,7 @@ export default function MyJobs() {
   useEffect(() => {
     const fetchJobsData = async () => {
       try {
-        const response = await fetchAppliedJobs();
+        const response = await fetchJoseekerAppliedJobs();
         console.log(response.data.data);
         setAppliedJobs(response.data.data);
       } catch (error) {
@@ -82,49 +83,7 @@ export default function MyJobs() {
               </div>
             </div>
             {/*end col*/}
-            <div class='col-lg-4'>
-              <div class='candidate-list-widgets'>
-                <div class='row'>
-                  <div class='col-lg-6'>
-                    <div class='selection-widget'>
-                      <select
-                        class='form-select'
-                        data-trigger
-                        name='choices-single-filter-orderby'
-                        id='choices-single-filter-orderby'
-                        aria-label='Default select example'
-                      >
-                        <option value='df'>Default</option>
-                        <option value='ne'>Newest</option>
-                        <option value='od'>Oldest</option>
-                        <option value='rd'>Random</option>
-                      </select>
-                    </div>
-                  </div>
-                  {/*end col*/}
-                  <div class='col-lg-6'>
-                    <div class='selection-widget mt-2 mt-lg-0'>
-                      <select
-                        class='form-select'
-                        data-trigger
-                        name='choices-candidate-page'
-                        id='choices-candidate-page'
-                        aria-label='Default select example'
-                      >
-                        <option value='df'>All</option>
-                        <option value='ne'>Last 2 Month</option>
-                        <option value='ne'>Last 6 Month</option>
-                        <option value='ne'>Last 12 Month</option>
-                        <option value='ne'>Last 2 Year</option>
-                      </select>
-                    </div>
-                  </div>
-                  {/*end col*/}
-                </div>
-                {/*end row*/}
-              </div>
-              {/*end candidate-list-widgets*/}
-            </div>
+            
             {/*end col*/}
           </div>
           {/*end row*/}

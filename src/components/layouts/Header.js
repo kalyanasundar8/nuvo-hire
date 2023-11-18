@@ -384,11 +384,18 @@ function Header() {
                 </li>
               )}
 
-              <li className='nav-item'>
-                <Link to='/pricing-plans' className='nav-link'>
-                  Pricing
-                </Link>
-              </li>
+              {isAuth === true ? (
+                <li className='nav-item'>
+                  <Link
+                    to={`/pricing-plans/${user?.data?.user_type}`}
+                    className='nav-link'
+                  >
+                    Pricing
+                  </Link>
+                </li>
+              ) : (
+                ""
+              )}
 
               <li className='nav-item'>
                 <Link to='/contact-us' className='nav-link'>

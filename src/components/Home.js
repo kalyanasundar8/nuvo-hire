@@ -4,9 +4,13 @@ import { useEffect, useState } from "react";
 import ApiService from "../services/ApiService";
 import useScrollToTop from "../hooks/useScrollToTop";
 import "./Home.css";
+import PropagateLoader from "react-spinners/PropagateLoader";
 
 export default function Home() {
   const navigate = useNavigate();
+
+  const [pageLoader, setPageLoader] = useState(true);
+
   // Job searching => countries
   const countriesData = useFetch("countries");
   const countries = countriesData.data;

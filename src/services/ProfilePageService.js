@@ -28,6 +28,20 @@ export const getCompanyProfile = async () => {
 export const updateEmployerProfile = async (payload) => {
   try {
     const response = await ApiService(
+      "update-company-profile",
+      "POST",
+      payload,
+      true
+    );
+    return response;
+  } catch (error) {
+    throw new Error("Couldn't get company profile");
+  }
+};
+
+export const updateCompanyOverview = async (payload) => {
+  try {
+    const response = await ApiService(
       "update-company-overview",
       "POST",
       payload,

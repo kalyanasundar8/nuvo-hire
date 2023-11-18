@@ -1,12 +1,32 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import useFetch from "./useFetch";
+import React, { useState, useEffect } from "react";
+import { fetchPricing } from "../services/PricingService";
+import { FaDollarSign } from "react-icons/fa";
+import { Link, useParams } from "react-router-dom";
 
 export default function Pricing() {
-  // Fetching from the API's
-  const pricingData = useFetch("packages");
-  const pricing = pricingData.data;
+  const [pricing, setPricing] = useState("");
+  const { user_type } = useParams("");
 
+  useEffect(() => {
+    const fetchPricingDetails = async () => {
+      try {
+        console.log(user_type);
+        if (user_type === "JobSeeker") {
+          const response = await fetchPricing(user_type);
+          console.log(response.data.data);
+          setPricing(response.data.data);
+        } else if (user_type === "Employer") {
+          const response = await fetchPricing(user_type);
+          console.log(response.data.data);
+          setPricing(response.data.data);
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+
+    fetchPricingDetails();
+  }, []);
   return (
     <div className='page-content'>
       {/* Start home */}
@@ -82,71 +102,66 @@ export default function Pricing() {
           </div>
           {/*end row*/}
           <div className='row'>
-           
-                {Array.isArray(pricing)
-                  ? pricing.map((price) => (
-                      <div className='col-lg-4 col-md-6 mt-5 pt-2'>
-                        <div className='pricing-box card bg-light'>
-                          <div key={price.id} className='card-body p-4 px-lg-5'>
-                            <div className='pricing-icon bg-light rounded-circle icons-md'>
-                              <i className='uim uim-telegram-alt'></i>
-                            </div>
-                            <div className='pricing-name text-center mt-4 pt-2'>
-                              <h4 className='fs-18'>{price.name}</h4>
-                            </div>
-                            <div className='pricing-price text-center mt-4'>
-                              <h2 className='fw-semibold'>
-                                {price.currency} {price.amount}
-                                <small className='fs-16'>/mo</small>
-                              </h2>
-                            </div>
-                            <ul className='list-unstyled pricing-details text-muted mt-4'>
-                              <li className='pricing-item'>
-                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                                {price.profile_download}
-                              </li>
-                              <li className='pricing-item'>
-                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                                {price.validity}
-                              </li>
-                              <li className='pricing-item'>
-                                <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
-                                {price.validity_value}
-                              </li>
-                              <li className='pricing-item text-decoration-line-through'>
-                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                                {price.profile_view}
-                              </li>
-                              <li className='pricing-item text-decoration-line-through'>
-                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                                {price.email}
-                              </li>
-                              <li className='pricing-item text-decoration-line-through'>
-                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                                {price.no_of_jobs}
-                              </li>
-                              <li className='pricing-item text-decoration-line-through'>
-                                <i className='mdi mdi-close-thick bg-soft-muted me-2'></i>{" "}
-                                {price.save_candidate_profile}
-                              </li>
-                            </ul>
-                            <div className='text-center mt-4 mb-2'>
-                              <a
-                                href='javascript:void(0)'
-                                className='btn btn-soft-primary rounded-pill'
-                              >
-                                Purchase Now <i className='uil uil-arrow-right'></i>
-                              </a>
-                            </div>
-                          </div>
+            {Array.isArray(pricing)
+              ? pricing.map((price) => (
+                  <div className='col-lg-4 col-md-6 mt-5 pt-2'>
+                    <div className='pricing-box card bg-light d-flex-column h-100'>
+                      <div key={price.id} className='card-body p-4 px-lg-5'>
+                        <div className='pricing-icon bg-light rounded-circle icons-md'>
+                          {price && price.icon ? (
+                            <img src={price.icon} alt='' />
+                          ) : (
+                            <FaDollarSign />
+                          )}
                         </div>
-                      {/*end pricing-box*/}
+                        <div className='pricing-name text-center mt-4 pt-2'>
+                          <h4 className='fs-18'>{price.name}</h4>
+                        </div>
+                        <div className='pricing-price text-center mt-4'>
+                          <h2 className='fw-semibold'>
+                            {price.amount}
+                            <small className='fs-16'>/{price.validity}</small>
+                          </h2>
+                          <p className='fs-16'></p>
+                        </div>
+                        <ul className='list-unstyled pricing-details text-muted mt-4'>
+                          <li className='pricing-item'>
+                            <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
+                            {price.profile_download}
+                          </li>
+                          <li className='pricing-item'>
+                            <i className='mdi mdi-check-bold success-bg-subtle me-2'></i>{" "}
+                            {price.profile_view}
+                          </li>
+                          <li className='pricing-item'>
+                            <i className='mdi mdi-check-bold bg-soft-muted me-2'></i>{" "}
+                            {price.email}
+                          </li>
+                          <li className='pricing-item'>
+                            <i className='mdi mdi-check-bold bg-soft-muted me-2'></i>{" "}
+                            {price.no_of_jobs}
+                          </li>
+                          <li className='pricing-item'>
+                            <i className='mdi mdi-check-bold bg-soft-muted me-2'></i>{" "}
+                            {price.save_candidate_profile}
+                          </li>
+                        </ul>
+                        <div className='text-center mx-auto mb-2'>
+                          <Link
+                            to={{
+                              pathname: `/view-cart/${price.id}`, // Include price.id as a URL parameter
+                            }}
+                            className='btn btn-soft-primary rounded-pill'
+                          >
+                            Purchase Now <i className='uil uil-arrow-right'></i>
+                          </Link>
+                        </div>
+                      </div>
                     </div>
-                    ))
-                  : null}
-             
-
-           
+                    {/*end pricing-box*/}
+                  </div>
+                ))
+              : null}
           </div>
           {/*end row*/}
         </div>

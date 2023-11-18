@@ -16,6 +16,7 @@ import Jobs from "./components/Jobs";
 import JobDetail from "./components/JobDetail";
 import Contact from "./components/Contact";
 import ManageJobs from "./components/ManageJobs";
+import Managejobs from "./Dashboard/ManageJobs";
 import BookmarkJobs from "./components/BookmarkJobs";
 import JobCategories from "./components/JobCategories";
 import MyProfile from "./components/MyProfile";
@@ -32,12 +33,17 @@ import ForgetPassword from "./components/ForgetPassword";
 import ResetPassword from "./components/ResetPassword";
 import VerifyOtp from "./components/employer/VerifyOtp";
 import CreateNewJobs from "./components/employer/CreateNewJobs";
+import CreateNewJob from "./Dashboard/CreatNewJobs";
 import MyTickets from "./components/tickets/MyTickets";
 import RaiseNewTicket from "./components/tickets/RaiseNewTicket";
 import ViewTickets from "./components/tickets/ViewTickets";
 import EditJobPost from "./components/EditJobPost";
 import MyJobs from "./components/jobseeker/MyJobs";
 import EmployerProfile from "./components/employer/EmployerProfile";
+import ViewCart from "./components/Cart/ViewCart";
+import AppliedJobsList from "./components/employer/AppliedJobsList";
+import Profile from "./Dashboard/Profile";
+import Tickets from "./Dashboard/Tickets";
 
 function App() {
   return (
@@ -57,6 +63,14 @@ function App() {
           <Route path='/reset-password/:token' element={<ResetPassword />} />
           <Route path='/verify-otp' element={<VerifyOtp />} />
           <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/applied-jobs/:id?' element={<AppliedJobsList />} />
+          
+          {/* Dashboard */}
+          <Route path='/dashboard-profile/:id?' element={<Profile />} />
+          <Route path='/dashboard-tickets' element={<Tickets />} />
+          <Route path='/dashboard-manage-jobs' element={<Managejobs />} />
+          <Route path='/dashboard-create-jobs' element={<CreateNewJob />} />
+
 
           {/* <Route path="/jobseeker-signup" element={<JobSeekerSignup />} /> */}
 
@@ -78,7 +92,8 @@ function App() {
           <Route path='/candidate-detail' element={<CandidateDetail />} />
           <Route path='/candidate-grid' element={<CandidateGrid />} />
           <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-          <Route path='/pricing-plans' element={<Pricing />} />
+          <Route path='/pricing-plans/:user_type' element={<Pricing />} />
+          <Route path='/view-cart/:priceId' element={<ViewCart />} />
 
           <Route path='/my-tickets' element={<MyTickets />} />
           <Route path='/raise-new-ticket' element={<RaiseNewTicket />} />
