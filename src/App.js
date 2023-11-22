@@ -44,6 +44,7 @@ import ViewCart from "./components/Cart/ViewCart";
 import AppliedJobsList from "./components/employer/AppliedJobsList";
 import Profile from "./Dashboard/Profile";
 import Tickets from "./Dashboard/Tickets";
+import SavedJobs from "./Dashboard/SavedJobs";
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
           <Route path='/dashboard-tickets' element={<Tickets />} />
           <Route path='/dashboard-manage-jobs' element={<Managejobs />} />
           <Route path='/dashboard-create-jobs' element={<CreateNewJob />} />
+          <Route path="/saved-jobs" element={<SavedJobs />}/>
 
 
           {/* <Route path="/jobseeker-signup" element={<JobSeekerSignup />} /> */}

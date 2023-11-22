@@ -14,7 +14,7 @@ export default function CompanySignup() {
   const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
-    company_name: Yup.string().required("Please enter the company name"),
+    company_name: Yup.string().matches(/^[a-zA-Z\s]+$/, 'Please enter a valid company name (only letters allowed)').required("Please enter the company name"),
     first_name: Yup.string().required("Please enter the first name"),
     // last_name: Yup.string().required("Last name is required"),
     email: Yup.string()
@@ -59,6 +59,9 @@ export default function CompanySignup() {
     formik.setFieldValue("terms", e.target.checked);
   };
 
+  let isAuth =
+    useSelector((state) => state?.auth?.isAuthenticated) ||
+    JSON.parse(localStorage.getItem("isAuthenticated"));
   // Signup form integration
 
   const [loading, setLoading] = useState(false);
@@ -90,9 +93,15 @@ export default function CompanySignup() {
         navigate("/verify-otp", { state: values.mobile_no });
         console.log(response);
       } else {
+        dispatch(setIsAuthenticated(true));
+        const user = localStorage.setItem("user", JSON.stringify(response?.data));
+        console.log(user);
         console.log(response?.response?.data?.message);
         setError(response?.response?.data?.message);
         setAlertMessage(response?.response?.data?.message);
+        setTimeout(() => {
+          setAlertMessage("");
+        }, 5000)
       }
     } catch (error) {
       console.log("Error:", error);

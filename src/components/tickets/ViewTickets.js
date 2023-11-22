@@ -7,7 +7,7 @@ import FileUploader from "../layouts/FileUploader";
 const ViewTickets = () => {
   const { id } = useParams();
 
-  const [showTicketDetails, setShowTicketDetails] = useState("");
+  const [showTicketDetails, setShowTicketDetails] = useState([]);
   const [addComment, setAddComment] = useState("");
   const [supportDocs, setSupportDocs] = useState([]);
   const [comments, setComments] = useState("");
@@ -21,7 +21,7 @@ const ViewTickets = () => {
         null,
         true
       );
-      console.log(response.data.data.comments);
+      console.log(response.data.data.response);
       setShowTicketDetails(response.data.data.response);
       setComments(response.data.data.comments);
     } catch (error) {
@@ -47,12 +47,12 @@ const ViewTickets = () => {
     };
 
     console.log(payload);
-    // try {
-    //   const commentResponse = await ApiService("post-comment", "POST", payload, true);
-    //   console.log(commentResponse);
-    // } catch (error){
-    //   console.log("Error: ", error);
-    // }
+    try {
+      const commentResponse = await ApiService("post-comment", "POST", payload, true);
+      console.log(commentResponse);
+    } catch (error){
+      console.log("Error: ", error);
+    }
   };
 
   const handleSupportDocsChange = (files) => {
@@ -109,9 +109,13 @@ const ViewTickets = () => {
                     <div className='mb-4'>
                       <h5>Attachments</h5>
                       <ul>
-                        <li>
-                          <a href='#'>{details.attachment}</a>
+                        { Array.isArray(details.attachment) ? (
+                        details.attachment.map((attach) => (
+                        <li key={attach.id}>
+                          <a href='#' target="blank">{attach.attachment}</a>
                         </li>
+                        ))
+                        ) : ""}
                         {/* Add more attachments as needed */}
                       </ul>
                     </div>
@@ -159,7 +163,7 @@ const ViewTickets = () => {
                     )}
                   </div>
                 ))
-              : null}
+              : "No"}
           </div>
         </div>
       </section>

@@ -22,8 +22,8 @@ export default function JobSeekerSignUp() {
     jobseeker_type: Yup.string().required(
       "Please choose you are worker (or) professional"
     ),
-    first_name: Yup.string().required("Please enter the first name"),
-    // last_name: Yup.string().required('Please enter the last name'),
+    first_name: Yup.string().min(3, "First name must be atleast 3 characters").max(25, "First name must be within 25 characters").required("Please enter the first name"),
+    // last_name: Yup.string().min().max(25, "Last name must be within 25 characters").required('Please enter the last name'),
     email: Yup.string()
       .email("Please enter the valid email address")
       .required("Please enter the email"),
@@ -72,26 +72,29 @@ export default function JobSeekerSignUp() {
     },
   });
 
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
 
   const jobseekerSignUp = async (values) => {
     // e.preventDefault();
-
-    const payload = {
-      jobseeker_type: values.jobseeker_type,
-      first_name: values.first_name,
-      last_name: values.last_name,
-      email: values.email,
-      password: values.password,
-      password_confirmation: values.password_confirmation,
-      mobile_no: values.mobile_no,
-      work_status: values.work_status,
-      resume: resumeFile,
-    };
-    console.log(payload);
     try {
+      const payload = {
+        jobseeker_type: values.jobseeker_type,
+        first_name: values.first_name,
+        last_name: values.last_name,
+        email: values.email,
+        password: values.password,
+        password_confirmation: values.password_confirmation,
+        mobile_no: values.mobile_no,
+        work_status: values.work_status,
+        resume: resumeFile,
+      };
+      console.log(payload);
+
+      setLoading(true);
+
       const response = await ApiService(
         "signup-as-jobseeker",
         "POST",
@@ -99,9 +102,11 @@ export default function JobSeekerSignUp() {
         false
       );
       if (response.status === 200) {
+        setLoading(false);
         navigate("/verify-otp", { state: values.mobile_no });
         console.log(response);
       } else {
+        setLoading(false);
         setAlertMessage(
           <Alert variant='danger'>{response?.response?.data?.message}</Alert>
         );
@@ -113,13 +118,13 @@ export default function JobSeekerSignUp() {
   };
 
   const handleFileChange = async (event) => {
-    setLoading(true);
+    setUploading(true);
     event.preventDefault();
 
     const file = event.target.files[0];
 
     if (!file) {
-      setLoading(false);
+      setUploading(false);
       return;
     }
 
@@ -128,13 +133,15 @@ export default function JobSeekerSignUp() {
     data.append("type", "resume");
 
     try {
+      setUploading(true);
       const response = await ApiService("resume-upload", "POST", data, false);
       console.log("Resume uploaded successfully", response.data.path);
       setResumeFile(response.data.path);
     } catch (error) {
+      setUploading(false);
       console.error("Error uploading resume: ", error);
     } finally {
-      setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -389,7 +396,7 @@ export default function JobSeekerSignUp() {
                                 htmlFor='meassageInput'
                                 className='form-label'
                               >
-                                Upload Resume
+                                { uploading ? "Uploading..." : "Upload Resume"}
                               </label>
                               <input
                                 type='file'
@@ -426,19 +433,21 @@ export default function JobSeekerSignUp() {
                           </div>
                           <div class='text-center'>
                             <button
-                              disabled={!formik.isValid}
+                              disabled={loading || !formik.isValid}
                               type='submit'
-                              class='btn btn-white btn-hover w-100'
+                              class={`btn btn-white btn-hover w-100 ${
+                                loading ? "disabled" : ""
+                              }`}
                             >
-                              Sign Up
+                              { loading ? "Signing Up...." : "Sign Up"}
                             </button>
                           </div>
                           <div class='mt-3 text-center'>
                             <p class='mb-0'>Or</p>
                           </div>
-                          <div>
+                          {/* <div>
                             <GoogleSignInBtn />
-                          </div>
+                          </div> */}
                         </div>
                       </form>
                       <div class='mt-3 text-center'>

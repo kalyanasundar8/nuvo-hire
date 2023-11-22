@@ -17,8 +17,11 @@ import { Badge } from "react-bootstrap";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-// ValidationSchema
+// Models
+import SuccessModel from "../components/layouts/SuccessModel";
+import ErrorModel from "../components/layouts/ErrorModel";
 
+// ValidationSchema
 const validationSchema = Yup.object({
   jobtitle: Yup.string()
     .required("Job Title is required")
@@ -131,6 +134,10 @@ export default function CreateNewJobs() {
   const [tags, setTags] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [postLater, setPostLater] = useState(0);
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
 
   // Description Editor
@@ -455,7 +462,22 @@ export default function CreateNewJobs() {
     try {
       const response = await createJobPostService(payload);
       console.log(response);
+      if(response.data.status === true) {
+        setTimeout(() => {
+          setLoading(false);
+        setSuccess("Job post was created successfuly");
+        }, 3000)
+      } else {
+        setLoading(true);
+        setTimeout(() => {
+          setError("We are not able to create this job post")
+        }, 3000)
+      }
     } catch (error) {
+      setTimeout(() => {
+        setLoading(false);
+        setError("We are not able to create this job post")
+      }, 3000)
       console.log("Error ", error);
     }
   };
@@ -1152,9 +1174,18 @@ export default function CreateNewJobs() {
                     >
                       Save
                     </button>
-                    <button type='submit' class='btn btn-primary mx-1'>
+                    { loading ? (
+                      <button type='submit' disabled class='btn btn-primary mx-1'>
+                      Loading...
+                    </button>  
+                    ) : (
+                      <button type='submit' class='btn btn-primary mx-1'>
                       Post Now <i class='mdi mdi-send'></i>
                     </button>
+                    )}
+                    <div className="mt-3">
+                    { success ? (<SuccessModel success={success}/>) : error ? (<ErrorModel error={error}/>) : ""}
+                    </div>      
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService";
 import {
   AiOutlineFile,
@@ -89,19 +89,60 @@ const FileUploader = ({ setAttachmentFiles, type }) => {
     }
   };
 
+  const handleFileChange = async (event) => {
+    setLoading(true);
+
+    const files = event.target.files;
+    const data = new FormData();
+
+    const invalidFiles = Array.from(files).filter((file) => {
+      const extension = file.name.split(".").pop().toLowerCase();
+      return !allowedFileTypes.includes(extension);
+    });
+
+    if (invalidFiles.length > 0) {
+      console.error("Invalid file types: ", invalidFiles);
+      setAlertMessage(
+        <Alert variant='danger'>Upload .jpg, .jpeg, .png or .pdf files</Alert>
+      );
+      setLoading(false);
+      return;
+    } else {
+      setAlertMessage(null);
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      data.append("file", files[i]);
+    }
+
+    data.append("type", type);
+
+    try {
+      const response = await ApiService("upload-kyc", "POST", data, true);
+      console.log("Files uploaded successfully");
+
+      setSelectedFiles((prevSelectedFiles) => [
+        ...prevSelectedFiles,
+        response.data.path,
+      ]);
+    } catch (error) {
+      console.error("Error uploading files: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   function getFileTypeIcon(filePath) {
     const extension = filePath.split(".").pop().toLowerCase();
     if (extension === "pdf") {
-      return <AiOutlineFilePdf size={40} />; // PDF icon
+      return <AiOutlineFilePdf size={40} />;
     } else if (["jpg", "jpeg", "png", "gif", "bmp"].includes(extension)) {
-      return <AiOutlineFileImage size={40} />; // Image icon
+      return <AiOutlineFileImage size={40} />;
     } else {
-      // Add more file type icons as needed for other file types
-      return <AiOutlineFile size={40} />; // Default file icon
+      return <AiOutlineFile size={40} />;
     }
   }
 
-  // Helper function to get the file name
   function getFileName(filePath) {
     return filePath.split("/").pop();
   }
@@ -131,8 +172,8 @@ const FileUploader = ({ setAttachmentFiles, type }) => {
           id='attachments'
           name='attachments'
           multiple
-          // onChange={handleFileChange}
-          style={{ border: "2px dashed #000", cursor: "pointer" }}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
         />
         <div
           style={{
@@ -141,9 +182,10 @@ const FileUploader = ({ setAttachmentFiles, type }) => {
             cursor: "pointer",
             height: "100px",
           }}
+          onClick={() => document.getElementById('attachments').click()}
         >
           <label className='btn btn-link m-4' htmlFor='attachments'>
-            Choose File
+            Drag and drop (or) Choose File
           </label>
         </div>
         {selectedFiles.length > 0 && (
@@ -160,7 +202,7 @@ const FileUploader = ({ setAttachmentFiles, type }) => {
                     </p>
                     <button
                       type='button'
-                      className='className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"'
+                      className='btn btn-danger btn-sm position-absolute top-0 end-0 m-2'
                       onClick={() => handleCancelFile(index)}
                       style={{
                         paddingTop: "2px",

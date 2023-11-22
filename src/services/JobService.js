@@ -34,6 +34,21 @@ export const fetchAllJobs = async () => {
   }
 };
 
+// Delete jobs
+export const deleteEmployeeJobs = async (payload) => {
+  try {
+    const response = await ApiService(
+      "delete-job",
+      "POST",
+      payload,
+      true
+    );
+    return response
+  } catch (error) {
+    throw new Error("Error while deleting");
+  }
+};
+
 // Fetching jobs based on subCategories
 export const fetchCategoriesJob = async (subCategoryId) => {
   try {
@@ -119,9 +134,10 @@ export const fetchBookmarkJob = async () => {
 };
 
 // Manage Jobs Services
-export const fetchEmployeeMyJobs = async () => {
+export const fetchEmployeeMyJobs = async (payload) => {
   try {
-    const response = await ApiService("myjobs", "GET", null, true);
+    console.log(payload)
+    const response = await ApiService("myjobs", "POST", payload, true);
     return response;
   } catch (error) {
     throw "Error while fetching BookmarkJob: " + error;

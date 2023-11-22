@@ -57,6 +57,16 @@ export default function MyProfile() {
   const [projectForm, setProjectForm] = useState(false);
   const [editProjectForm, setEditProjectForm] = useState(false);
   const [aboutForm, setAboutForm] = useState(false);
+  const [linkedInForm, setLinkedInForm] = useState(false);
+
+  // LinkedInForm
+  const handleLinkedInForm = () => {
+    setLinkedInForm(true);
+  };
+
+  const handleLinkeInFormClose = () => {
+    setLinkedInForm(false);
+  };
 
   // About details
   const handleAboutForm = () => {
@@ -159,6 +169,21 @@ export default function MyProfile() {
   };
   // Projects modal controls end
   // Modal end
+
+  // Dowload resume
+  const downloadResume = async () => {
+    try {
+      const response = await ApiService(
+        "candidate-resume-download",
+        "GET",
+        null,
+        true
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //? Dropdown data
   const [country, setCountry] = useState("");
@@ -389,19 +414,40 @@ export default function MyProfile() {
   // Resume details fetching
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState(null);
-  const [selectedFilePath, setFilePath] = useState(null);
+  const [filePath, setFilePath] = "";
 
   const handleFileChange = async (event) => {
     setLoading(true);
     event.preventDefault();
 
-    const selectedFile = event.target.files[0];
+    const selectedFile = event.target.files[0] || null;
 
     if (!selectedFile) {
       setLoading(false);
       return;
     }
 
+    await uploadFile(selectedFile);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const droppedFiles = e.dataTransfer.files;
+
+    if (droppedFiles.length > 0) {
+      const selectedFile = droppedFiles[0];
+      await uploadFile(selectedFile);
+    }
+  };
+
+  const uploadFile = async (selectedFile) => {
     const data = new FormData();
     data.append("file", selectedFile);
     data.append("type", "resume");
@@ -753,6 +799,37 @@ export default function MyProfile() {
     console.log("Avatar upload: ", avatarPath);
   };
 
+  // Linkedin profile
+
+  const linkedInProfile = async () => {
+    const payload = {
+      linkedin_profile: linkedinFormik.values.linkedin_profile,
+    };
+    console.log(payload);
+
+    try {
+      const response = await ApiService(
+        "linkedin-profile-update",
+        "POST",
+        payload,
+        true
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const linkedinFormik = useFormik({
+    initialValues: {
+      linkedin_profile: "",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+      linkedInProfile(values);
+    },
+  });
+
   useEffect(() => {
     fetchingMyAbout();
     fetchMyProfile();
@@ -848,36 +925,14 @@ export default function MyProfile() {
   //! File uploader end
 
   return (
-    <div className='page-content'>
+    <div className="page-content">
       {/* Start home */}
-      <section className='page-title-box'>
-        <div className='container'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6'>
-              <div className='text-center text-white'>
-                <h3 className='mb-4'>My Profile</h3>
-                <div className='page-next'>
-                  <nav
-                    className='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol className='breadcrumb justify-content-center'>
-                      <li className='breadcrumb-item'>
-                        <a href='index.php'>Home</a>
-                      </li>
-                      <li className='breadcrumb-item'>
-                        <a href=''>My Profile</a>
-                      </li>
-                      <li
-                        className='breadcrumb-item active'
-                        aria-current='page'
-                      >
-                        {" "}
-                        My Profile{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
+      <section className="page-title-box">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-6">
+              <div className="text-center text-white">
+                <h3 className="mb-4">My Profile</h3>
               </div>
             </div>
             {/*end col*/}
@@ -889,13 +944,13 @@ export default function MyProfile() {
       {/* end home */}
 
       {/* START SHAPE */}
-      <div className='position-relative' style={{ zIndex: 1 }}>
-        <div className='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
+      <div className="position-relative" style={{ zIndex: 1 }}>
+        <div className="shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
             <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
+              fill=""
+              fill-opacity="1"
+              d="M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
             ></path>
           </svg>
         </div>
@@ -903,16 +958,16 @@ export default function MyProfile() {
       {/* END SHAPE */}
 
       {/* START PROFILE */}
-      <section className='section'>
-        <div className='container'>
-          <div className='row'>
-            <div class='col-lg-5'>
-              <div class='card side-bar'>
+      <section className="section">
+        <div className="container">
+          <div className="row">
+            <div class="col-lg-5">
+              <div class="card side-bar">
                 {Array.isArray(general) &&
                   general.map((gen) => (
                     <>
-                      <div key={gen.id} class='card-body p-4'>
-                        <div class='candidate-profile text-center'>
+                      <div key={gen.id} class="card-body p-4">
+                        <div class="candidate-profile text-center">
                           <div>
                             <AvatarUploader
                               onAvatarUpload={handleUserAvatarUpload}
@@ -921,48 +976,48 @@ export default function MyProfile() {
                           <Modal
                             show={showForm}
                             onHide={handleCloseForm}
-                            dialogClassName='centered-modal'
+                            dialogClassName="centered-modal"
                           >
                             <Modal.Header closeButton>
                               <Modal.Title>General</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
-                              <div class='p-4'>
+                              <div class="p-4">
                                 <form onSubmit={formik.handleSubmit}>
-                                  <div className='row'>
-                                    <div className='col-lg-6 mb-3'>
-                                      <label htmlFor='first_name'>
+                                  <div className="row">
+                                    <div className="col-lg-6 mb-3">
+                                      <label htmlFor="first_name">
                                         First Name
                                       </label>
                                       <input
-                                        type='text'
-                                        className='form-control'
-                                        name='first_name'
+                                        type="text"
+                                        className="form-control"
+                                        name="first_name"
                                         // placeholder={gen.name}
                                         value={formik.values.first_name}
                                         onChange={formik.handleChange}
                                       />
                                     </div>
-                                    <div className='col-lg-6 mb-3'>
-                                      <label htmlFor='lastName'>
+                                    <div className="col-lg-6 mb-3">
+                                      <label htmlFor="lastName">
                                         Last Name
                                       </label>
                                       <input
-                                        type='text'
-                                        className='form-control'
-                                        name='lastName'
+                                        type="text"
+                                        className="form-control"
+                                        name="lastName"
                                         value={formik.values.lastName}
                                         onChange={formik.handleChange}
                                       />
                                     </div>
                                   </div>
 
-                                  <div className='row'>
-                                    <div className='col-lg-6 mb-4'>
-                                      <label htmlFor='country'>Country</label>
+                                  <div className="row">
+                                    <div className="col-lg-6 mb-4">
+                                      <label htmlFor="country">Country</label>
                                       <select
-                                        className='form-select'
-                                        name='country'
+                                        className="form-select"
+                                        name="country"
                                         value={country}
                                         onChange={(e) => {
                                           formik.handleChange(e);
@@ -983,17 +1038,17 @@ export default function MyProfile() {
                                       </select>
                                       {formik.touched.country &&
                                         formik.errors.country && (
-                                          <span className='text-danger'>
+                                          <span className="text-danger">
                                             {formik.errors.country}
                                           </span>
                                         )}
                                     </div>
 
-                                    <div className='col-lg-6 mb-4'>
-                                      <label htmlFor='state'>State</label>
+                                    <div className="col-lg-6 mb-4">
+                                      <label htmlFor="state">State</label>
                                       <select
-                                        className='form-select'
-                                        name='state'
+                                        className="form-select"
+                                        name="state"
                                         value={state}
                                         onChange={(e) => {
                                           formik.handleChange(e);
@@ -1013,26 +1068,26 @@ export default function MyProfile() {
                                       </select>
                                       {formik.touched.state &&
                                         formik.errors.state && (
-                                          <span className='text-danger'>
+                                          <span className="text-danger">
                                             {formik.errors.state}
                                           </span>
                                         )}
                                     </div>
                                   </div>
 
-                                  <div className='row'>
-                                    <div className='col-lg-6 mb-4'>
-                                      <label htmlFor='city'>City</label>
+                                  <div className="row">
+                                    <div className="col-lg-6 mb-4">
+                                      <label htmlFor="city">City</label>
                                       <select
-                                        className='form-select'
-                                        name='city'
+                                        className="form-select"
+                                        name="city"
                                         value={city}
                                         onChange={(e) => {
                                           formik.handleChange(e);
                                           setCity(e.target.value);
                                         }}
                                       >
-                                        <option value='' disabled></option>
+                                        <option value="" disabled></option>
                                         {Array.isArray(cityData.data) &&
                                           cityData.data.map((cities) => (
                                             <option
@@ -1045,60 +1100,60 @@ export default function MyProfile() {
                                       </select>
                                       {formik.touched.city &&
                                         formik.errors.city && (
-                                          <span className='text-danger'>
+                                          <span className="text-danger">
                                             {formik.errors.city}
                                           </span>
                                         )}
                                     </div>
 
-                                    <div className='col-lg-6 mb-4'>
-                                      <label htmlFor='address'>Address</label>
+                                    <div className="col-lg-6 mb-4">
+                                      <label htmlFor="address">Address</label>
                                       <textarea
-                                        className='form-control'
-                                        name='address'
+                                        className="form-control"
+                                        name="address"
                                         onChange={formik.handleChange}
                                       />
                                     </div>
                                   </div>
 
-                                  <div className='row'>
-                                    <div className='col-lg-6 mb-3'>
+                                  <div className="row">
+                                    <div className="col-lg-6 mb-3">
                                       <label>Work Status</label>
                                       <select
-                                        className='form-select'
-                                        name='work_status'
+                                        className="form-select"
+                                        name="work_status"
                                         value={formik.values.work_status}
                                         onChange={formik.handleChange}
                                       >
-                                        <option value='Fresher'>Fresher</option>
-                                        <option value='Experienced'>
+                                        <option value="Fresher">Fresher</option>
+                                        <option value="Experienced">
                                           Experienced
                                         </option>
                                       </select>
                                     </div>
 
-                                    <div className='col-lg-6 mb-3'>
-                                      <label htmlFor='jobseeker_type'>
+                                    <div className="col-lg-6 mb-3">
+                                      <label htmlFor="jobseeker_type">
                                         Jobseeker Type
                                       </label>
                                       <select
-                                        className='form-select'
-                                        name='jobseeker_type'
+                                        className="form-select"
+                                        name="jobseeker_type"
                                         value={formik.values.jobseeker_type}
                                         onChange={formik.handleChange}
                                       >
-                                        <option value='Worker'>Worker</option>
-                                        <option value='Professional'>
+                                        <option value="Worker">Worker</option>
+                                        <option value="Professional">
                                           Professional
                                         </option>
                                       </select>
                                     </div>
                                   </div>
 
-                                  <div className='text-end'>
+                                  <div className="text-end">
                                     <button
-                                      className='btn btn-primary'
-                                      type='submit'
+                                      className="btn btn-primary"
+                                      type="submit"
                                     >
                                       Update
                                     </button>
@@ -1107,124 +1162,125 @@ export default function MyProfile() {
                               </div>
                             </Modal.Body>
                           </Modal>
-                          <h6 class='fs-18 mb-4 mt-4'>
+                          <h6 class="fs-18 mb-4 mt-4">
                             {gen.name}{" "}
-                            <span class='text-muted'>{gen.last_name}</span>
+                            <span class="text-muted">{gen.last_name}</span>
                             <FaPencilAlt
-                              class='text-muted'
+                              class="text-muted"
                               style={{
                                 marginLeft: "10px",
                                 fontSize: "12px",
                                 cursor: "pointer",
                               }}
                               onClick={handleGeneralClick}
-                              title='Edit your basics'
+                              title="Edit your basics"
                             />
                           </h6>
                         </div>
-                        <div class='candidate-profile-overview  card-body border-top p-4'>
-                          <h6 class='fs-17 fw-semibold mb-3'>
+                        <div class="candidate-profile-overview  card-body border-top p-4">
+                          <h6 class="fs-17 fw-semibold mb-3">
                             Profile Overview
                           </h6>
-                          <ul class='list-unstyled mb-0'>
+                          <ul class="list-unstyled mb-0">
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>Work Status</label>
+                              <div class="d-flex">
+                                <label class="text-dark">Work Status</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.work_status}
+                                    {gen.work_status ? gen.work_status : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>JobSeeker Type</label>
+                              <div class="d-flex">
+                                <label class="text-dark">JobSeeker Type</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.jobseeker_type}
+                                    {gen.jobseeker_type ? gen.jobseeker_type : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>Country</label>
+                              <div class="d-flex">
+                                <label class="text-dark">Country</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.country_id && gen.country_id.name}
+                                    {gen.country_id && gen.country_id.name ? gen.country_id.name : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>State</label>
+                              <div class="d-flex">
+                                <label class="text-dark">State</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.state_id && gen.state_id.name}
+                                    {gen.state_id && gen.state_id.name ? gen.state_id.name : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>City</label>
+                              <div class="d-flex">
+                                <label class="text-dark">City</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.city_id && gen.city_id.name}
+                                    {gen.city_id && gen.city_id.name ? gen.city_id.name : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>Address</label>
+                              <div class="d-flex">
+                                <label class="text-dark">Address</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.address}
+                                    {gen.address ? gen.address : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                             <li>
-                              <div class='d-flex'>
-                                <label class='text-dark'>Pincode</label>
+                              <div class="d-flex">
+                                <label class="text-dark">Pincode</label>
                                 <div>
                                   <p
-                                    class='text-muted mb-0'
+                                    class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.pincode}
+                                    {gen.pincode ? gen.pincode : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
                             </li>
                           </ul>
-                          <div class='mt-3'>
+                          <div class="mt-3">
                             <a
-                              href=''
-                              class='btn btn-primary btn-hover w-100 mt-2'
+                              onClick={() => downloadResume()}
+                              href=""
+                              class="btn btn-primary btn-hover w-100 mt-2"
                             >
-                              <i class='uil uil-import'></i> Download CV
+                              <i class="uil uil-import"></i> Download CV
                             </a>
                           </div>
                         </div>
@@ -1235,32 +1291,32 @@ export default function MyProfile() {
 
                 {/*candidate-profile-overview*/}
 
-                <div class='card-body p-4 border-top'>
-                  <h6 class='fs-17 fw-semibold mb-3'>
+                <div class="card-body p-4 border-top">
+                  <h6 class="fs-17 fw-semibold mb-3">
                     Professional Skills
                     <FaPencilAlt
-                      class='text-muted'
+                      class="text-muted"
                       style={{
                         marginLeft: "10px",
                         fontSize: "12px",
                         cursor: "pointer",
                       }}
                       onClick={handleSkillsForm}
-                      title='Edit your basics'
+                      title="Edit your basics"
                     />
                   </h6>
                   <Modal
                     show={skillsModel}
                     onHide={handleSkillsFormClose}
-                    dialogClassName='centered-modal'
+                    dialogClassName="centered-modal"
                   >
                     <Modal.Header closeButton>
                       <Modal.Title>Skills</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <div class='p-4'>
+                      <div class="p-4">
                         <form onSubmit={skillsFormik.handleSubmit}>
-                          <label for='skills' class='form-label'>
+                          <label for="skills" class="form-label">
                             Skills
                           </label>
                           <Select
@@ -1268,10 +1324,10 @@ export default function MyProfile() {
                             value={selectedSkill}
                             onChange={handleSelect}
                             isMulti={true}
-                            name='skills'
+                            name="skills"
                           />
-                          <div className='text-end mt-4'>
-                            <button className='btn btn-primary' type='submit'>
+                          <div className="text-end mt-4">
+                            <button className="btn btn-primary" type="submit">
                               Update
                             </button>
                           </div>
@@ -1280,8 +1336,8 @@ export default function MyProfile() {
                     </Modal.Body>
                   </Modal>
                   <div>
-                    <div className='d-flex item-center'>
-                      {Array.isArray(skills) &&
+                    <div className="d-flex item-center">
+                      {Array.isArray(skills) && skills.length > 0 ?
                         skills.map((skill) => (
                           <div
                             key={skill.id}
@@ -1289,65 +1345,114 @@ export default function MyProfile() {
                               display: "flex",
                             }}
                           >
-                            <span class='badge bg-success-subtle text-success fs-13 mt-1 ml-1'>
+                            <span class="badge bg-success-subtle text-success fs-13 mt-1 ml-1">
                               {skill.name}
                             </span>
                           </div>
-                        ))}
+                        )) : "Add skills"}
                     </div>
                   </div>
                 </div>
+                {/* LinkedIn model */}
+                <Modal
+                  show={linkedInForm}
+                  onHide={handleLinkeInFormClose}
+                  dialogClassName="centered-modal"
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>LinkedIn</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <div class="p-4">
+                      <form onSubmit={linkedinFormik.handleSubmit}>
+                        <div className="row">
+                          <div className="col-lg-6 mb-3">
+                            <label htmlFor="first_name">
+                              LinkedIn profile link
+                            </label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              name="linkedin_profile"
+                              // placeholder={gen.name}
+                              value={formik.values.linkedin_profile}
+                              onChange={linkedinFormik.handleChange}
+                            />
+                          </div>
+                        </div>
+                        <div className="text-end">
+                          <button className="btn btn-primary" type="submit">
+                            Update
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </Modal.Body>
+                </Modal>
+                {/* Linkedinmodel end */}
                 {/*end card-body*/}
                 {Array.isArray(contactDetails) &&
                   contactDetails.map((contact) => (
                     <div
                       key={contact.id}
-                      class='candidate-contact-details card-body p-4 border-top'
+                      class="candidate-contact-details card-body p-4 border-top"
                     >
-                      <h6 class='fs-17 fw-semibold mb-3'>Contact Details</h6>
-                      <ul class='list-unstyled mb-0'>
+                      <h6 class="fs-17 fw-semibold mb-3">Contact Details</h6>
+                      <ul class="list-unstyled mb-0">
                         <li>
-                          <div class='d-flex align-items-center mt-4'>
-                            <div class='icon bg-primary-subtle text-primary flex-shrink-0'>
-                              <i class='uil uil-envelope-alt'></i>
+                          <div class="d-flex align-items-center mt-4">
+                            <div class="icon bg-primary-subtle text-primary flex-shrink-0">
+                              <i class="uil uil-envelope-alt"></i>
                             </div>
-                            <div class='ms-3'>
-                              <h6 class='fs-14 mb-1'>Email</h6>
-                              <p class='text-muted mb-0'>{contact.email}</p>
+                            <div class="ms-3">
+                              <h6 class="fs-14 mb-1">Email</h6>
+                              <p class="text-muted mb-0">{contact.email ? contact.email : "Not disclosed"}</p>
                             </div>
                           </div>
                         </li>
                         <li>
-                          <div class='d-flex align-items-center mt-4'>
-                            <div class='icon bg-primary-subtle text-primary flex-shrink-0'>
-                              <i class='uil uil-map-marker'></i>
+                          <div class="d-flex align-items-center mt-4">
+                            <div class="icon bg-primary-subtle text-primary flex-shrink-0">
+                              <i class="uil uil-map-marker"></i>
                             </div>
-                            <div class='ms-3'>
-                              <h6 class='fs-14 mb-1'>Address</h6>
-                              <p class='text-muted mb-0'>{contact.address}</p>
-                            </div>
-                          </div>
-                        </li>
-                        <li>
-                          <div class='d-flex align-items-center mt-4'>
-                            <div class='icon bg-primary-subtle text-primary flex-shrink-0'>
-                              <i class='uil uil-phone'></i>
-                            </div>
-                            <div class='ms-3'>
-                              <h6 class='fs-14 mb-1'>Phone</h6>
-                              <p class='text-muted mb-0'>{contact.phone}</p>
+                            <div class="ms-3">
+                              <h6 class="fs-14 mb-1">Address</h6>
+                              <p class="text-muted mb-0">{contact.address ? contact.address : "Not disclosed"}</p>
                             </div>
                           </div>
                         </li>
                         <li>
-                          <div class='d-flex align-items-center mt-4'>
-                            <div class='icon bg-primary-subtle text-primary flex-shrink-0'>
-                              <i class='uil uil-skype-alt'></i>
+                          <div class="d-flex align-items-center mt-4">
+                            <div class="icon bg-primary-subtle text-primary flex-shrink-0">
+                              <i class="uil uil-phone"></i>
                             </div>
-                            <div class='ms-3'>
-                              <h6 class='fs-14 mb-1'>LinkedIn</h6>
-                              <p class='text-muted mb-0'>
-                                {contact.lined_in_profile}
+                            <div class="ms-3">
+                              <h6 class="fs-14 mb-1">Phone</h6>
+                              <p class="text-muted mb-0">{contact.phone ? contact.phone : "Not disclosed"}</p>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="d-flex align-items-center mt-4">
+                            <div class="icon bg-primary-subtle text-primary flex-shrink-0">
+                              <i class="uil uil-skype-alt"></i>
+                            </div>
+                            <div class="ms-3">
+                              <h6 class="fs-14 mb-1">
+                                LinkedIn
+                                <FaPencilAlt
+                                  class="text-muted"
+                                  style={{
+                                    marginLeft: "10px",
+                                    fontSize: "12px",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={handleLinkedInForm}
+                                  title="Edit your basics"
+                                />
+                              </h6>
+                              <p class="text-muted mb-0">
+                                {contact.linkedin_profile ? contact.linkedin_profile : "Not disclosed"}
                               </p>
                             </div>
                           </div>
@@ -1361,137 +1466,137 @@ export default function MyProfile() {
             </div>
 
             {/*end col*/}
-            <div className='col-lg-7 mt-0'>
-              <div className='card profile-content-page mt-4 mt-lg-0'>
+            <div className="col-lg-7 mt-0">
+              <div className="card profile-content-page mt-4 mt-lg-0">
                 <ul
-                  className='profile-content-nav nav nav-pills border-bottom mb-4'
-                  id='pills-tab'
-                  role='tablist'
+                  className="profile-content-nav nav nav-pills border-bottom mb-4"
+                  id="pills-tab"
+                  role="tablist"
                   style={{
                     fontSize: "16px",
                   }}
                 >
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link active'
-                      id='overview-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#overview'
-                      type='button'
-                      role='tab'
-                      aria-controls='overview'
-                      aria-selected='true'
+                      className="nav-link active"
+                      id="overview-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#overview"
+                      type="button"
+                      role="tab"
+                      aria-controls="overview"
+                      aria-selected="true"
                     >
                       Summary
                     </button>
                   </li>
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link'
-                      id='resume-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#resume'
-                      type='button'
-                      role='tab'
-                      aria-controls='resume'
-                      aria-selected='true'
+                      className="nav-link"
+                      id="resume-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#resume"
+                      type="button"
+                      role="tab"
+                      aria-controls="resume"
+                      aria-selected="true"
                     >
                       Resume
                     </button>
                   </li>
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link'
-                      id='education-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#education'
-                      type='button'
-                      role='tab'
-                      aria-controls='education'
-                      aria-selected='false'
+                      className="nav-link"
+                      id="education-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#education"
+                      type="button"
+                      role="tab"
+                      aria-controls="education"
+                      aria-selected="false"
                     >
                       Education
                     </button>
                   </li>
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link'
-                      id='experience-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#experience'
-                      type='button'
-                      role='tab'
-                      aria-controls='experience'
-                      aria-selected='false'
+                      className="nav-link"
+                      id="experience-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#experience"
+                      type="button"
+                      role="tab"
+                      aria-controls="experience"
+                      aria-selected="false"
                     >
                       Experience
                     </button>
                   </li>
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link'
-                      id='projects-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#projects'
-                      type='button'
-                      role='tab'
-                      aria-controls='projects'
-                      aria-selected='false'
+                      className="nav-link"
+                      id="projects-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#projects"
+                      type="button"
+                      role="tab"
+                      aria-controls="projects"
+                      aria-selected="false"
                     >
                       Projects
                     </button>
                   </li>
-                  <li className='nav-item' role='presentation'>
+                  <li className="nav-item" role="presentation">
                     <button
-                      className='nav-link'
-                      id='kyc-tab'
-                      data-bs-toggle='pill'
-                      data-bs-target='#kyc'
-                      type='button'
-                      role='tab'
-                      aria-controls='kyc'
-                      aria-selected='false'
+                      className="nav-link"
+                      id="kyc-tab"
+                      data-bs-toggle="pill"
+                      data-bs-target="#kyc"
+                      type="button"
+                      role="tab"
+                      aria-controls="kyc"
+                      aria-selected="false"
                     >
                       kyc
                     </button>
                   </li>
                 </ul>
                 {/* --- Summary --- */}
-                <div className='card-body p-4'>
-                  <div className='tab-content' id='pills-tabContent'>
+                <div className="card-body p-4">
+                  <div className="tab-content" id="pills-tabContent">
                     <div
-                      className='tab-pane fade show active'
-                      id='overview'
-                      role='tabpanel'
-                      aria-labelledby='overview-tab'
+                      className="tab-pane fade show active"
+                      id="overview"
+                      role="tabpanel"
+                      aria-labelledby="overview-tab"
                     >
                       <Modal
                         show={aboutForm}
                         onHide={handleCloseAboutForm}
-                        dialogClassName='centered-modal'
+                        dialogClassName="centered-modal"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title>About</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <div className='p-4'>
+                          <div className="p-4">
                             <form onSubmit={aboutFormik.handleSubmit}>
-                              <div className='mb-3'>
-                                <label htmlFor='about' className='form-label'>
+                              <div className="mb-3">
+                                <label htmlFor="about" className="form-label">
                                   About
                                 </label>
                                 <textarea
-                                  type='text'
-                                  className='form-control'
-                                  id='about'
+                                  type="text"
+                                  className="form-control"
+                                  id="about"
                                   value={aboutFormik.values.about}
                                   onChange={aboutFormik.handleChange}
                                 />
                               </div>
-                              <div className='text-end'>
+                              <div className="text-end">
                                 <button
-                                  type='submit'
-                                  className='btn btn-primary'
+                                  type="submit"
+                                  className="btn btn-primary"
                                 >
                                   Update
                                 </button>
@@ -1500,20 +1605,20 @@ export default function MyProfile() {
                           </div>
                         </Modal.Body>
                       </Modal>
-                      <div className='container'>
-                        <div className='bg-white p-4 rounded'>
+                      <div className="container">
+                        <div className="bg-white p-4 rounded">
                           <div>
                             <h5>
                               About
                               <FaPencilAlt
-                                class='text-muted'
+                                class="text-muted"
                                 style={{
                                   marginLeft: "10px",
                                   fontSize: "12px",
                                   cursor: "pointer",
                                 }}
                                 onClick={handleAboutForm}
-                                title='Edit your basics'
+                                title="Edit your basics"
                               />
                             </h5>
                             {Array.isArray(aboutMe) ? (
@@ -1526,7 +1631,7 @@ export default function MyProfile() {
                               <p>Try to add your about</p>
                             )}
                           </div>
-                          <div className='mt-4'>
+                          <div className="mt-4">
                             <h5>Upload Your Resume</h5>
                             <p>
                               Upload your resume here. Lorem ipsum dolor sit
@@ -1534,16 +1639,19 @@ export default function MyProfile() {
                               justo in metus sagittis suscipit. Vivamus tempor,
                               ex ut faucibus.
                             </p>
-                            <div>
+                            <div
+                              onDragOver={handleDragOver}
+                              onDrop={handleDrop}
+                            >
                               <input
-                                type='file'
-                                id='resumeUploadInput'
-                                accept='.pdf, .doc, .docx'
+                                type="file"
+                                id="resumeUploadInput"
+                                accept=".pdf, .doc, .docx"
                                 onChange={handleFileChange}
-                                style={{ display: "none" }} // Hide the input element
+                                style={{ display: "none" }}
                               />
                               <label
-                                htmlFor='resumeUploadInput'
+                                htmlFor="resumeUploadInput"
                                 className={`btn${loading ? " disabled" : ""}`}
                                 style={buttonStyle}
                               >
@@ -1558,54 +1666,54 @@ export default function MyProfile() {
                     {/* --- Summary end --- */}
 
                     <div
-                      className='tab-pane fade'
-                      id='settings'
-                      role='tabpanel'
-                      aria-labelledby='settings-tab'
+                      className="tab-pane fade"
+                      id="settings"
+                      role="tabpanel"
+                      aria-labelledby="settings-tab"
                     >
                       <div>
-                        <div className='container mt-4'>
-                          <div className='d-flex'>
+                        <div className="container mt-4">
+                          <div className="d-flex">
                             <div
-                              className='mb-3 text-center fw-bold'
+                              className="mb-3 text-center fw-bold"
                               style={{ fontSize: "32px", color: "#333" }}
                             >
                               Kalyanasundar{" "}
-                              <span className='text-muted'>Arunachalam</span>
+                              <span className="text-muted">Arunachalam</span>
                               <FaPencilAlt
-                                class='text-muted'
+                                class="text-muted"
                                 style={{
                                   marginLeft: "10px",
                                   fontSize: "18px",
                                   cursor: "pointer",
                                 }}
                                 // onClick={handlePencilIconClick}
-                                title='Edit your basics'
+                                title="Edit your basics"
                               />
                             </div>
-                            <div className='container text-center'>
-                              <div className='row'>
-                                <div className='col-12'>
-                                  <div className=''>
-                                    <div className='d-flex align-center justify-content-around'>
-                                      <p className='text-muted'>
+                            <div className="container text-center">
+                              <div className="row">
+                                <div className="col-12">
+                                  <div className="">
+                                    <div className="d-flex align-center justify-content-around">
+                                      <p className="text-muted">
                                         <FaUser /> Fresher
                                       </p>
-                                      <p className='text-muted'>
+                                      <p className="text-muted">
                                         <FaBriefcase /> Professional
                                       </p>
-                                      <p className='text-muted'>
+                                      <p className="text-muted">
                                         <FaMapMarkerAlt /> 6/97, Kovil Street
                                       </p>
                                     </div>
-                                    <div className='d-flex align-center justify-content-around'>
-                                      <p className='text-muted'>
+                                    <div className="d-flex align-center justify-content-around">
+                                      <p className="text-muted">
                                         <FaFlag /> India
                                       </p>
-                                      <p className='text-muted'>
+                                      <p className="text-muted">
                                         <FaMap /> Tamilnadu
                                       </p>
-                                      <p className='text-muted'>
+                                      <p className="text-muted">
                                         <FaMapPin /> Tenkasi
                                       </p>
                                     </div>
@@ -1623,20 +1731,20 @@ export default function MyProfile() {
 
                     {/* --- Education information tab --- */}
                     <div
-                      className='tab-pane fade'
-                      id='education'
-                      role='tabpanel'
-                      aria-labelledby='education-tab'
+                      className="tab-pane fade"
+                      id="education"
+                      role="tabpanel"
+                      aria-labelledby="education-tab"
                     >
                       <div>
-                        <div className='container mt-0'>
-                          <div className=''>
-                            <div class='candidate-education-details mt-0 pt-3'>
-                              <h6 class='fs-17 fw-bold mb-0'>
+                        <div className="container mt-0">
+                          <div className="">
+                            <div class="candidate-education-details mt-0 pt-3">
+                              <h6 class="fs-17 fw-bold mb-0">
                                 Education
                                 <AiOutlinePlusCircle
-                                  title='Add education details'
-                                  className='text-muted fw-bold'
+                                  title="Add education details"
+                                  className="text-muted fw-bold"
                                   style={{
                                     marginLeft: "10px",
                                     fontSize: "18px",
@@ -1647,20 +1755,20 @@ export default function MyProfile() {
                               </h6>
                               {Array.isArray(education) &&
                                 education.map((educationDetails) => (
-                                  <div class='candidate-education-content mt-4 d-flex'>
-                                    <div class='circle flex-shrink-0 bg-primary-subtle text-primary'>
+                                  <div class="candidate-education-content mt-4 d-flex">
+                                    <div class="circle flex-shrink-0 bg-primary-subtle text-primary">
                                       {" "}
                                       B{" "}
                                     </div>
-                                    <div class='ms-4'>
-                                      <h6 class='fs-16 mb-1'>
+                                    <div class="ms-4">
+                                      <h6 class="fs-16 mb-1">
                                         {educationDetails.degree &&
                                           educationDetails.degree.name}{" "}
                                         -{" "}
                                         {educationDetails.course &&
                                           educationDetails.course.name}
                                         <FaPencilAlt
-                                          class='text-muted'
+                                          class="text-muted"
                                           style={{
                                             marginLeft: "10px",
                                             fontSize: "12px",
@@ -1671,10 +1779,10 @@ export default function MyProfile() {
                                               educationDetails.id
                                             )
                                           }
-                                          title='Edit your basics'
+                                          title="Edit your basics"
                                         />
                                       </h6>
-                                      <p class='mb-2 text-muted'>
+                                      <p class="mb-2 text-muted">
                                         {educationDetails.college &&
                                           educationDetails.college.name}{" "}
                                         -{" "}
@@ -1683,7 +1791,7 @@ export default function MyProfile() {
                                         ({educationDetails.edu_year_from} to{" "}
                                         {educationDetails.edu_year_to})
                                       </p>
-                                      <p class='text-muted'>
+                                      <p class="text-muted">
                                         {educationDetails.description}
                                       </p>
                                     </div>
@@ -1698,24 +1806,24 @@ export default function MyProfile() {
                       <Modal
                         show={educationForm}
                         onHide={handleEducationFormClose}
-                        dialogClassName='centered-modal'
+                        dialogClassName="centered-modal"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title>Add Education</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <div className='p-4'>
+                          <div className="p-4">
                             <form onSubmit={educationFormik.handleSubmit}>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='degree'>Degree</label>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="degree">Degree</label>
                                   <select
-                                    className='form-control'
-                                    name='degree'
+                                    className="form-control"
+                                    name="degree"
                                     value={educationFormik.values.degree}
                                     onChange={educationFormik.handleChange}
                                   >
-                                    <option value=''>Select Degree</option>
+                                    <option value="">Select Degree</option>
                                     {Array.isArray(degrees)
                                       ? degrees.map((degree) => (
                                           <option
@@ -1728,15 +1836,15 @@ export default function MyProfile() {
                                       : null}
                                   </select>
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='course'>Course</label>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="course">Course</label>
                                   <select
-                                    className='form-control'
-                                    name='course'
+                                    className="form-control"
+                                    name="course"
                                     value={educationFormik.values.course}
                                     onChange={educationFormik.handleChange}
                                   >
-                                    <option value=''>Select Course</option>
+                                    <option value="">Select Course</option>
                                     {Array.isArray(courses)
                                       ? courses.map((course) => (
                                           <option
@@ -1750,16 +1858,16 @@ export default function MyProfile() {
                                   </select>
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='college'>College</label>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="college">College</label>
                                   <select
-                                    className='form-control'
-                                    name='college'
+                                    className="form-control"
+                                    name="college"
                                     value={educationFormik.values.college}
                                     onChange={educationFormik.handleChange}
                                   >
-                                    <option value=''>Select College</option>
+                                    <option value="">Select College</option>
                                     {Array.isArray(colleges)
                                       ? colleges.map((college) => (
                                           <option
@@ -1772,15 +1880,15 @@ export default function MyProfile() {
                                       : null}
                                   </select>
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='university'>University</label>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="university">University</label>
                                   <select
-                                    className='form-control'
-                                    name='university'
+                                    className="form-control"
+                                    name="university"
                                     value={educationFormik.values.university}
                                     onChange={educationFormik.handleChange}
                                   >
-                                    <option value=''>Select University</option>
+                                    <option value="">Select University</option>
                                     {Array.isArray(universities)
                                       ? universities.map((university) => (
                                           <option
@@ -1794,53 +1902,53 @@ export default function MyProfile() {
                                   </select>
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
                                   <label
-                                    htmlFor='edu_year_from'
-                                    className='mt-4'
+                                    htmlFor="edu_year_from"
+                                    className="mt-4"
                                   >
                                     Year From
                                   </label>
                                   <input
-                                    type='date'
-                                    className='form-control'
-                                    name='edu_year_from'
+                                    type="date"
+                                    className="form-control"
+                                    name="edu_year_from"
                                     value={educationFormik.values.edu_year_from}
                                     onChange={educationFormik.handleChange}
                                   />
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='edu_year_to' className='mt-4'>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="edu_year_to" className="mt-4">
                                     Year To
                                   </label>
                                   <input
-                                    type='date'
-                                    className='form-control'
-                                    name='edu_year_to'
+                                    type="date"
+                                    className="form-control"
+                                    name="edu_year_to"
                                     value={educationFormik.values.edu_year_to}
                                     onChange={educationFormik.handleChange}
                                   />
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-12 mb-3'>
-                                  <label htmlFor='description' className='mt-4'>
+                              <div className="form-group row">
+                                <div className="col-md-12 mb-3">
+                                  <label htmlFor="description" className="mt-4">
                                     Description
                                   </label>
                                   <textarea
-                                    className='form-control'
-                                    rows='2'
-                                    name='description'
+                                    className="form-control"
+                                    rows="2"
+                                    name="description"
                                     value={educationFormik.values.description}
                                     onChange={educationFormik.handleChange}
                                   />
                                 </div>
                               </div>
-                              <div className='text-center'>
+                              <div className="text-center">
                                 <button
-                                  className='btn btn-primary mt-4'
-                                  type='submit'
+                                  className="btn btn-primary mt-4"
+                                  type="submit"
                                 >
                                   Save Changes
                                 </button>
@@ -1856,20 +1964,20 @@ export default function MyProfile() {
                       <Modal
                         show={editEducationForm}
                         onHide={handleEditEducationFormClose}
-                        dialogClassName='centered-modal'
+                        dialogClassName="centered-modal"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title>Edit Education</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <div className='p-4'>
+                          <div className="p-4">
                             <form onSubmit={updateEducationFormik.handleSubmit}>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='degree'>Degree</label>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="degree">Degree</label>
                                   <select
-                                    className='form-control'
-                                    name='degree'
+                                    className="form-control"
+                                    name="degree"
                                     value={updateEducationFormik.values.degree}
                                     onChange={
                                       updateEducationFormik.handleChange
@@ -1887,17 +1995,17 @@ export default function MyProfile() {
                                       : null}
                                   </select>
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='course'>Course</label>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="course">Course</label>
                                   <select
-                                    className='form-control'
-                                    name='course'
+                                    className="form-control"
+                                    name="course"
                                     value={updateEducationFormik.values.course}
                                     onChange={
                                       updateEducationFormik.handleChange
                                     }
                                   >
-                                    <option value=''>Select Course</option>
+                                    <option value="">Select Course</option>
                                     {Array.isArray(courses)
                                       ? courses.map((course) => (
                                           <option
@@ -1911,18 +2019,18 @@ export default function MyProfile() {
                                   </select>
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='college'>College</label>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="college">College</label>
                                   <select
-                                    className='form-control'
-                                    name='college'
+                                    className="form-control"
+                                    name="college"
                                     value={updateEducationFormik.values.college}
                                     onChange={
                                       updateEducationFormik.handleChange
                                     }
                                   >
-                                    <option value=''>Select College</option>
+                                    <option value="">Select College</option>
                                     {Array.isArray(colleges)
                                       ? colleges.map((college) => (
                                           <option
@@ -1935,11 +2043,11 @@ export default function MyProfile() {
                                       : null}
                                   </select>
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='university'>University</label>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="university">University</label>
                                   <select
-                                    className='form-control'
-                                    name='university'
+                                    className="form-control"
+                                    name="university"
                                     value={
                                       updateEducationFormik.values.university
                                     }
@@ -1947,7 +2055,7 @@ export default function MyProfile() {
                                       updateEducationFormik.handleChange
                                     }
                                   >
-                                    <option value=''>Select University</option>
+                                    <option value="">Select University</option>
                                     {Array.isArray(universities)
                                       ? universities.map((university) => (
                                           <option
@@ -1961,18 +2069,18 @@ export default function MyProfile() {
                                   </select>
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-6 mb-3'>
+                              <div className="form-group row">
+                                <div className="col-md-6 mb-3">
                                   <label
-                                    htmlFor='edu_year_from'
-                                    className='mt-4'
+                                    htmlFor="edu_year_from"
+                                    className="mt-4"
                                   >
                                     Year From
                                   </label>
                                   <input
-                                    type='date'
-                                    className='form-control'
-                                    name='edu_year_from'
+                                    type="date"
+                                    className="form-control"
+                                    name="edu_year_from"
                                     value={
                                       updateEducationFormik.values.edu_year_from
                                     }
@@ -1981,14 +2089,14 @@ export default function MyProfile() {
                                     }
                                   />
                                 </div>
-                                <div className='col-md-6 mb-3'>
-                                  <label htmlFor='edu_year_to' className='mt-4'>
+                                <div className="col-md-6 mb-3">
+                                  <label htmlFor="edu_year_to" className="mt-4">
                                     Year To
                                   </label>
                                   <input
-                                    type='date'
-                                    className='form-control'
-                                    name='edu_year_to'
+                                    type="date"
+                                    className="form-control"
+                                    name="edu_year_to"
                                     value={
                                       updateEducationFormik.values.edu_year_to
                                     }
@@ -1998,15 +2106,15 @@ export default function MyProfile() {
                                   />
                                 </div>
                               </div>
-                              <div className='form-group row'>
-                                <div className='col-md-12 mb-3'>
-                                  <label htmlFor='description' className='mt-4'>
+                              <div className="form-group row">
+                                <div className="col-md-12 mb-3">
+                                  <label htmlFor="description" className="mt-4">
                                     Description
                                   </label>
                                   <textarea
-                                    className='form-control'
-                                    rows='2'
-                                    name='description'
+                                    className="form-control"
+                                    rows="2"
+                                    name="description"
                                     value={
                                       updateEducationFormik.values.description
                                     }
@@ -2016,10 +2124,10 @@ export default function MyProfile() {
                                   />
                                 </div>
                               </div>
-                              <div className='text-center'>
+                              <div className="text-center">
                                 <button
-                                  className='btn btn-primary mt-4'
-                                  type='submit'
+                                  className="btn btn-primary mt-4"
+                                  type="submit"
                                 >
                                   Save Changes
                                 </button>
@@ -2035,59 +2143,59 @@ export default function MyProfile() {
 
                     {/* --- Experience information tab --- */}
                     <div
-                      className='tab-pane fade'
-                      id='experience'
-                      role='tabpanel'
-                      aria-labelledby='experience-tab'
+                      className="tab-pane fade"
+                      id="experience"
+                      role="tabpanel"
+                      aria-labelledby="experience-tab"
                     >
                       <div>
-                        <div className='container mt-4'>
-                          <div className=''>
-                            <div class='candidate-education-details mt-4 pt-3'>
+                        <div className="container mt-4">
+                          <div className="">
+                            <div class="candidate-education-details mt-4 pt-3">
                               {/* Add experience */}
                               <Modal
                                 show={experienceForm}
                                 onHide={handleExperienceFormClose}
-                                dialogClassName='centered-modal'
+                                dialogClassName="centered-modal"
                               >
                                 <Modal.Header closeButton>
                                   <Modal.Title>Add Experience</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                  <div className='p-4'>
+                                  <div className="p-4">
                                     <form
                                       onSubmit={experienceFormik.handleSubmit}
                                     >
-                                      <div className='mb-4'>
+                                      <div className="mb-4">
                                         <label
-                                          htmlFor='company_name'
-                                          className='form-label'
+                                          htmlFor="company_name"
+                                          className="form-label"
                                         >
                                           Company Name
                                         </label>
                                         <input
-                                          type='text'
-                                          className='form-control'
-                                          name='company_name'
+                                          type="text"
+                                          className="form-control"
+                                          name="company_name"
                                           value={experienceFormik.company_name}
                                           onChange={
                                             experienceFormik.handleChange
                                           }
                                         />
                                       </div>
-                                      <div className='row'>
-                                        <div className='col-lg-6'>
-                                          <div className='mb-4'>
+                                      <div className="row">
+                                        <div className="col-lg-6">
+                                          <div className="mb-4">
                                             <label
-                                              htmlFor='year_from'
-                                              className='form-label'
+                                              htmlFor="year_from"
+                                              className="form-label"
                                             >
                                               Year From
                                             </label>
                                             <input
-                                              type='date'
-                                              className='form-control'
-                                              name='year_from'
+                                              type="date"
+                                              className="form-control"
+                                              name="year_from"
                                               value={experienceFormik.year_from}
                                               onChange={
                                                 experienceFormik.handleChange
@@ -2095,18 +2203,18 @@ export default function MyProfile() {
                                             />
                                           </div>
                                         </div>
-                                        <div className='col-lg-6'>
-                                          <div className='mb-4'>
+                                        <div className="col-lg-6">
+                                          <div className="mb-4">
                                             <label
-                                              htmlFor='year_to'
-                                              className='form-label'
+                                              htmlFor="year_to"
+                                              className="form-label"
                                             >
                                               Year To
                                             </label>
                                             <input
-                                              type='date'
-                                              className='form-control'
-                                              name='year_to'
+                                              type="date"
+                                              className="form-control"
+                                              name="year_to"
                                               value={experienceFormik.year_to}
                                               onChange={
                                                 experienceFormik.handleChange
@@ -2115,13 +2223,13 @@ export default function MyProfile() {
                                           </div>
                                         </div>
                                       </div>
-                                      <div className='mb-4'>
-                                        <label htmlFor='exp_designation'>
+                                      <div className="mb-4">
+                                        <label htmlFor="exp_designation">
                                           Designation
                                         </label>
                                         <select
-                                          className='form-control'
-                                          name='exp_designation'
+                                          className="form-control"
+                                          name="exp_designation"
                                           value={
                                             experienceFormik.values
                                               .exp_designation
@@ -2145,28 +2253,28 @@ export default function MyProfile() {
                                             : null}
                                         </select>
                                       </div>
-                                      <div className='mb-4'>
+                                      <div className="mb-4">
                                         <label
-                                          htmlFor='exp_description'
-                                          className='form-label'
+                                          htmlFor="exp_description"
+                                          className="form-label"
                                         >
                                           Description
                                         </label>
                                         <textarea
-                                          className='form-control'
-                                          name='exp_description'
+                                          className="form-control"
+                                          name="exp_description"
                                           value={experience.exp_description}
-                                          rows='5'
+                                          rows="5"
                                           onChange={
                                             experienceFormik.handleChange
                                           }
                                         ></textarea>
                                       </div>
 
-                                      <div className='mt-4 text-end'>
+                                      <div className="mt-4 text-end">
                                         <button
-                                          type='submit'
-                                          className='btn btn-primary'
+                                          type="submit"
+                                          className="btn btn-primary"
                                         >
                                           Update
                                         </button>
@@ -2181,29 +2289,29 @@ export default function MyProfile() {
                               <Modal
                                 show={editExperienceForm}
                                 onHide={handleEditExperienceFormClose}
-                                dialogClassName='centered-modal'
+                                dialogClassName="centered-modal"
                               >
                                 <Modal.Header closeButton>
                                   <Modal.Title>Edit Experience</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                  <div className='p-4'>
+                                  <div className="p-4">
                                     <form
                                       onSubmit={
                                         editExperienceFormik.handleSubmit
                                       }
                                     >
-                                      <div className='mb-4'>
+                                      <div className="mb-4">
                                         <label
-                                          htmlFor='company_name'
-                                          className='form-label'
+                                          htmlFor="company_name"
+                                          className="form-label"
                                         >
                                           Company Name
                                         </label>
                                         <input
-                                          type='text'
-                                          className='form-control'
-                                          name='company_name'
+                                          type="text"
+                                          className="form-control"
+                                          name="company_name"
                                           value={
                                             editExperienceFormik.company_name
                                           }
@@ -2212,19 +2320,19 @@ export default function MyProfile() {
                                           }
                                         />
                                       </div>
-                                      <div className='row'>
-                                        <div className='col-lg-6'>
-                                          <div className='mb-4'>
+                                      <div className="row">
+                                        <div className="col-lg-6">
+                                          <div className="mb-4">
                                             <label
-                                              htmlFor='year_from'
-                                              className='form-label'
+                                              htmlFor="year_from"
+                                              className="form-label"
                                             >
                                               Year From
                                             </label>
                                             <input
-                                              type='date'
-                                              className='form-control'
-                                              name='year_from'
+                                              type="date"
+                                              className="form-control"
+                                              name="year_from"
                                               value={
                                                 editExperienceFormik.year_from
                                               }
@@ -2234,18 +2342,18 @@ export default function MyProfile() {
                                             />
                                           </div>
                                         </div>
-                                        <div className='col-lg-6'>
-                                          <div className='mb-4'>
+                                        <div className="col-lg-6">
+                                          <div className="mb-4">
                                             <label
-                                              htmlFor='year_to'
-                                              className='form-label'
+                                              htmlFor="year_to"
+                                              className="form-label"
                                             >
                                               Year To
                                             </label>
                                             <input
-                                              type='date'
-                                              className='form-control'
-                                              name='year_to'
+                                              type="date"
+                                              className="form-control"
+                                              name="year_to"
                                               value={
                                                 editExperienceFormik.year_to
                                               }
@@ -2256,13 +2364,13 @@ export default function MyProfile() {
                                           </div>
                                         </div>
                                       </div>
-                                      <div className='mb-4'>
-                                        <label htmlFor='exp_designation'>
+                                      <div className="mb-4">
+                                        <label htmlFor="exp_designation">
                                           Designation
                                         </label>
                                         <select
-                                          className='form-control'
-                                          name='exp_designation'
+                                          className="form-control"
+                                          name="exp_designation"
                                           value={
                                             editExperienceFormik.values
                                               .exp_designation
@@ -2286,30 +2394,30 @@ export default function MyProfile() {
                                             : null}
                                         </select>
                                       </div>
-                                      <div className='mb-4'>
+                                      <div className="mb-4">
                                         <label
-                                          htmlFor='exp_description'
-                                          className='form-label'
+                                          htmlFor="exp_description"
+                                          className="form-label"
                                         >
                                           Description
                                         </label>
                                         <textarea
-                                          className='form-control'
-                                          name='exp_description'
+                                          className="form-control"
+                                          name="exp_description"
                                           value={
                                             editExperienceFormik.exp_description
                                           }
-                                          rows='5'
+                                          rows="5"
                                           onChange={
                                             editExperienceFormik.handleChange
                                           }
                                         ></textarea>
                                       </div>
 
-                                      <div className='mt-4 text-end'>
+                                      <div className="mt-4 text-end">
                                         <button
-                                          type='submit'
-                                          className='btn btn-primary'
+                                          type="submit"
+                                          className="btn btn-primary"
                                         >
                                           Update
                                         </button>
@@ -2320,11 +2428,11 @@ export default function MyProfile() {
                               </Modal>
                               {/* Edit experience end */}
 
-                              <h6 class='fs-17 fw-bold mb-0'>
+                              <h6 class="fs-17 fw-bold mb-0">
                                 Experience
                                 <AiOutlinePlusCircle
-                                  title='Add experience details'
-                                  className='text-muted fw-bold'
+                                  title="Add experience details"
+                                  className="text-muted fw-bold"
                                   style={{
                                     marginLeft: "10px",
                                     fontSize: "18px",
@@ -2337,17 +2445,17 @@ export default function MyProfile() {
                                 experience.map((experienceDetails) => (
                                   <div
                                     key={experienceDetails.id}
-                                    class='candidate-education-content mt-4 d-flex'
+                                    class="candidate-education-content mt-4 d-flex"
                                   >
-                                    <div class='circle flex-shrink-0 bg-primary-subtle text-primary'>
+                                    <div class="circle flex-shrink-0 bg-primary-subtle text-primary">
                                       {" "}
                                       B{" "}
                                     </div>
-                                    <div class='ms-4'>
-                                      <h6 class='fs-16 mb-1'>
+                                    <div class="ms-4">
+                                      <h6 class="fs-16 mb-1">
                                         {experienceDetails.company_name}
                                         <FaPencilAlt
-                                          class='text-muted'
+                                          class="text-muted"
                                           style={{
                                             marginLeft: "10px",
                                             fontSize: "12px",
@@ -2358,10 +2466,10 @@ export default function MyProfile() {
                                               experienceDetails.id
                                             )
                                           }
-                                          title='Edit your basics'
+                                          title="Edit your basics"
                                         />
                                       </h6>
-                                      <p class='mb-2 text-muted'>
+                                      <p class="mb-2 text-muted">
                                         {experienceDetails.exp_designation
                                           ? experienceDetails.exp_designation
                                               .name
@@ -2369,7 +2477,7 @@ export default function MyProfile() {
                                         - ({experienceDetails.year_from} -{" "}
                                         {experienceDetails.year_to})
                                       </p>
-                                      <p class='text-muted'>
+                                      <p class="text-muted">
                                         {experienceDetails.exp_description}
                                       </p>
                                     </div>
@@ -2384,58 +2492,58 @@ export default function MyProfile() {
 
                     {/* --- Projects information tab  */}
                     <div
-                      className='tab-pane fade'
-                      id='projects'
-                      role='tabpanel'
-                      aria-labelledby='projects-tab'
+                      className="tab-pane fade"
+                      id="projects"
+                      role="tabpanel"
+                      aria-labelledby="projects-tab"
                     >
                       {/* Add projects */}
                       <Modal
                         show={projectForm}
                         onHide={handleProjectFormClose}
-                        dialogClassName='centered-modal'
+                        dialogClassName="centered-modal"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title>Add your Project</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <div className='p-4'>
+                          <div className="p-4">
                             <form onSubmit={projectFormik.handleSubmit}>
-                              <div className='mb-4'>
+                              <div className="mb-4">
                                 <label
-                                  htmlFor='project_title'
-                                  className='form-label'
+                                  htmlFor="project_title"
+                                  className="form-label"
                                 >
                                   Project Title
                                 </label>
                                 <input
-                                  type='text'
-                                  className='form-control'
-                                  name='project_title'
+                                  type="text"
+                                  className="form-control"
+                                  name="project_title"
                                   value={projectFormik.project_title}
                                   onChange={projectFormik.handleChange}
                                 />
                               </div>
-                              <div className='mb-4'>
+                              <div className="mb-4">
                                 <label
-                                  htmlFor='project_description'
-                                  className='form-label'
+                                  htmlFor="project_description"
+                                  className="form-label"
                                 >
                                   Project Description
                                 </label>
                                 <textarea
-                                  className='form-control'
-                                  name='project_description'
+                                  className="form-control"
+                                  name="project_description"
                                   value={projectFormik.project_description}
-                                  rows='5'
+                                  rows="5"
                                   onChange={projectFormik.handleChange}
                                 ></textarea>
                               </div>
 
-                              <div className='mt-4 text-end'>
+                              <div className="mt-4 text-end">
                                 <button
-                                  type='submit'
-                                  className='btn btn-primary'
+                                  type="submit"
+                                  className="btn btn-primary"
                                 >
                                   Update
                                 </button>
@@ -2450,49 +2558,49 @@ export default function MyProfile() {
                       <Modal
                         show={editProjectForm}
                         onHide={handleEditProjectFormClose}
-                        dialogClassName='centered-modal'
+                        dialogClassName="centered-modal"
                       >
                         <Modal.Header closeButton>
                           <Modal.Title>Edit project</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          <div className='p-4'>
+                          <div className="p-4">
                             <form onSubmit={editProjectFormik.handleSubmit}>
-                              <div className='mb-4'>
+                              <div className="mb-4">
                                 <label
-                                  htmlFor='project_title'
-                                  className='form-label'
+                                  htmlFor="project_title"
+                                  className="form-label"
                                 >
                                   Project Title
                                 </label>
                                 <input
-                                  type='text'
-                                  className='form-control'
-                                  name='project_title'
+                                  type="text"
+                                  className="form-control"
+                                  name="project_title"
                                   value={editProjectFormik.project_title}
                                   onChange={editProjectFormik.handleChange}
                                 />
                               </div>
-                              <div className='mb-4'>
+                              <div className="mb-4">
                                 <label
-                                  htmlFor='project_description'
-                                  className='form-label'
+                                  htmlFor="project_description"
+                                  className="form-label"
                                 >
                                   Project Description
                                 </label>
                                 <textarea
-                                  className='form-control'
-                                  name='project_description'
+                                  className="form-control"
+                                  name="project_description"
                                   value={editProjectFormik.project_description}
-                                  rows='5'
+                                  rows="5"
                                   onChange={editProjectFormik.handleChange}
                                 ></textarea>
                               </div>
 
-                              <div className='mt-4 text-end'>
+                              <div className="mt-4 text-end">
                                 <button
-                                  type='submit'
-                                  className='btn btn-primary'
+                                  type="submit"
+                                  className="btn btn-primary"
                                 >
                                   Update
                                 </button>
@@ -2502,11 +2610,11 @@ export default function MyProfile() {
                         </Modal.Body>
                       </Modal>
                       {/* Edit projects end */}
-                      <h6 class='fs-17 fw-bold mb-0'>
+                      <h6 class="fs-17 fw-bold mb-0">
                         Projects
                         <AiOutlinePlusCircle
-                          title='Add experience details'
-                          className='text-muted fw-bold'
+                          title="Add experience details"
+                          className="text-muted fw-bold"
                           style={{
                             marginLeft: "10px",
                             fontSize: "18px",
@@ -2519,28 +2627,28 @@ export default function MyProfile() {
                         projects.map((projectDetails) => (
                           <div
                             key={projectDetails.project_id}
-                            class='candidate-education-content mt-4 d-flex'
+                            class="candidate-education-content mt-4 d-flex"
                           >
-                            <div class='circle flex-shrink-0 bg-primary-subtle text-primary'>
+                            <div class="circle flex-shrink-0 bg-primary-subtle text-primary">
                               {" "}
                               B{" "}
                             </div>
-                            <div class='ms-4'>
-                              <h6 class='fs-16 mb-1'>
+                            <div class="ms-4">
+                              <h6 class="fs-16 mb-1">
                                 {projectDetails.project_title}
                                 <FaPencilAlt
-                                  class='text-muted'
+                                  class="text-muted"
                                   style={{
                                     marginLeft: "10px",
                                     fontSize: "12px",
                                     cursor: "pointer",
                                   }}
                                   onClick={handleEditProjectForm}
-                                  title='Edit your basics'
+                                  title="Edit your basics"
                                 />
                               </h6>
 
-                              <p class='text-muted'>
+                              <p class="text-muted">
                                 {projectDetails.project_description}
                               </p>
                             </div>
@@ -2551,98 +2659,98 @@ export default function MyProfile() {
 
                     {/* --- KYC Information tab --- */}
                     <div
-                      className='tab-pane fade'
-                      id='kyc'
-                      role='tabpanel'
-                      aria-labelledby='kyc-tab'
+                      className="tab-pane fade"
+                      id="kyc"
+                      role="tabpanel"
+                      aria-labelledby="kyc-tab"
                     >
                       <form onSubmit={kycFormik.handleSubmit}>
-                        <h3 className='fs-17 fw-semibold mb-3'>
+                        <h3 className="fs-17 fw-semibold mb-3">
                           Identification
                         </h3>
-                        <div className='row'>
-                          <div className='col-lg-6 mb-3'>
-                            <label htmlFor='pan_number' className='form-label'>
+                        <div className="row">
+                          <div className="col-lg-6 mb-3">
+                            <label htmlFor="pan_number" className="form-label">
                               PAN Number
                             </label>
                             <input
-                              type='text'
-                              className='form-control'
-                              id='pan_number'
+                              type="text"
+                              className="form-control"
+                              id="pan_number"
                               onChange={kycFormik.handleChange}
                             />
                           </div>
-                          <div className='col-lg-6 mb-3'>
+                          <div className="col-lg-6 mb-3">
                             <label
-                              htmlFor='aadhaar_number'
-                              className='form-label'
+                              htmlFor="aadhaar_number"
+                              className="form-label"
                             >
                               Aadhaar Number
                             </label>
                             <input
-                              type='text'
-                              className='form-control'
-                              id='aadhaar_number'
+                              type="text"
+                              className="form-control"
+                              id="aadhaar_number"
                               onChange={kycFormik.handleChange}
                             />
                           </div>
                         </div>
 
-                        <div className='row'>
-                          <div className='col-lg-6 mb-3'>
-                            <label htmlFor='pan_front' className='form-label'>
+                        <div className="row">
+                          <div className="col-lg-6 mb-3">
+                            <label htmlFor="pan_front" className="form-label">
                               PAN Front
                             </label>
                             <UploaderServices
                               onFileUpload={handlePanFrontUpload}
-                              Filetype='pan_front'
+                              Filetype="pan_front"
                             />
                           </div>
-                          <div className='col-lg-6 mb-3'>
-                            <label htmlFor='pan_back' className='form-label'>
+                          <div className="col-lg-6 mb-3">
+                            <label htmlFor="pan_back" className="form-label">
                               PAN Back
                             </label>
                             <UploaderServices
                               onFileUpload={handlePanBackUpload}
-                              Filetype='pan_back'
+                              Filetype="pan_back"
                             />
                           </div>
-                          <div className='col-lg-6 mb-3'>
+                          <div className="col-lg-6 mb-3">
                             <label
-                              htmlFor='aadhaar_front'
-                              className='form-label'
+                              htmlFor="aadhaar_front"
+                              className="form-label"
                             >
                               Aadhaar Front
                             </label>
                             <UploaderServices
                               onFileUpload={handleAadhaarFrontUpload}
-                              Filetype='aadhaar_front'
+                              Filetype="aadhaar_front"
                             />
                           </div>
-                          <div className='col-lg-6 mb-3'>
+                          <div className="col-lg-6 mb-3">
                             <label
-                              htmlFor='aadhaar_back'
-                              className='form-label'
+                              htmlFor="aadhaar_back"
+                              className="form-label"
                             >
                               Aadhaar Back
                             </label>
                             <UploaderServices
                               onFileUpload={handleAadhaarBackUpload}
-                              Filetype='aadhar_back'
+                              Filetype="aadhar_back"
                             />
                           </div>
-                          <div className='col-lg-6 mb-3'>
-                            <label htmlFor='passport' className='form-label'>
+                          <div className="col-lg-6 mb-3">
+                            <label htmlFor="passport" className="form-label">
                               Passport
                             </label>
                             <UploaderServices
                               onFileUpload={handlePassportUpload}
-                              Filetype='passport'
+                              Filetype="passport"
                             />
                           </div>
                         </div>
-                        <div className='mt-4 text-end'>
-                          <button type='submit' className='btn btn-primary'>
+                        <div className="mt-4 text-end">
+                          <button type="submit" className="btn btn-primary">
                             Update
                           </button>
                         </div>
@@ -2652,34 +2760,34 @@ export default function MyProfile() {
 
                     {/* --- Resume information tab --- */}
                     <div
-                      className='tab-pane fade'
-                      id='resume'
-                      role='tabpanel'
-                      aria-labelledby='resume-tab'
+                      className="tab-pane fade"
+                      id="resume"
+                      role="tabpanel"
+                      aria-labelledby="resume-tab"
                     >
                       {Array.isArray(resume)
                         ? resume.map((resumeDetails) => (
-                            <div className='container mt-4'>
-                              <header className='bg-primary text-white text-center p-4'>
+                            <div className="container mt-4">
+                              <header className="bg-primary text-white text-center p-4">
                                 <h1>
                                   {resumeDetails.resume_title}
                                   <FaPencilAlt
-                                    class='text-muted'
+                                    class="text-muted"
                                     style={{
                                       marginLeft: "10px",
                                       fontSize: "12px",
                                       cursor: "pointer",
                                     }}
                                     onClick={handleResumeForm}
-                                    title='Edit your basics'
+                                    title="Edit your basics"
                                   />
                                 </h1>
                                 <p>{resumeDetails.designation}</p>
                               </header>
-                              <main className='p-4'>
-                                <section className='mb-4'>
+                              <main className="p-4">
+                                <section className="mb-4">
                                   <h2>Contact Information</h2>
-                                  <ul className='list-unstyled'>
+                                  <ul className="list-unstyled">
                                     <li>
                                       <strong
                                         style={{
@@ -2743,9 +2851,9 @@ export default function MyProfile() {
                                   </ul>
                                 </section>
 
-                                <section className='mb-4'>
+                                <section className="mb-4">
                                   <h2>Education</h2>
-                                  <ul className='list-unstyled'>
+                                  <ul className="list-unstyled">
                                     <li>
                                       <strong
                                         style={{
@@ -2786,64 +2894,64 @@ export default function MyProfile() {
                     <Modal
                       show={resumeDetails}
                       onHide={handleResumeFormClose}
-                      dialogClassName='centered-modal'
+                      dialogClassName="centered-modal"
                     >
                       <Modal.Header closeButton>
                         <Modal.Title>Resume Information</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <form
-                          className='p-4'
+                          className="p-4"
                           onSubmit={resumeFormik.handleSubmit}
                         >
-                          <h3 className='fs-17 fw-semibold mb-3'>
+                          <h3 className="fs-17 fw-semibold mb-3">
                             Resume Information
                           </h3>
-                          <div className='row'>
-                            <div className='col-lg-6 mb-3'>
+                          <div className="row">
+                            <div className="col-lg-6 mb-3">
                               <label
-                                htmlFor='resume_title'
-                                className='form-label'
+                                htmlFor="resume_title"
+                                className="form-label"
                               >
                                 Resume Title
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='resume_title'
-                                name='resume_title'
+                                type="text"
+                                className="form-control"
+                                id="resume_title"
+                                name="resume_title"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
 
-                            <div className='col-lg-6 mb-3'>
+                            <div className="col-lg-6 mb-3">
                               <label
-                                htmlFor='work_experience'
-                                className='form-label'
+                                htmlFor="work_experience"
+                                className="form-label"
                               >
                                 Work Experience
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='work_experience'
-                                name='work_experience'
+                                type="text"
+                                className="form-control"
+                                id="work_experience"
+                                name="work_experience"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
                           </div>
-                          <div className='row'>
-                            <div class='col-lg-6'>
-                              <div class='mb-4'>
-                                <label for='salary' class='form-label'>
+                          <div className="row">
+                            <div class="col-lg-6">
+                              <div class="mb-4">
+                                <label for="salary" class="form-label">
                                   Salary
                                 </label>
                                 <select
-                                  class='form-select'
-                                  data-trigger=''
-                                  name='salary'
-                                  id='salary'
-                                  aria-label='Default select example'
+                                  class="form-select"
+                                  data-trigger=""
+                                  name="salary"
+                                  id="salary"
+                                  aria-label="Default select example"
                                   value={resumeFormik.values.salary}
                                   onChange={resumeFormik.handleChange}
                                 >
@@ -2861,35 +2969,35 @@ export default function MyProfile() {
                                 </select>
                               </div>
                             </div>
-                            <div className='col-lg-6 mb-3'>
+                            <div className="col-lg-6 mb-3">
                               <label
-                                htmlFor='current_location'
-                                className='form-label'
+                                htmlFor="current_location"
+                                className="form-label"
                               >
                                 Current Location
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='current_location'
-                                name='current_location'
+                                type="text"
+                                className="form-control"
+                                id="current_location"
+                                name="current_location"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
                           </div>
 
-                          <div className='row'>
-                            <div className='mb-3'>
+                          <div className="row">
+                            <div className="mb-3">
                               <label
-                                htmlFor='locationInput'
-                                className='form-label'
+                                htmlFor="locationInput"
+                                className="form-label"
                               >
                                 preferred Location
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='locationInput'
+                                type="text"
+                                className="form-control"
+                                id="locationInput"
                                 value={locationInput}
                                 onChange={handleInputChange}
                                 onKeyPress={handleInputKeyPress}
@@ -2901,12 +3009,12 @@ export default function MyProfile() {
                                 flexWrap: "wrap",
                                 gap: "10px", // Adjust the gap between locations
                               }}
-                              className='mb-4'
+                              className="mb-4"
                             >
                               {updateLocations.map((location, index) => (
                                 <div
                                   key={index}
-                                  className='d-flex align-items-center'
+                                  className="d-flex align-items-center"
                                   style={{
                                     backgroundColor: "#f0f0f0",
                                     padding: "5px",
@@ -2921,13 +3029,13 @@ export default function MyProfile() {
                                       borderRadius: "4px",
                                       marginRight: "5px",
                                     }}
-                                    className='bg-primary'
+                                    className="bg-primary"
                                   >
                                     {location}
                                   </span>
                                   <button
-                                    type='button'
-                                    className='btn btn-sm btn-danger'
+                                    type="button"
+                                    className="btn btn-sm btn-danger"
                                     onClick={() =>
                                       handleLocationRemove(location)
                                     }
@@ -2937,17 +3045,17 @@ export default function MyProfile() {
                                 </div>
                               ))}
                             </div>
-                            <div class='col-lg-6'>
-                              <div class='mb-4'>
-                                <label for='designation' class='form-label'>
+                            <div class="col-lg-6">
+                              <div class="mb-4">
+                                <label for="designation" class="form-label">
                                   Designation
                                 </label>
                                 <select
-                                  class='form-select'
-                                  data-trigger=''
-                                  name='designation'
-                                  id='designation'
-                                  aria-label='Default select example'
+                                  class="form-select"
+                                  data-trigger=""
+                                  name="designation"
+                                  id="designation"
+                                  aria-label="Default select example"
                                   value={resumeFormik.values.designation}
                                   onChange={resumeFormik.handleChange}
                                 >
@@ -2965,7 +3073,7 @@ export default function MyProfile() {
                                 </select>
                                 {resumeFormik.touched.designation &&
                                   resumeFormik.errors.designation && (
-                                    <span className='error'>
+                                    <span className="error">
                                       {resumeFormik.errors.designation}
                                     </span>
                                   )}
@@ -2973,85 +3081,85 @@ export default function MyProfile() {
                             </div>
                           </div>
 
-                          <div className='row'>
-                            <div className='col-lg-6 mb-3'>
-                              <label htmlFor='course_ug' className='form-label'>
+                          <div className="row">
+                            <div className="col-lg-6 mb-3">
+                              <label htmlFor="course_ug" className="form-label">
                                 Course (UG)
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='course_ug'
-                                name='course_ug'
+                                type="text"
+                                className="form-control"
+                                id="course_ug"
+                                name="course_ug"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
-                            <div className='col-lg-6 mb-3'>
-                              <label htmlFor='course_pg' className='form-label'>
+                            <div className="col-lg-6 mb-3">
+                              <label htmlFor="course_pg" className="form-label">
                                 Course (PG)
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                name='course_pg'
-                                id='course_pg'
+                                type="text"
+                                className="form-control"
+                                name="course_pg"
+                                id="course_pg"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
                           </div>
-                          <div className='row'>
-                            <div className='col-lg-6 mb-3'>
+                          <div className="row">
+                            <div className="col-lg-6 mb-3">
                               <label
-                                htmlFor='post_course_pg'
-                                className='form-label'
+                                htmlFor="post_course_pg"
+                                className="form-label"
                               >
                                 Post Course (PG)
                               </label>
                               <input
-                                type='text'
-                                className='form-control'
-                                id='post_course_pg'
-                                name='post_course_pg'
+                                type="text"
+                                className="form-control"
+                                id="post_course_pg"
+                                name="post_course_pg"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
-                            <div className='col-lg-6 mb-3'>
-                              <label htmlFor='dob' className='form-label'>
+                            <div className="col-lg-6 mb-3">
+                              <label htmlFor="dob" className="form-label">
                                 Date of Birth
                               </label>
                               <input
-                                type='date'
-                                className='form-control'
-                                id='dob'
-                                name='dob'
+                                type="date"
+                                className="form-control"
+                                id="dob"
+                                name="dob"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
                           </div>
-                          <div className='row'>
-                            <div className='col-lg-6 mb-3'>
-                              <label htmlFor='age' className='form-label'>
+                          <div className="row">
+                            <div className="col-lg-6 mb-3">
+                              <label htmlFor="age" className="form-label">
                                 Age
                               </label>
                               <input
-                                type='number'
-                                className='form-control'
-                                id='age'
-                                name='age'
+                                type="number"
+                                className="form-control"
+                                id="age"
+                                name="age"
                                 onChange={resumeFormik.handleChange}
                               />
                             </div>
-                            <div class='col-lg-6'>
-                              <div class='mb-4'>
-                                <label for='marital_status' class='form-label'>
+                            <div class="col-lg-6">
+                              <div class="mb-4">
+                                <label for="marital_status" class="form-label">
                                   Marital Status
                                 </label>
                                 <select
-                                  class='form-select'
-                                  data-trigger=''
-                                  name='marital_status'
-                                  id='marital_status'
-                                  aria-label='Default select example'
+                                  class="form-select"
+                                  data-trigger=""
+                                  name="marital_status"
+                                  id="marital_status"
+                                  aria-label="Default select example"
                                   value={resumeFormik.values.marital_status}
                                   onChange={resumeFormik.handleChange}
                                 >
@@ -3070,8 +3178,8 @@ export default function MyProfile() {
                               </div>
                             </div>
                           </div>
-                          <div className='mt-4 text-end'>
-                            <button type='submit' className='btn btn-primary'>
+                          <div className="mt-4 text-end">
+                            <button type="submit" className="btn btn-primary">
                               Update
                             </button>
                           </div>

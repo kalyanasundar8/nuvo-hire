@@ -6,11 +6,8 @@ const UploaderServices = ({ onFileUpload, Filetype }) => {
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState(null);
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = async (selectedFile) => {
     setLoading(true);
-    event.preventDefault();
-
-    const selectedFile = event.target.files[0];
 
     if (!selectedFile) {
       setLoading(false);
@@ -33,33 +30,54 @@ const UploaderServices = ({ onFileUpload, Filetype }) => {
     }
   };
 
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy"; // Visual feedback to indicate that the file can be dropped
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const selectedFile = event.dataTransfer.files[0];
+    handleFileChange(selectedFile);
+  };
+
+  const handleFileInput = (event) => {
+    event.preventDefault(); // Prevent the default behavior of the input element
+    const selectedFile = event.target.files[0];
+    handleFileChange(selectedFile);
+  };
+
   const buttonStyle = {
     backgroundColor: "#ccc", // Muted gray color
     // Add any other styles you want
   };
 
   return (
-    <div className={`${Filetype}-uploader`}>
+    <div
+      className={`${Filetype}-uploader`}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <label htmlFor={`${Filetype}-input`}>
-        <Button as='span' style={buttonStyle}>
-          Choose File
+        <Button as="span" style={buttonStyle}>
+          Drag and drop (or) Choose File
         </Button>
       </label>
       <input
         id={`${Filetype}-input`}
-        type='file' // Define accepted file types
-        onChange={handleFileChange}
+        type="file" // Define accepted file types
+        onChange={handleFileInput}
         disabled={loading}
         style={{ display: "none" }} // Hide the input element
       />
       {loading ? (
-        <Spinner animation='border' role='status' size='sm' />
+        <Spinner animation="border" role="status" size="sm" />
       ) : (
-        <p class='mt-3'>
+        <p className="mt-3">
           {files ? (
-            <span class='text-success'>{`Uploaded: ${files.name}`}</span>
+            <span className="text-success">{`Uploaded: ${files.name}`}</span>
           ) : (
-            <span class='text-danger'>No file selected</span>
+            <span className="text-danger">No file selected</span>
           )}
         </p>
       )}

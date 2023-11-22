@@ -30,8 +30,8 @@ export default function VerifyOtp() {
   //   Schema for validation
   const validationSchema = Yup.object({
     otp: Yup.string()
-      .min(6, "OTP was min 6 digits")
-      .max(6, "OTP was max 6 digits")
+      .min(6, "OTP must minimum 6 digits")
+      .max(6, "OTP must maximum 6 digits")
       .required("Please enter the OTP"),
   });
 
@@ -75,6 +75,14 @@ export default function VerifyOtp() {
         };
         const response = await ApiService("resend-otp", "POST", payload, false);
         console.log(response);
+        setAlertMessage(
+          <Alert variant="success">{response?.data?.message}</Alert>
+        );
+
+        setTimeout(() => {
+          setAlertMessage("")
+        }, 5000);
+
       } catch (error) {
         console.log("Error", error);
       }
@@ -103,7 +111,11 @@ export default function VerifyOtp() {
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
         );
 
-        if (response.data.data.user_type === "JobSeeker") {
+        setTimeout(() => {
+          setAlertMessage("")
+        }, 5000)
+
+        if (response?.data?.data?.user_type === "JobSeeker") {
           navigate("/");
         } else {
           navigate("/manage-jobs");
@@ -112,10 +124,14 @@ export default function VerifyOtp() {
         // navigate("/dashboard");
       } else {
         setLoading(false);
-        console.log("Something went wrong");
+
         setAlertMessage(
           <Alert variant='danger'>{response?.response?.data?.message}</Alert>
         );
+
+        setTimeout(() => {
+          setAlertMessage("");
+        }, 5000)
       }
     } catch (error) {
       setLoading(false);
@@ -168,7 +184,7 @@ export default function VerifyOtp() {
                             {" "}
                             We send an OTP to your mobile number, Don't share
                             your OTP to anyone. If you didn't get your OTP click
-                            the resendOTP and get your OTP again.
+                            the resend OTP and get your OTP again.
                           </p>
                         </div>
                         {alertMessage && <div role='alert'>{alertMessage}</div>}
@@ -177,8 +193,8 @@ export default function VerifyOtp() {
                           className='auth-form'
                         >
                           <div className='mb-3'>
-                            <label for='usernameInput' className='form-label'>
-                              Your OTP
+                            <label for='usernameInput' className='form-label' style={{ display: "flex", alignItems: "center"}}>
+                              Enter Your OTP <span style={{ fontSize: "8px", marginLeft: "10px", color: "white"}}>(Enter your 6 digit OTP)</span>
                             </label>
                             <input
                               type='text'
@@ -234,7 +250,7 @@ export default function VerifyOtp() {
                             onClick={handleResendOtp}
                             disabled={timerActive}
                           >
-                            ResendOTP
+                            Resend OTP
                           </button>
                           {timerActive ? (
                             <button

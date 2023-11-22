@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useFetch from "./useFetch";
 import { fetchEmployeeMyJobs } from "../services/JobService";
 import {
+  FaBan,
   FaBuilding,
   FaCheckCircle,
   FaTimesCircle,
@@ -94,7 +95,7 @@ export default function ManageJobs() {
             {/*end col*/}
           </div>
           {/*end row*/}
-          {Array.isArray(manageJobs)
+          {Array.isArray(manageJobs) && manageJobs.length > 0
             ? manageJobs.map((manage) => (
                 <div class="row">
                   <div class="col-lg-12">
@@ -257,7 +258,15 @@ export default function ManageJobs() {
                   {/*end col*/}
                 </div>
               ))
-            : null}
+            : (
+              <div style={{
+                marginTop: "50px",
+                textAlign: "center",
+              }} className="text-muted">
+                <FaBan />
+                <p>No jobs found <Link to="/create-new-job" className="text-primary">Create a job post</Link> </p>
+              </div>
+            )}
           {/*end row*/}
           {/*end row*/}
         </div>

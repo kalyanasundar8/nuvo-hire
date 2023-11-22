@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchBookmarkJob } from "../services/JobService";
+import {
+  FaBan,
+  FaBuilding
+} from "react-icons/fa";
 
 export default function BookmarkJobs() {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
@@ -28,25 +32,6 @@ export default function BookmarkJobs() {
             <div class='col-md-6'>
               <div class='text-center text-white'>
                 <h3 class='mb-4'>Bookmark Jobs</h3>
-                <div class='page-next'>
-                  <nav
-                    class='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol class='breadcrumb justify-content-center'>
-                      <li class='breadcrumb-item'>
-                        <Link to='/'>Home</Link>
-                      </li>
-                      <li class='breadcrumb-item'>
-                        <Link to=''>Profile</Link>
-                      </li>
-                      <li class='breadcrumb-item active' aria-current='page'>
-                        {" "}
-                        Bookmark Jobs{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
               </div>
             </div>
             {/*end col*/}
@@ -77,199 +62,98 @@ export default function BookmarkJobs() {
           <div class='row align-items-center'>
             <div class='col-lg-8'>
               <div class='mb-4 mb-lg-0'>
-                <h6 class='mb-0'> My Job Listings </h6>
+                <h6 class='mb-0'>Bookmarked Jobs</h6>
               </div>
             </div>
             {/*end col*/}
-            <div class='col-lg-4'>
-              <div class='candidate-list-widgets'>
-                <div class='row'>
-                  <div class='col-lg-6'>
-                    <div class='selection-widget'>
-                      <select
-                        class='form-select'
-                        data-trigger
-                        name='choices-single-filter-orderby'
-                        id='choices-single-filter-orderby'
-                        aria-label='Default select example'
-                      >
-                        <option value='df'>Default</option>
-                        <option value='ne'>Newest</option>
-                        <option value='od'>Oldest</option>
-                        <option value='rd'>Random</option>
-                      </select>
-                    </div>
-                  </div>
-                  {/*end col*/}
-                  <div class='col-lg-6'>
-                    <div class='selection-widget mt-2 mt-lg-0'>
-                      <select
-                        class='form-select'
-                        data-trigger
-                        name='choices-candidate-page'
-                        id='choices-candidate-page'
-                        aria-label='Default select example'
-                      >
-                        <option value='df'>All</option>
-                        <option value='ne'>Last 2 Month</option>
-                        <option value='ne'>Last 6 Month</option>
-                        <option value='ne'>Last 12 Month</option>
-                        <option value='ne'>Last 2 Year</option>
-                      </select>
-                    </div>
-                  </div>
-                  {/*end col*/}
-                </div>
-                {/*end row*/}
-              </div>
-              {/*end candidate-list-widgets*/}
-            </div>
             {/*end col*/}
           </div>
           {/*end row*/}
           <div class='row'>
-            <div class='col-lg-12'>
-              {Array.isArray(bookmarkedJobs) &&
-                bookmarkedJobs.map((bookmarkedJob) => (
-                  <div key={bookmarkedJob.id} class='job-box card mt-4'>
-                    <div class='card-body p-4'>
-                      <div class='row'>
-                        <div class='col-lg-1'>
-                          <Link to='company-details.php'>
-                            <img
-                              src='assets/images/featured-job/img-01.png'
-                              alt=''
-                              class='img-fluid rounded-3'
-                            />
-                          </Link>
-                        </div>
-                        {/*end col*/}
-                        <div class='col-lg-9'>
-                          <div class='mt-3 mt-lg-0'>
-                            <h5 class='fs-17 mb-1'>
-                              <Link
-                                to={`/job-detail/${bookmarkedJob.id}`}
-                                class='text-dark'
-                              >
-                                {bookmarkedJob.job_title}
-                              </Link>
-                            </h5>
-                            <ul class='list-inline mb-0'>
-                              <li class='list-inline-item'>
-                                <p class='text-muted fs-14 mb-0'>
-                                  {bookmarkedJob.company_name}
-                                </p>
-                              </li>
-                              <li class='list-inline-item'>
-                                <p class='text-muted fs-14 mb-0'>
-                                  <i class='mdi mdi-map-marker'></i>{" "}
-                                  {bookmarkedJob.city_id &&
-                                    bookmarkedJob.city_id.name}
-                                </p>
-                              </li>
-                              <li class='list-inline-item'>
-                                <p class='text-muted fs-14 mb-0'>
-                                  <i class='uil uil-wallet'></i> $
-                                  {bookmarkedJob.salary_id &&
-                                    bookmarkedJob.salary_id.name}{" "}
-                                  / month
-                                </p>
-                              </li>
-                            </ul>
-                            <div class='mt-2'>
-                              <span class='badge danger-bg-subtle mt-1'>
-                                Part Time
-                              </span>
-                              <span class='badge warning-bg-subtle mt-1'>
-                                Urgent
-                              </span>
+          {Array.isArray(bookmarkedJobs) && bookmarkedJobs.length > 0 ? (
+              bookmarkedJobs.map((bookmarkedJob) =>
+                bookmarkedJob.status === "approved" ? (
+                  <div key={bookmarkedJob.job_id} className="col-lg-12">
+                    <div className="job-box card mt-4">
+                      <div className="card-body p-4">
+                        <div className="row" key={bookmarkedJob.id}>
+                          <div className="col-lg-1">
+                            <Link to="company-details.php">
+                              {bookmarkedJob.company_logo ? (
+                                <img
+                                  src={bookmarkedJob.company_logo}
+                                  alt=""
+                                  className="img-fluid rounded-3"
+                                />
+                              ) : (
+                                <div style={{ color: "grey" }}>
+                                  <FaBuilding size={32} />
+                                </div> // Replace this with your desired icon
+                              )}
+                            </Link>
+                          </div>
+                          <div className="col-lg-9">
+                            <div className="mt-3 mt-lg-0">
+                              <h5 className="d-flex fs-17 mb-1">
+                                <Link
+                                  to={`/job-detail/${bookmarkedJob.id}`}
+                                  className="text-dark"
+                                  key={bookmarkedJob.id} // Move the key attribute here
+                                >
+                                  {bookmarkedJob.job_title}
+                                </Link>
+                              </h5>
+                              <ul className="list-inline mb-0">
+                                <li className="list-inline-item">
+                                  <p className="text-muted fs-14 mb-0">
+                                    {bookmarkedJob.company_name}
+                                  </p>
+                                </li>
+                                <li className="list-inline-item">
+                                  <p className="text-muted fs-14 mb-0">
+                                    <i className="mdi mdi-map-marker"></i>{" "}
+                                    {bookmarkedJob.city_id &&
+                                      bookmarkedJob.city_id.name}
+                                  </p>
+                                </li>
+                                <li className="list-inline-item">
+                                  <p className="text-muted fs-14 mb-0">
+                                    <i className="uil uil-wallet"></i> $
+                                    {bookmarkedJob.salary_id &&
+                                      bookmarkedJob.salary_id.name}{" "}
+                                    / month
+                                  </p>
+                                </li>
+                              </ul>
                             </div>
                           </div>
                         </div>
-                        {/*end col*/}
-                        <div class='col-lg-2 align-self-center'>
-                          <ul class='list-inline mt-3 mb-0'>
-                            <li
-                              class='list-inline-item'
-                              data-bs-toggle='tooltip'
-                              data-bs-placement='top'
-                              title='View More'
-                            >
-                              <Link
-                                to='/job-detail'
-                                class='avatar-sm success-bg-subtle d-inline-block text-center rounded-circle fs-18'
-                              >
-                                <i class='mdi mdi-eye'></i>
-                              </Link>
-                            </li>
-                            <li
-                              class='list-inline-item'
-                              data-bs-toggle='tooltip'
-                              data-bs-placement='top'
-                              title='Delete'
-                            >
-                              <Link
-                                to=''
-                                data-bs-toggle='modal'
-                                data-bs-target='#deleteModal'
-                                class='avatar-sm danger-bg-subtle d-inline-block text-center rounded-circle fs-18'
-                              >
-                                <i class='uil uil-trash-alt'></i>
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
-                        {/*end col*/}
+                        {/*end row*/}
                       </div>
-                      {/*end row*/}
                     </div>
                   </div>
-                ))}
-              {/*end job-box*/}
-            </div>
-            {/*end col*/}
+                ) : <p>Waitin</p>
+              )
+            ) : (
+              <div
+                style={{
+                  marginTop: "50px",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "center",
+                  }}
+                  className="text-muted"
+                >
+                  No jobs found
+                </p>
+              </div>
+            )}
           </div>
           {/*end row*/}
-
-          <div class='row'>
-            <div class='col-lg-12 mt-4 pt-2'>
-              <nav aria-label='Page navigation example'>
-                <ul class='pagination job-pagination mb-0 justify-content-center'>
-                  <li class='page-item disabled'>
-                    <Link class='page-link' to='' tabindex='-1'>
-                      <i class='mdi mdi-chevron-double-left fs-15'></i>
-                    </Link>
-                  </li>
-                  <li class='page-item active'>
-                    <Link class='page-link' to=''>
-                      1
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      2
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      3
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      4
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      <i class='mdi mdi-chevron-double-right fs-15'></i>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            {/*end col*/}
-          </div>
           {/*end row*/}
         </div>
         {/*end container*/}

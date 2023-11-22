@@ -7,6 +7,11 @@ import ApiService from "../services/ApiService";
 import { Modal, Button } from "react-bootstrap";
 
 export default function JobDetail() {
+
+  const userData = (JSON.parse(localStorage.getItem("user")));
+  const userId = userData.data.id;
+  console.log(userData.data.id)
+
   const { id } = useParams();
   console.log(id);
 
@@ -14,6 +19,7 @@ export default function JobDetail() {
   const [jobDetails, setJobDetails] = useState([]);
   const [jobOverView, setJobOverView] = useState([]);
   const [companyDetails, setCompanyDetails] = useState([]);
+  const [appliedCandidate, setAppliedCandidate] = useState([]);
 
   // Related Jobs
   const relatesJobsData = useFetch("jobs");
@@ -33,6 +39,13 @@ export default function JobDetail() {
       const jobOverView = jobDetailsData.data.job_over_view;
       const companyDetails = jobDetailsData.data.company_details;
       console.log(responseData, jobOverView, companyDetails);
+      console.log(response.data.data);
+      
+      if(Array.isArray(appliedCandidate.applied_candidate)) {
+        console.log("ok")
+      }
+
+      setAppliedCandidate(response.data.data);
       setJobDetails(responseData);
       setJobOverView(jobOverView);
       setCompanyDetails(companyDetails);
@@ -49,6 +62,8 @@ export default function JobDetail() {
 
   const [showPopUp, setShowPopUp] = useState(false);
   const [showPopUpMessage, setShowPopUpMessage] = useState("");
+  const [status, setStatus] = useState("");
+  const [isApplyButtonDisabled, setApplyButtonDisabled] = useState(false);
 
   const handleApplyJob = async () => {
     const jobId = id;
@@ -59,11 +74,15 @@ export default function JobDetail() {
     try {
       const response = await ApiService("apply-jobs", "POST", payload, true);
       console.log(response.response.data.message);
-      if (response.response.data.status === false) {
-        setShowPopUpMessage(response.response.data.message);
-      } else {
-        setShowPopUpMessage(response.data.message);
+      if(response.response.data.status === false) {
+        setApplyButtonDisabled(true)
+        setShowPopUpMessage(response.response.data.message)
       }
+
+      if(response.status === true) {
+        setShowPopUp(response.message);
+      }
+
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -90,6 +109,7 @@ export default function JobDetail() {
       );
       console.log(response.data.message);
       if (response.status === true) {
+        setApplyButtonDisabled(true)
         setShowPopUpMessage(response.data.message);
       } else {
         setShowPopUpMessage(response.data.message);
@@ -124,25 +144,6 @@ export default function JobDetail() {
             <div class='col-md-6'>
               <div class='text-center text-white'>
                 <h3 class='mb-4'>Job Details</h3>
-                <div class='page-next'>
-                  <nav
-                    class='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol class='breadcrumb justify-content-center'>
-                      <li class='breadcrumb-item'>
-                        <Link to='index.php'>Home</Link>
-                      </li>
-                      <li class='breadcrumb-item'>
-                        <Link to=''>Pages</Link>
-                      </li>
-                      <li class='breadcrumb-item active' aria-current='page'>
-                        {" "}
-                        Job Details{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
               </div>
             </div>
           </div>
@@ -187,11 +188,11 @@ export default function JobDetail() {
                   <div>
                     <div class='row'>
                       <div class='col-md-8'>
-                        <h5 class='mb-1'>{jobDetails.job_title}</h5>
+                        <h5 class='mb-1'>{jobDetails.job_title ? jobDetails.job_title : "Not disclosed"}</h5>
                         <ul class='list-inline text-muted mb-0'>
                           <li class='list-inline-item'>
                             <i class='mdi mdi-account'></i>
-                            {jobDetails.vacancy} vacancy
+                            {jobDetails.vacancy ? jobDetails.vacancy : "Not disclosed"} vacancy
                           </li>
                           <li class='list-inline-item text-warning review-rating'>
                             <span class='badge bg-warning'>4.8</span>{" "}
@@ -200,24 +201,6 @@ export default function JobDetail() {
                             <i class='mdi mdi-star align-middle'></i>
                             <i class='mdi mdi-star align-middle'></i>
                             <i class='mdi mdi-star-half-full align-middle'></i>
-                          </li>
-                        </ul>
-                      </div>
-                      <div class='col-lg-4'>
-                        <ul class='list-inline mb-0 text-lg-end mt-3 mt-lg-0'>
-                          <li class='list-inline-item'>
-                            <div class='favorite-icon'>
-                              <Link to=''>
-                                <i class='uil uil-heart-alt'></i>
-                              </Link>
-                            </div>
-                          </li>
-                          <li class='list-inline-item'>
-                            <div class='favorite-icon'>
-                              <Link to=''>
-                                <i class='uil uil-setting'></i>
-                              </Link>
-                            </div>
                           </li>
                         </ul>
                       </div>
@@ -232,7 +215,7 @@ export default function JobDetail() {
                           <p class='fw-medium fs-15 mb-0'>
                             Minimum{" "}
                             {jobDetails.experience_id &&
-                              jobDetails.experience_id.year}
+                              jobDetails.experience_id.year ? jobDetails.experience_id.year : "Not disclosed"}
                           </p>
                         </div>
                       </div>
@@ -241,7 +224,7 @@ export default function JobDetail() {
                           <p class='text-muted fs-13 mb-0'>
                             Application Deadline
                           </p>
-                          {jobOverView.application_deadline_date}
+                          {jobOverView.application_deadline_date ? jobOverView.application_deadline_date : "Not disclosed"}
                         </div>
                       </div>
                       <div class='col-lg-3'>
@@ -249,7 +232,7 @@ export default function JobDetail() {
                           <p class='text-muted fs-13 mb-0'>Position</p>
                           <p class='fw-medium mb-0'>
                             {jobDetails.designation_id &&
-                              jobDetails.designation_id.name}
+                              jobDetails.designation_id.name ? jobDetails.designation_id.name : "Not disclosed"}
                           </p>
                         </div>
                       </div>
@@ -258,7 +241,7 @@ export default function JobDetail() {
                           <p class='text-muted fs-13 mb-0'>Offer Salary</p>
                           <p class='fw-medium mb-0'>
                             ${" "}
-                            {jobDetails.salary_id && jobDetails.salary_id.name}/
+                            {jobOverView.salary_id && jobOverView.salary_id.name ? jobOverView.salary_id.name : "Not disclosed"}/
                             Month
                           </p>
                         </div>
@@ -303,36 +286,39 @@ export default function JobDetail() {
                     </div>
                   </div>
 
-                  <div class='mt-4 pt-3'>
+                  {/* <div class='mt-4 pt-3'>
                     <ul class='list-inline mb-0'>
                       <li class='list-inline-item mt-1'>Share this job:</li>
                       <li class='list-inline-item mt-1'>
                         <Link to='' class='btn btn-primary btn-hover'>
-                          <i class='uil uil-facebook-f'></i> Facebook
+                          <i class='uil uil-facebook-f'></i>
                         </Link>
                       </li>
                       <li class='list-inline-item mt-1'>
-                        <Link to='' class='btn btn-danger btn-hover'>
-                          <i class='uil uil-google'></i> Google+
+                        <Link to='' class='btn btn-danger btn-hover' style={{
+                          width: "20px",
+                          height: "20px"
+                        }}>
+                          <i class='uil uil-google' style={{ fontSize: "10px"}}></i>
                         </Link>
                       </li>
                       <li class='list-inline-item mt-1'>
                         <Link to='' class='btn btn-success btn-hover'>
-                          <i class='uil uil-linkedin-alt'></i> linkedin
+                          <i class='uil uil-linkedin-alt'></i>
                         </Link>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
               <div class='mt-4'>
                 <h5>Related Jobs</h5>
-                {Array.isArray(relatedJobs)
+                {Array.isArray(relatedJobs) && relatedJobs.length > 0
                   ? relatedJobs.map((related) => (
                       <div class='job-box card mt-4'>
                         <div class='p-4'>
-                          <div class='row'>
+                          <div key={related.id} class='row'>
                             <div class='col-lg-1'>
                               <img
                                 src='assets/images/featured-job/img-01.png'
@@ -343,33 +329,33 @@ export default function JobDetail() {
                             <div class='col-lg-10'>
                               <div class='mt-3 mt-lg-0'>
                                 <h5 class='fs-17 mb-1'>
-                                  <Link to='/job-detail' class='text-dark'>
-                                    {related.job_title}
+                                  <Link to={`/job-detail/${related.id}`} class='text-dark'>
+                                    {related.job_title ? related.job_title : "Not disclosed"}
                                   </Link>{" "}
                                   <small class='text-muted fw-normal'>
                                     (
                                     {related.experience_id &&
-                                      related.experience_id.year}{" "}
+                                      related.experience_id.year ? related.experience_id.year : "Not disclosed"}{" "}
                                     Yrs Exp.)
                                   </small>
                                 </h5>
                                 <ul class='list-inline mb-0'>
                                   <li class='list-inline-item'>
                                     <p class='text-muted fs-14 mb-0'>
-                                      {related.company_name}
+                                      {related.company_name ? related.company_name : "Not disclosed"}
                                     </p>
                                   </li>
                                   <li class='list-inline-item'>
                                     <p class='text-muted fs-14 mb-0'>
                                       <i class='mdi mdi-map-marker'></i>{" "}
-                                      {related.city_id && related.city_id.name}
+                                      {related.city_id && related.city_id.name ? related.city_id.name : "Not disclosed"}
                                     </p>
                                   </li>
                                   <li class='list-inline-item'>
                                     <p class='text-muted fs-14 mb-0'>
                                       <i class='uil uil-wallet'></i> $
                                       {related.salary_id &&
-                                        related.salary_id.name}
+                                        related.salary_id.name ? related.salary_id.name : "Not disclosed"}
                                       / month
                                     </p>
                                   </li>
@@ -377,7 +363,7 @@ export default function JobDetail() {
                                 <div class='mt-2'>
                                   <span class='badge bg-success-subtle text-success mt-1'>
                                     {related.employment_type_id &&
-                                      related.employment_type_id.name}
+                                      related.employment_type_id.name ? related.employment_type_id.name : ""}
                                   </span>
                                   <span class='badge bg-warning-subtle text-warning mt-1'>
                                     Urgent
@@ -417,20 +403,18 @@ export default function JobDetail() {
                                 </ul>
                               </div>
                             </div>
-
-                            <div class='col-md-3'>
-                              <div class='text-md-end'>
-                                <Link to='' class='primary-link'>
-                                  Apply Now{" "}
-                                  <i class='mdi mdi-chevron-double-right'></i>
-                                </Link>
-                              </div>
-                            </div>
                           </div>
                         </div>
                       </div>
                     ))
-                  : null}
+                  : (
+                    <div style={{
+                      marginTop: "50px",
+                      textAlign: "center",
+                    }} className="text-muted">
+                      <p>No jobs found </p>
+                    </div>
+                  )}
               </div>
               <div class='text-center mt-4'>
                 <Link to='/jobs' class='primary-link form-text'>
@@ -451,7 +435,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Job Title</h6>
                             <p class='text-muted mb-0'>
-                              {jobDetails.job_title}
+                              {jobDetails.job_title ? jobDetails.job_title : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -463,7 +447,7 @@ export default function JobDetail() {
                             <h6 class='fs-14 mb-2'>Experience</h6>
                             <p class='text-muted mb-0'>
                               {jobDetails.experience_id &&
-                                jobDetails.experience_id.year}
+                                jobDetails.experience_id.year ? jobDetails.experience_id.year : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -474,7 +458,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Location</h6>
                             <p class='text-muted mb-0'>
-                              {jobOverView.job_locations}
+                              {jobOverView.job_locations ? jobOverView.job_locations : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -501,7 +485,7 @@ export default function JobDetail() {
                             <p class='text-muted mb-0'>
                               $
                               {jobOverView.salary_id &&
-                                jobOverView.salary_id.name}
+                                jobOverView.salary_id.name ? jobOverView.salary_id.name : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -514,7 +498,7 @@ export default function JobDetail() {
                             {Array.isArray(jobOverView.education_id) &&
                               jobOverView.education_id.map((education) => (
                                 <p key={education.id} class='text-muted mb-0'>
-                                  {education.education}
+                                  {education.education ? education.education : "Not disclosed"}
                                 </p>
                               ))}
                           </div>
@@ -527,7 +511,7 @@ export default function JobDetail() {
                             <h6 class='fs-14 mb-2'>Industry</h6>
                             <p class='text-muted mb-0'>
                               {jobDetails.industry_id &&
-                                jobDetails.industry_id.name}
+                                jobDetails.industry_id.name ? jobDetails.industry_id.name : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -538,24 +522,45 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Date Posted</h6>
                             <p class='text-muted mb-0'>
-                              {jobOverView.created_at}
+                              {jobOverView.created_at ? jobOverView.created_at : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                     </ul>
                     <div class='mt-3'>
+                      { Array.isArray(appliedCandidate.applied_candidate) ? appliedCandidate.applied_candidate.map ((candidate) => (
+                        candidate.user_id === userId ? (
+                          <Link
+                        to=''
+                        data-bs-toggle='modal'
+                        className="btn btn-primary btn-hover w-100 mt-2"
+                        disabled
+                      >
+                        Applied... <i class='uil uil-arrow-right'></i>
+                      </Link>
+                        ) : (
+                          <Link
+                        to=''
+                        data-bs-toggle='modal'
+                        className={`btn btn-primary btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
+                        onClick={handleApplyJob}
+                      >
+                        Apply Now <i class='uil uil-arrow-right'></i>
+                      </Link>
+                        )
+                      )) : ""}
                       <Link
                         to=''
                         data-bs-toggle='modal'
-                        class='btn btn-primary btn-hover w-100 mt-2'
+                        className={`btn btn-primary btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
                         onClick={handleApplyJob}
                       >
                         Apply Now <i class='uil uil-arrow-right'></i>
                       </Link>
                       <Link
                         to=''
-                        class='btn btn-soft-warning btn-hover w-100 mt-2'
+                        class={`btn btn-soft-warning btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
                         onClick={() => handleJobBookMark(id)}
                       >
                         <i class='uil uil-bookmark'></i> Add Bookmark
@@ -575,7 +580,7 @@ export default function JobDetail() {
 
                       <div class='mt-4'>
                         <h6 class='fs-17 mb-1'>
-                          {companyDetails.company_name}
+                          {companyDetails.company_name ? companyDetails.company_name : "Not disclosed"}
                         </h6>
                         <p class='text-muted'>Since July 2017</p>
                       </div>
@@ -587,7 +592,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Phone</h6>
                             <p class='text-muted fs-14 mb-0'>
-                              +{companyDetails.phone}
+                              +{companyDetails.phone ? companyDetails.phone : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -598,7 +603,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Email</h6>
                             <p class='text-muted fs-14 mb-0'>
-                              {companyDetails.email}
+                              {companyDetails.email ? companyDetails.email : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -609,7 +614,7 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Website</h6>
                             <p class='text-muted fs-14 text-break mb-0'>
-                              {companyDetails.website}
+                              {companyDetails.website ? companyDetails.website : "Not disclosed"}
                             </p>
                           </div>
                         </div>
@@ -620,24 +625,24 @@ export default function JobDetail() {
                           <div class='ms-3'>
                             <h6 class='fs-14 mb-2'>Location</h6>
                             <p class='text-muted fs-14 mb-0'>
-                              Oakridge Lane Richardson.
+                              {companyDetails.city_id && companyDetails.city_id.name ? companyDetails.city_id.name : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                     </ul>
-                    <div class='mt-4'>
+                    {/* <div class='mt-4'>
                       <Link
                         to='company-details.php'
                         class='btn btn-primary btn-hover w-100 rounded'
                       >
                         <i class='mdi mdi-eye'></i> View Profile
                       </Link>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 
-                <div class='mt-4'>
+                {/* <div class='mt-4'>
                   <h6 class='fs-16 mb-3'>Job location</h6>
                   <iframe
                     src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.15830869428!2d-74.119763973046!3d40.69766374874431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sin!4v1628067715234!5m2!1sen!2sin'
@@ -646,7 +651,7 @@ export default function JobDetail() {
                     allowfullscreen=''
                     loading='lazy'
                   ></iframe>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

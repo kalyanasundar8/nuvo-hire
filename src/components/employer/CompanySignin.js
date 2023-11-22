@@ -38,6 +38,7 @@ export default function CompanySignin() {
     useSelector((state) => state?.auth?.isAuthenticated) ||
     JSON.parse(localStorage.getItem("isAuthenticated"));
 
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -46,12 +47,15 @@ export default function CompanySignin() {
   // console.log(isAuth);
 
   const loginHandler = async (values) => {
-    const payload = {
-      email: values.email,
-      password: values.password,
-    };
 
     try {
+      const payload = {
+        email: values.email,
+        password: values.password,
+      };
+
+      setLoading(true);
+
       const response = await ApiService(
         "employer-login",
         "POST",
@@ -64,62 +68,29 @@ export default function CompanySignin() {
       }
 
       if (response?.data?.status_code == 200) {
+        setLoading(false);
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response?.data));
-        setError("");
         setAlertMessage(
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
         );
         navigate("/dashboard");
         window.location.reload();
       } else {
+        setLoading(false);
         setError(response?.response?.data?.message);
         setAlertMessage(
           <Alert variant='danger'>{response?.response?.data?.message}</Alert>
         );
+
+        setTimeout(() => {
+          setAlertMessage("");
+        }, 5000);
       }
       //   setJobDetails(responseData);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
-
-    // const result = await ApiService('employer-login', 'POST', payload, false).then(({ response }) => {
-
-    // if (response.status_code === 200) {
-
-    //     // console.log(response.data.data)
-    //     // dispatch(setIsAuthenticated(true));
-    //     // localStorage.setItem('user', JSON.stringify(response.data.data));
-    //     // setError('');
-    //     // navigate("/")
-    //     // window.location.reload();
-
-    // } else {
-
-    //     setError(response.data.message);
-    // }
-    //
-    // Swal.fire({
-    //     icon: "success",
-    //     text: data.message
-    // })
-
-    // }).catch(({ err }) => {
-
-    //     console.log(err)
-    //     setError('Something went wrong');
-    //     // if( response.status === 400 ) {
-    //     //   Swal.fire({
-    //     //       icon:"error",
-    //     //       text:response.data.message
-    //     //   })
-    //     // } else {
-    //     //   Swal.fire({
-    //     //     text: "Something went wrong",
-    //     //     icon:"error"
-    //     //   })
-    //     // }
-    // })
   };
 
   return (
@@ -240,9 +211,12 @@ export default function CompanySignin() {
                           <div className='text-center'>
                             <button
                               type='submit'
-                              className='btn btn-white btn-hover w-100'
+                              className={`btn btn-white btn-hover w-100 ${
+                                loading ? "disabled" : ""
+                              }`}
+                              disabled = { loading || !formik.isValid }
                             >
-                              Sign In
+                              { loading ? "Signing In..." : "Sign In"}
                             </button>
                           </div>
                         </form>

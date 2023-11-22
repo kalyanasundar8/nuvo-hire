@@ -1,17 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { fetchEmployeeMyJobs } from "../services/JobService";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { deleteEmployeeJobs, fetchEmployeeMyJobs } from "../services/JobService";
 import {
+  FaBan,
   FaBuilding,
   FaCheckCircle,
   FaTimesCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
+import SuccessModel from "../components/layouts/SuccessModel";
 
 export default function ManageJobs() {
   const [manageJobs, setManageJobs] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
+
+  const deleteJob = async (jobId) => {
+    const payload = {
+      job_id: jobId
+    }
+    try {
+      const response = await deleteEmployeeJobs(payload);
+      console.log(response);
+      if(response?.data?.status === true) {
+        setSuccess("Job was deleted successfuly");
+        window.location.reload();
+      } else {
+        setError("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     const fetchMyJobs = async () => {
@@ -41,8 +63,9 @@ export default function ManageJobs() {
             {/*end col*/}
             {/*end col*/}
           </div>
+          
           {/*end row*/}
-          {Array.isArray(manageJobs)
+          {Array.isArray(manageJobs) && manageJobs.length > 0
             ? manageJobs.map((manage) => (
                 <div class="row">
                   <div class="col-lg-12">
@@ -185,10 +208,8 @@ export default function ManageJobs() {
                                 title="Delete"
                               >
                                 <Link
+                                onClick={() => deleteJob(manage.id)}
                                   to=""
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#deleteModal"
-                                  class="avatar-sm danger-bg-subtle d-inline-block text-center rounded-circle fs-18"
                                 >
                                   <i class="uil uil-trash-alt"></i>
                                 </Link>
@@ -205,7 +226,15 @@ export default function ManageJobs() {
                   {/*end col*/}
                 </div>
               ))
-            : null}
+            : (
+              <div style={{
+                marginTop: "50px",
+                textAlign: "center",
+              }} className="text-muted">
+                <FaBan />
+                <p>No jobs found <Link to="/create-new-job" className="text-primary">Create a job post</Link> </p>
+              </div>
+            )}
           {/*end row*/}
           {/*end row*/}
         </div>

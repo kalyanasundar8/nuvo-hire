@@ -289,8 +289,11 @@ function Header() {
                   </li>
                 </ul>
               </li>
-
-              <li className='nav-item dropdown dropdown-hover'>
+              
+              { isAuth === true && user?.data?.user_type === "Employer" ? (
+                ""   
+              ) : (
+                <li className='nav-item dropdown dropdown-hover'>
                 <a
                   className='nav-link'
                   href=''
@@ -343,8 +346,9 @@ function Header() {
                     </Link>
                   </li>
                 </ul>
-              </li>
-
+              </li> 
+              )}
+            
               <li className='nav-item'>
                 <Link to='/jobs' className='nav-link'>
                   Jobs
@@ -543,7 +547,7 @@ function Header() {
                     aria-expanded='false'
                   >
                     <span className='d-none d-md-inline-block fw-medium'>
-                      Hi, {user ? user?.data?.name : "Guest"}
+                      Hi, {user ? user?.data?.name || user?.name : "Guest"}
                     </span>
                   </a>
                   <ul

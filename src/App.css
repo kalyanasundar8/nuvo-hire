@@ -105,6 +105,11 @@
     transition: border-color 0.3s ease-in-out;
   }
 
+  .secondary-card {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+    transition: border-color 0.3s ease-in-out;
+  }
+
   .sortlist-btn-hover:hover {
     background-color: #C1FFC1; /* Change this to the desired hover color */
     color: #2E7D32; /* Change this to the desired text color on hover */

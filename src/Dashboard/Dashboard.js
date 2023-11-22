@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { FaPlusCircle, FaTasks, FaUser, FaTicketAlt } from "react-icons/fa";
+import { FaPlusCircle, FaTasks, FaChartBar, FaTicketAlt } from "react-icons/fa";
+import { MdDrafts } from 'react-icons/md';
 import CreateNewJobs from "../Dashboard/CreatNewJobs";
 import ManageJobs from "../Dashboard/ManageJobs";
 import Profile from "../Dashboard/Profile";
 import Tickets from "../Dashboard/Tickets";
 import { fetchRss } from "../services/DashboardServices";
+import SavedJobs from "./SavedJobs";
 
 export default function Dashboard() {
-  const [activeItem, setActiveItem] = useState(3);
+  const [activeItem, setActiveItem] = useState(1);
 
   const handleItemClick = (index) => {
     setActiveItem(index);
@@ -44,29 +46,14 @@ export default function Dashboard() {
               <li className="nav-item">
                 <a
                   href="#"
-                  className={`nav-link ${activeItem === 3 ? "active" : ""}`}
+                  className={`nav-link ${activeItem === 1 ? "active" : ""}`}
                   style={{
-                    color: activeItem === 3 ? "#007BFF" : "#777",
+                    color: activeItem === 1 ? "#007BFF" : "#777",
                     textDecoration: "none",
                   }}
-                  onClick={() => handleItemClick(3)}
+                  onClick={() => handleItemClick(1)}
                 >
-                  <FaUser className="me-2" /> Profile
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  href="#"
-                  className={`nav-link ${activeItem === 4 ? "active" : ""}`}
-                  style={{
-                    color: activeItem === 4 ? "#007BFF" : "#777",
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  onClick={() => handleItemClick(4)}
-                >
-                  <FaTicketAlt className="me-2" /> Tickets
+                  <FaChartBar className="me-2" /> Stats
                 </a>
               </li>
               <li className="nav-item">
@@ -76,8 +63,23 @@ export default function Dashboard() {
                   style={{
                     color: activeItem === 2 ? "#007BFF" : "#777",
                     textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                   onClick={() => handleItemClick(2)}
+                >
+                  <FaTicketAlt className="me-2" /> Tickets
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="#"
+                  className={`nav-link ${activeItem === 3 ? "active" : ""}`}
+                  style={{
+                    color: activeItem === 3 ? "#007BFF" : "#777",
+                    textDecoration: "none",
+                  }}
+                  onClick={() => handleItemClick(3)}
                 >
                   <FaTasks className="me-2" /> Manage Jobs
                 </a>
@@ -85,12 +87,25 @@ export default function Dashboard() {
               <li className="nav-item">
                 <a
                   href="#"
-                  className={`nav-link ${activeItem === 1 ? "active" : ""}`}
+                  className={`nav-link ${activeItem === 4 ? "active" : ""}`}
                   style={{
-                    color: activeItem === 1 ? "#007BFF" : "#777",
+                    color: activeItem === 4 ? "#007BFF" : "#777",
                     textDecoration: "none",
                   }}
-                  onClick={() => handleItemClick(1)}
+                  onClick={() => handleItemClick(4)}
+                >
+                  <MdDrafts className="me-2" /> Drafts
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="#"
+                  className={`nav-link ${activeItem === 5 ? "active" : ""}`}
+                  style={{
+                    color: activeItem === 5 ? "#007BFF" : "#777",
+                    textDecoration: "none",
+                  }}
+                  onClick={() => handleItemClick(5)}
                 >
                   <FaPlusCircle className="me-2" /> Create New Jobs
                 </a>
@@ -99,108 +114,12 @@ export default function Dashboard() {
           </div>
         </nav>
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          {/* <div className="row mt-3">
-            <div className="col-xl-4 col-md-5 col-sm-6 mb-4">
-              <div
-                className="card text-white"
-                style={{ background: "#ADD8E6" }}
-              >
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="card-title" style={{ color: "#1565C0" }}>
-                      Job applied
-                    </h5>
-                  </div>
-                  <div>
-                    <h1 className="card-text" style={{ color: "#1565C0" }}>
-                      8
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-4 col-md-7 col-sm-6 mb-4">
-              <div
-                className="card text-white"
-                style={{ background: "#C1FFC1" }}
-              >
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="card-title" style={{ color: "#2E7D32" }}>
-                      Approved jobs
-                    </h5>
-                  </div>
-                  <div>
-                    <h1 className="card-text" style={{ color: "#2E7D32" }}>
-                      8
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
-              <div
-                className="card text-white"
-                style={{ background: "#FFCCCC" }}
-              >
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="card-title" style={{ color: "#B71C1C" }}>
-                      Not approved Jobs
-                    </h5>
-                  </div>
-                  <div>
-                    <h1 className="card-text" style={{ color: "#B71C1C" }}>
-                      8
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
-              <div
-                className="card text-white"
-                style={{ background: "#FFE4B5" }}
-              >
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="card-title" style={{ color: "#E65100" }}>
-                      Approval pending Jobs
-                    </h5>
-                  </div>
-                  <div>
-                    <h1 className="card-text" style={{ color: "#E65100" }}>
-                      8
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-4 col-md-6 col-sm-6 mb-4">
-              <div
-                className="card text-white"
-                style={{ background: "#FFF9C4" }}
-              >
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 className="card-title" style={{ color: "#FBC02D" }}>
-                      Created Jobs
-                    </h5>
-                  </div>
-                  <div>
-                    <h1 className="card-text" style={{ color: "#FBC02D" }}>
-                      8
-                    </h1>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
           <div></div>
-          {activeItem === 1 && <CreateNewJobs />}
-          {activeItem === 2 && <ManageJobs />}
-          {activeItem === 3 && <Profile />}
-          {activeItem === 4 && <Tickets />}
+          {activeItem === 1 && <Profile />}
+          {activeItem === 2 && <Tickets />}
+          {activeItem === 3 && <ManageJobs />}
+          {activeItem === 4 && <SavedJobs />}
+          {activeItem === 5 && <CreateNewJobs />}
         </main>
       </div>
     </div>

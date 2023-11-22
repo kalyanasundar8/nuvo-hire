@@ -47,25 +47,30 @@ export default function JobSeekerSignIn() {
   const [alertMessage, setAlertMessage] = useState("");
 
   const loginHandler = async (values) => {
-    const payload = {
-      email: values.email,
-      password: values.password,
-    };
 
     try {
+      const payload = {
+        email: values.email,
+        password: values.password,
+      };
+
+      setLoading(true);
+
       const response = await ApiService("login", "POST", payload, false);
 
       if (response?.response?.data?.is_otp_verified == false) {
         navigate("/verify-otp", { state: response?.response?.data?.phone_no });
       }
 
-      if (response?.data?.status_code == 200) {
+      if (response?.data?.status == true) {
+        setLoading(false);
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response.data));
         setError("");
         navigate("/");
         window.location.reload();
       } else {
+        setLoading(false)
         console.log(response?.response?.data?.message);
         setError(response?.response?.data?.message);
         setAlertMessage(
@@ -196,12 +201,12 @@ export default function JobSeekerSignIn() {
                           <div className='text-center'>
                             <button
                               type='submit'
-                              disabled={!formik.isValid}
+                              disabled={loading || !formik.isValid}
                               className={`btn btn-white btn-hover w-100 ${
                                 loading ? "disabled" : ""
                               }`}
                             >
-                              {loading ? "Sign In..." : "Sign In"}
+                              {loading ? "Signing In..." : "Sign In"}
                             </button>
                           </div>
                         </form>

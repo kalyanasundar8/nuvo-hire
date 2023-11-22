@@ -1,11 +1,17 @@
-import { Alert } from 'react-bootstrap';
-
 const SuccessModel = ({ success }) => {
 
   return (
-    <Alert variant="success">
+    <div style={{
+      backgroundColor: "#C1FFC1",
+      color: "#2E7D32",
+      padding: "15px",
+      fontWeight: "600",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    }}>
       { success }
-    </Alert>
+    </div>
   )
 }
 

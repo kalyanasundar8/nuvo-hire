@@ -127,6 +127,9 @@ export default function CreateNewJobs() {
   const [tags, setTags] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [postLater, setPostLater] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
 
   // Description Editor
@@ -442,7 +445,7 @@ export default function CreateNewJobs() {
       country_id: values.country,
       state_id: values.state,
       city_id: values.city,
-      job_location: jobLocations,
+      job_locations: jobLocations,
       zipcode: values.zipcode,
       tags_id: tagsValue,
       is_post_later: postLater,
@@ -451,7 +454,22 @@ export default function CreateNewJobs() {
     try {
       const response = await createJobPostService(payload);
       console.log(response);
+      if(response.data.status === true) {
+        setTimeout(() => {
+          setLoading(false);
+        setSuccess("Job post was created successfuly");
+        }, 3000)
+      } else {
+        setLoading(true);
+        setTimeout(() => {
+          setError("We are not able to create this job post")
+        }, 3000)
+      }
     } catch (error) {
+      setTimeout(() => {
+        setLoading(false);
+        setError("We are not able to create this job post")
+      }, 3000)
       console.log("Error ", error);
     }
   };

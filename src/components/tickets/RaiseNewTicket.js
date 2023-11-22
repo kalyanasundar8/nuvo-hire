@@ -105,6 +105,7 @@ const RaiseNewTicket = () => {
                 <div className='mb-3'>
                   <label htmlFor='title' className='form-label'>
                     Title
+                    <span className='text-danger font-weight-bold'>*</span>
                   </label>
                   <input
                     type='text'
@@ -125,6 +126,7 @@ const RaiseNewTicket = () => {
                 <div className='mb-3'>
                   <label htmlFor='description' className='form-label'>
                     Description
+                    <span className='text-danger font-weight-bold'>*</span>
                   </label>
                   <textarea
                     className='form-control'

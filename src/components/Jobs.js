@@ -9,6 +9,7 @@ import {
   fetchAllSubCategories,
   fetchCategoriesJob,
 } from "../services/JobService";
+import { useFormik } from "formik";
 
 export default function Jobs() {
   const { id } = useParams();
@@ -69,116 +70,295 @@ export default function Jobs() {
       title = "Job List";
   }
 
-  // // All jobs list
-  // const allJobsData = useFetch("jobs");
-  // const allJobs = allJobsData.data;
-  // console.log(allJobs);
-
-  // // SubCategories Jobs
-  // const subCategoriesData = useFetch(`jobs?subcategory_id=${subCategoryId}`);
-  // const subCategory = subCategoriesData.data;
-  // console.log("Subcategory", subCategory);
-
   // Job Search
   const countriesData = useFetch("countries");
   const countries = countriesData.data;
 
+  // Experience
+  const experienceData = useFetch("experiances", "GET", null, false);
+  const experiences = experienceData.data;
+  console.log(experiences);
+
+  // Employment
+  const employmentData = useFetch("employment-types", "GET", null, false);
+  const employmentTypes = employmentData.data;
+
+  // Salary
+  const salaryData = useFetch("salaries", "GET", null, false);
+  const salaries = salaryData.data;
+  console.log(salaries);
+
+  // WorkMode
+  const workModeData = useFetch("workmodes", "GET", null, false);
+  const workModes = workModeData.data;
+  console.log(workModes);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [countryId, setCountryId] = useState("101");
 
-  const handleSearch = async () => {
-    console.log(searchQuery);
-    console.log(countryId);
-    try {
-      const searchResults = await ApiService(
-        `job-search?value=${encodeURIComponent(
-          searchQuery
-        )}&country_id=${countryId}`
+  // Category
+  const jobData = useFetch("onsearch-jobs");
+  const jobList = jobData.data;
+
+  const [query, setQuery] = useState("");
+  const [showSuggestion, setShowSuggestion] = useState("");
+  const [selectedJob, setSelectedJob] = useState("");
+
+  const handleSuggestionClick = (jobTitle) => {
+    setSelectedJob(jobTitle);
+    setQuery(jobTitle);
+    setShowSuggestion(false);
+  };
+
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    setQuery(inputValue);
+    setShowSuggestion(inputValue !== "");
+  };
+
+  const [category, setCategory] = useState("");
+  const [country, setCountry] = useState("");
+
+  const [employment, setEmployment] = useState("");
+  const [datePosted, setPostDate] = useState("");
+
+  const [workMode, setWorkmode] = useState("");
+  const [selectedWorkMode, setSelectedWorkMode] = useState([]);
+
+  const handleWorkMode = (e) => {
+    const selectedModeId = e.target.value;
+
+    // Check if the selected work mode is already in the array
+    if (selectedWorkMode.includes(selectedModeId)) {
+      // If it is, remove it from the array
+      setSelectedWorkMode((prevSelectedWorkMode) =>
+        prevSelectedWorkMode.filter((id) => id !== selectedModeId)
       );
-      console.log(searchResults);
+    } else {
+      // If it is not, add it to the array
+      setSelectedWorkMode((prevSelectedWorkMode) => [
+        ...prevSelectedWorkMode,
+        selectedModeId,
+      ]);
+    }
+  };
+
+  // Experience selection
+  const [noExperience, setNoExperience] = useState("");
+  const [selectedExperience, setSelectedExperience] = useState([]);
+
+  const handleExperience = (e) => {
+    const selectedExperienceId = e.target.value;
+
+    // Check if the selected experience is already in the array
+    if (selectedExperience.includes(selectedExperienceId)) {
+      // If it is, remove it from the array
+      setSelectedExperience((prevSelectedExperience) =>
+        prevSelectedExperience.filter((id) => id !== selectedExperienceId)
+      );
+    } else {
+      // If it is not, add it to the array
+      setSelectedExperience((prevSelectedExperience) => [
+        ...prevSelectedExperience,
+        selectedExperienceId,
+      ]);
+    }
+  };
+
+  // Salary selection
+  const [salary, setSalary] = useState("");
+  const [selectedSalaries, setSelectedSalaries] = useState([]);
+
+  const handleSalaryChange = (e) => {
+    const selectedSalaryId = e.target.value;
+
+    // Check if the selected salary is already in the array
+    if (selectedSalaries.includes(selectedSalaryId)) {
+      // If it is, remove it from the array
+      setSelectedSalaries((prevSelectedSalaries) =>
+        prevSelectedSalaries.filter((id) => id !== selectedSalaryId)
+      );
+    } else {
+      // If it is not, add it to the array
+      setSelectedSalaries((prevSelectedSalaries) => [
+        ...prevSelectedSalaries,
+        selectedSalaryId,
+      ]);
+    }
+  };
+
+  console.log(selectedJob);
+  console.log(country);
+  console.log(category);
+  console.log(selectedExperience);
+  console.log(selectedWorkMode);
+  console.log(selectedSalaries);
+  console.log(employment);
+  console.log(datePosted);
+
+  const categoriesData = useFetch("categories", "GET", null, false);
+  const categories = categoriesData.data;
+  console.log(categories);
+
+  // const formik = useFormik({
+  //   initialValues: {
+  //     value: "",
+  //     country_id: "",
+  //     designation_id: "",
+  //     salary_id: [],
+  //     experience_id: [],
+  //     work_mode_id: [],
+  //     created_at: "",
+  //   },
+  //   onSubmit: (values) => {
+  //     console.log(values);
+  //   },
+  // });
+
+  console.log(selectedJob, countryId, selectedSalaries, category, selectedExperience, selectedWorkMode, datePosted)
+
+  const filterJobs = async () => {
+    const payload = {
+      value: selectedJob,
+      country_id: countryId,
+      designation_id: category,
+      salary_id: selectedSalaries,
+      experience_id: selectedExperience,
+      work_mode_id: selectedWorkMode,
+      created_at: datePosted,
+    };
+    console.log(payload);
+
+    try {
+      const response = await ApiService(
+        "jobs-filter",
+        "POST",
+        payload,
+        true
+      );
+      console.log(response);
+      setJobsData(response.data.data)
     } catch (error) {
       console.log(error);
     }
   };
 
+  const renderSuggestions = () => {
+    const filteredJobs = jobList.filter((jobs) =>
+      jobs.job_title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filteredJobs.length === 0) {
+      return null;
+    }
+
+    return (
+      <ul
+        style={{
+          width: 300,
+          position: "absolute",
+          top: "105%",
+          zIndex: 1000,
+          left: 10,
+          listStyleType: "none",
+          backgroundColor: "#fff",
+          borderRadius: "0 0 8px 8px",
+          padding: 20,
+          margin: 0,
+          boxShadow: "0 20px 20px rgba(0, 0, 0, 0.1)",
+          maxHeight: "150px", // Set a max height for scroll
+          overflowY: "auto", // Enable scroll when needed
+        }}
+      >
+        {filteredJobs.map((jobs, index) => (
+          <li
+            key={index}
+            style={{
+              padding: "8px",
+              cursor: "pointer",
+            }}
+            onClick={() => handleSuggestionClick(jobs.job_title)}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#f0f0f0"; // Change background on hover
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "initial"; // Reset background when not hovering
+            }}
+          >
+            {jobs.job_title}
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   useScrollToTop();
 
   return (
-    <div class='page-content'>
-      <section class='page-title-box'>
-        <div class='container'>
-          <div class='row justify-content-center'>
-            <div class='col-md-6'>
-              <div class='text-center text-white'>
-                <h3 class='mb-4'>{title}</h3>
-                <div class='page-next'>
-                  <nav
-                    class='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol class='breadcrumb justify-content-center'>
-                      <li class='breadcrumb-item'>
-                        {" "}
-                        <Link to='index.php'>Home</Link>
-                      </li>
-                      <li class='breadcrumb-item'>
-                        {" "}
-                        <Link to=''>Pages</Link>
-                      </li>
-                      <li class='breadcrumb-item active' aria-current='page'>
-                        {" "}
-                        {title}{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
+    <div class="page-content">
+      <section class="page-title-box">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="text-center text-white">
+                <h3 class="mb-4">{title}</h3>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <div class='position-relative' style={{ zIndex: 1 }}>
-        <div class='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
+      <div class="position-relative" style={{ zIndex: 1 }}>
+        <div class="shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
             <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
+              fill=""
+              fill-opacity="1"
+              d="M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
             ></path>
           </svg>
         </div>
       </div>
-      <section class='section'>
-        <div class='container'>
-          <div class='row'>
-            <div class='col-lg-9'>
-              <div class='me-lg-5'>
-                <div class='job-list-header'>
-                  <form action='#'>
-                    <div class='row g-2'>
-                      <div class='col-lg-3 col-md-6'>
-                        <div class='filler-job-form'>
-                          <i class='uil uil-briefcase-alt'></i>
+      <section class="section">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-9">
+              <div class="me-lg-5">
+                <div class="job-list-header" style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-around"
+                }}>
+                  <form>
+                    <div class="row g-2">
+                      <div class="col-lg-4 col-md-4">
+                        <div class="filler-job-form">
+                          <i class="uil uil-briefcase-alt"></i>
                           <input
-                            type='search'
-                            class='form-control filter-job-input-box'
-                            id='exampleFormControlInput1'
-                            placeholder='Job, company... '
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            type="search"
+                            class="form-control filter-job-input-box"
+                            id="exampleFormControlInput1"
+                            placeholder="Job, company... "
+                            value={query}
+                            onChange={handleInputChange}
+                            autoComplete="off"
                           />
                         </div>
+                        {showSuggestion && renderSuggestions()}
                       </div>
 
-                      <div class='col-lg-3 col-md-6'>
-                        <div class='filler-job-form'>
-                          <i class='uil uil-location-point'></i>
+                      <div class="col-lg-4 col-md-4">
+                        <div class="filler-job-form">
+                          <i class="uil uil-location-point"></i>
                           <select
-                            class='form-select'
+                            class="form-select"
                             data-trigger
-                            name='choices-single-location'
-                            id='choices-single-location'
-                            aria-label='Default select example'
+                            name="choices-single-location"
+                            id="choices-single-location"
+                            aria-label="Default select example"
+                            onChange={(e) => {
+                              setCountry(e.target.value);
+                            }}
+                           
                           >
                             {Array.isArray(countries)
                               ? countries.map((country) => (
@@ -191,693 +371,419 @@ export default function Jobs() {
                         </div>
                       </div>
 
-                      <div class='col-lg-3 col-md-6'>
-                        <div class='filler-job-form'>
-                          <i class='uil uil-clipboard-notes'></i>
+                      <div class="col-lg-4 col-md-4">
+                        <div class="filler-job-form">
+                          <i class="uil uil-clipboard-notes"></i>
                           <select
-                            class='form-select '
+                            class="form-select "
                             data-trigger
-                            name='choices-single-categories'
-                            id='choices-single-categories'
-                            aria-label='Default select example'
+                            name="choices-single-categories"
+                            id="choices-single-categories"
+                            aria-label="Default select example"
+                            onChange={(e) => {
+                              setCategory(e.target.value);
+                            }}
+                            
                           >
-                            <option value='4'>Accounting</option>
-                            <option value='1'>IT & Software</option>
-                            <option value='3'>Marketing</option>
-                            <option value='5'>Banking</option>
+                            {Array.isArray(categories) &&
+                              categories.map((cat) => (
+                                <option value={cat.id}>{cat.name}</option>
+                              ))}
                           </select>
                         </div>
                       </div>
-
-                      <div class='col-lg-3 col-md-6'>
-                        <Link to='' class='btn btn-primary w-100'>
-                          <i class='uil uil-filter'></i> Fliter
-                        </Link>
-                      </div>
                     </div>
                   </form>
-                </div>
-
-                <div class='wedget-popular-title mt-4'>
-                  <h6>Popular</h6>
-                  <ul class='list-inline'>
-                    <li class='list-inline-item'>
-                      <div class='popular-box d-flex align-items-center'>
-                        <div class='number flex-shrink-0 me-2'>20</div>
-                        <Link to='' class='primary-link stretched-link'>
-                          <h6 class='fs-14 mb-0'>UI/UX designer</h6>
+                  <div class="col-lg-2 col-md-2">
+                        <Link to="" class="btn btn-primary w-100" onClick={filterJobs}>
+                          <i class="uil uil-filter"></i> Fliter
                         </Link>
                       </div>
-                    </li>
-                    <li class='list-inline-item'>
-                      <div class='popular-box d-flex align-items-center'>
-                        <div class='number flex-shrink-0 me-2'>18</div>
-                        <Link to='' class='primary-link stretched-link'>
-                          <h6 class='fs-14 mb-0'>HR manager</h6>
-                        </Link>
-                      </div>
-                    </li>
-                    <li class='list-inline-item'>
-                      <div class='popular-box d-flex align-items-center'>
-                        <div class='number flex-shrink-0 me-2'>10</div>
-                        <Link to='' class='primary-link stretched-link'>
-                          <h6 class='fs-14 mb-0'>Product manager</h6>
-                        </Link>
-                      </div>
-                    </li>
-                    <li class='list-inline-item'>
-                      <div class='popular-box d-flex align-items-center'>
-                        <div class='number flex-shrink-0 me-2'>15</div>
-                        <Link to='' class='primary-link stretched-link'>
-                          <h6 class='fs-14 mb-0'>Sales manager</h6>
-                        </Link>
-                      </div>
-                    </li>
-                    <li class='list-inline-item'>
-                      <div class='popular-box d-flex align-items-center'>
-                        <div class='number flex-shrink-0 me-2'>28</div>
-                        <Link to='' class='primary-link stretched-link'>
-                          <h6 class='fs-14 mb-0'>Developer</h6>
-                        </Link>
-                      </div>
-                    </li>
-                  </ul>
                 </div>
 
                 <div>
-                  {Array.isArray(jobsData)
-                    ? jobsData.map((jobs) => (
-                        <div key={jobs.id} class='job-box card mt-5'>
-                          <div class='bookmark-label text-center'>
-                            <Link to='' class='align-middle text-white'>
-                              <i class='mdi mdi-star'></i>
-                            </Link>
-                          </div>
-                          <div class='p-4'>
-                            <div class='row align-items-center'>
-                              <div class='col-md-2'>
-                                <div class='text-center mb-4 mb-lg-0'>
-                                  <Link to='company-details.php'>
-                                    <img
-                                      src='assets/images/featured-job/img-01.png'
-                                      alt=''
-                                      class='img-fluid rounded-3'
-                                    />
-                                  </Link>
-                                </div>
+                  {Array.isArray(jobsData) && jobData.length > 0 ? (
+                    jobsData.map((jobs) => (
+                      <div key={jobs.id} class="job-box card mt-5">
+                        <div class="bookmark-label text-center">
+                          <Link to="" class="align-middle text-white">
+                            <i class="mdi mdi-star"></i>
+                          </Link>
+                        </div>
+                        <div class="p-4">
+                          <div class="row align-items-center">
+                            <div class="col-md-2">
+                              <div class="text-center mb-4 mb-lg-0">
+                                <Link to="company-details.php">
+                                  <img
+                                    src="assets/images/featured-job/img-01.png"
+                                    alt=""
+                                    class="img-fluid rounded-3"
+                                  />
+                                </Link>
                               </div>
-
-                              <div class='col-md-3'>
-                                <div class='mb-2 mb-md-0'>
-                                  <h5 class='fs-18 mb-0'>
-                                    {" "}
-                                    <Link
-                                      to={`/job-detail/${jobs.id}`}
-                                      class='text-dark'
-                                    >
-                                      {jobs.job_title}
-                                    </Link>
-                                  </h5>
-                                  <p class='text-muted fs-14 mb-0'>
-                                    {jobs.company_name}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div class='col-md-3'>
-                                <div class='d-flex mb-2'>
-                                  <div class='flex-shrink-0'>
-                                    <i class='mdi mdi-map-marker text-primary me-1'></i>
-                                  </div>
-                                  <p class='text-muted'>
-                                    {" "}
-                                    {jobs.city_id && jobs.city_id.name}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div class='col-md-2'>
-                                <div class='d-flex mb-0'>
-                                  <div class='flex-shrink-0'>
-                                    <i class='uil uil-clock-three text-primary me-1'></i>
-                                  </div>
-                                  <p class='text-muted mb-0'> 3 min ago</p>
-                                </div>
-                              </div>
-                              {Array.isArray(jobs.employment_type_id) &&
-                                jobs.employment_type_id.map((employment) => (
-                                  <div class='col-md-2'>
-                                    <div key={employment.employment_type_id}>
-                                      <span class='badge bg-success-subtle text-success fs-13 mt-1'>
-                                        {employment.employment_type}
-                                      </span>
-                                    </div>
-                                  </div>
-                                ))}
                             </div>
-                          </div>
-                          <div class='p-3 bg-light'>
-                            <div class='row justify-content-between'>
-                              <div class='col-md-4'>
-                                <div>
-                                  <p class='text-muted mb-0'>
-                                    <span class='text-dark'>Experience :</span>{" "}
-                                    {jobs.experience_id &&
-                                      jobs.experience_id.year}
-                                  </p>
-                                </div>
-                              </div>
 
-                              <div class='col-lg-2 col-md-3'>
-                                <div class='text-start text-md-end'>
+                            <div class="col-md-3">
+                              <div class="mb-2 mb-md-0">
+                                <h5 class="fs-18 mb-0">
+                                  {" "}
                                   <Link
-                                    to='#applyNow'
-                                    data-bs-toggle='modal'
-                                    class='primary-link'
+                                    to={`/job-detail/${jobs.id}`}
+                                    class="text-dark"
                                   >
-                                    Apply Now{" "}
-                                    <i class='mdi mdi-chevron-double-right'></i>
+                                    {jobs.job_title}
                                   </Link>
+                                </h5>
+                                <p class="text-muted fs-14 mb-0">
+                                  {jobs.company_name}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="col-md-3">
+                              <div class="d-flex mb-2">
+                                <div class="flex-shrink-0">
+                                  <i class="mdi mdi-map-marker text-primary me-1"></i>
                                 </div>
+                                <p class="text-muted">
+                                  {" "}
+                                  {jobs.city_id && jobs.city_id.name}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="col-md-2">
+                              <div class="d-flex mb-0">
+                                <div class="flex-shrink-0">
+                                  <i class="uil uil-clock-three text-primary me-1"></i>
+                                </div>
+                                <p class="text-muted mb-0"> 3 min ago</p>
+                              </div>
+                            </div>
+                            {Array.isArray(jobs.employment_type_id) &&
+                              jobs.employment_type_id.map((employment) => (
+                                <div class="col-md-2">
+                                  <div key={employment.employment_type_id}>
+                                    <span class="badge bg-success-subtle text-success fs-13 mt-1">
+                                      {employment.employment_type}
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                        <div class="p-3 bg-light">
+                          <div class="row justify-content-between">
+                            <div class="col-md-4">
+                              <div>
+                                <p class="text-muted mb-0">
+                                  <span class="text-dark">Experience :</span>{" "}
+                                  {jobs.experience_id &&
+                                    jobs.experience_id.year}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-3">
+                              <div class="text-start text-md-end">
+                                <Link
+                                  to="#applyNow"
+                                  data-bs-toggle="modal"
+                                  class="primary-link"
+                                >
+                                  Apply Now{" "}
+                                  <i class="mdi mdi-chevron-double-right"></i>
+                                </Link>
                               </div>
                             </div>
                           </div>
                         </div>
-                      ))
-                    : // : Array.isArray(searchedResult.data)
-                      // ? searchedResult.data.map((searched) => (
-                      //     <div key={searched.id} class='job-box card mt-5'>
-                      //       <div class='bookmark-label text-center'>
-                      //         <Link to='' class='align-middle text-white'>
-                      //           <i class='mdi mdi-star'></i>
-                      //         </Link>
-                      //       </div>
-                      //       <div class='p-4'>
-                      //         <div class='row align-items-center'>
-                      //           <div class='col-md-2'>
-                      //             <div class='text-center mb-4 mb-lg-0'>
-                      //               <Link to='company-details.php'>
-                      //                 <img
-                      //                   src='assets/images/featured-job/img-01.png'
-                      //                   alt=''
-                      //                   class='img-fluid rounded-3'
-                      //                 />
-                      //               </Link>
-                      //             </div>
-                      //           </div>
-
-                      //           <div class='col-md-3'>
-                      //             <div class='mb-2 mb-md-0'>
-                      //               <h5 class='fs-18 mb-0'>
-                      //                 {" "}
-                      //                 <Link
-                      //                   to={`/job-detail/${id}`}
-                      //                   class='text-dark'
-                      //                 >
-                      //                   {searched.job_title}
-                      //                 </Link>
-                      //               </h5>
-                      //               <p class='text-muted fs-14 mb-0'>
-                      //                 {searched.company_name}
-                      //               </p>
-                      //             </div>
-                      //           </div>
-
-                      //           <div class='col-md-3'>
-                      //             <div class='d-flex mb-2'>
-                      //               <div class='flex-shrink-0'>
-                      //                 <i class='mdi mdi-map-marker text-primary me-1'></i>
-                      //               </div>
-                      //               <p class='text-muted'>
-                      //                 {" "}
-                      //                 {searched.state_id &&
-                      //                   searched.state_id.name}
-                      //               </p>
-                      //             </div>
-                      //           </div>
-
-                      //           <div class='col-md-2'>
-                      //             <div class='d-flex mb-0'>
-                      //               <div class='flex-shrink-0'>
-                      //                 <i class='uil uil-clock-three text-primary me-1'></i>
-                      //               </div>
-                      //               <p class='text-muted mb-0'> 3 min ago</p>
-                      //             </div>
-                      //           </div>
-
-                      //           <div class='col-md-2'>
-                      //             <div>
-                      //               <span class='badge bg-success-subtle text-success fs-13 mt-1'>
-                      //                 {searched.employment_type_id &&
-                      //                   searched.employment_type_id.name}
-                      //               </span>
-                      //             </div>
-                      //           </div>
-                      //         </div>
-                      //       </div>
-                      //       <div class='p-3 bg-light'>
-                      //         <div class='row justify-content-between'>
-                      //           <div class='col-md-4'>
-                      //             <div>
-                      //               <p class='text-muted mb-0'>
-                      //                 <span class='text-dark'>Experience :</span>{" "}
-                      //                 {searched.experience_id &&
-                      //                   searched.experience_id.year}
-                      //               </p>
-                      //             </div>
-                      //           </div>
-
-                      //           <div class='col-lg-2 col-md-3'>
-                      //             <div class='text-start text-md-end'>
-                      //               <Link
-                      //                 to='#applyNow'
-                      //                 data-bs-toggle='modal'
-                      //                 class='primary-link'
-                      //               >
-                      //                 Apply Now{" "}
-                      //                 <i class='mdi mdi-chevron-double-right'></i>
-                      //               </Link>
-                      //             </div>
-                      //           </div>
-                      //         </div>
-                      //       </div>
-                      //     </div>
-                      //   ))
-                      null}
-                </div>
-
-                <div class='row'>
-                  <div class='col-lg-12 mt-4 pt-2'>
-                    <nav aria-label='Page navigation example'>
-                      <ul class='pagination job-pagination mb-0 justify-content-center'>
-                        <li class='page-item disabled'>
-                          <Link class='page-link' to='' tabindex='-1'>
-                            <i class='mdi mdi-chevron-double-left fs-15'></i>
-                          </Link>
-                        </li>
-                        <li class='page-item active'>
-                          {" "}
-                          <Link class='page-link' to=''>
-                            1
-                          </Link>
-                        </li>
-                        <li class='page-item'>
-                          {" "}
-                          <Link class='page-link' to=''>
-                            2
-                          </Link>
-                        </li>
-                        <li class='page-item'>
-                          {" "}
-                          <Link class='page-link' to=''>
-                            3
-                          </Link>
-                        </li>
-                        <li class='page-item'>
-                          {" "}
-                          <Link class='page-link' to=''>
-                            4
-                          </Link>
-                        </li>
-                        <li class='page-item'>
-                          <Link class='page-link' to=''>
-                            <i class='mdi mdi-chevron-double-right fs-15'></i>
-                          </Link>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p
+                      style={{
+                        marginTop: "50px",
+                        textAlign: "center",
+                      }}
+                      className="text-muted"
+                    >
+                      No jobs found
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div class='col-lg-3'>
-              <div class='side-bar mt-5 mt-lg-0'>
-                <div class='accordion' id='accordionExample'>
-                  <div class='accordion-item'>
-                    <h2 class='accordion-header' id='locationOne'>
+            <div class="col-lg-3">
+              <div class="side-bar mt-5 mt-lg-0">
+                <div class="accordion" id="accordionExample">
+                  {/* Experience */}
+                  <div class="accordion-item mt-4">
+                    <h2 class="accordion-header" id="experienceOne">
                       <button
-                        class='accordion-button'
-                        type='button'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#location'
-                        aria-expanded='true'
-                        aria-controls='location'
-                      >
-                        Location
-                      </button>
-                    </h2>
-                    <div
-                      id='location'
-                      class='accordion-collapse collapse show'
-                      aria-labelledby='locationOne'
-                    >
-                      <div class='accordion-body'>
-                        <div class='side-title'>
-                          <div class='mb-3'>
-                            <form class='position-relative'>
-                              <input
-                                class='form-control'
-                                type='search'
-                                placeholder='Search...'
-                              />
-                              <button
-                                class='bg-transparent border-0 position-absolute top-50 end-0 translate-middle-y me-2'
-                                type='submit'
-                              >
-                                <span class='mdi mdi-magnify text-muted'></span>
-                              </button>
-                            </form>
-                          </div>
-                          <div class='area-range'>
-                            <div class='form-label mb-3'>
-                              Area Range:{" "}
-                              <span class='example-val mt-2' id='slider1-span'>
-                                9.00
-                              </span>{" "}
-                              miles
-                            </div>
-                            <div
-                              id='slider1'
-                              class='noUi-target noUi-ltr noUi-horizontal noUi-txt-dir-ltr'
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class='accordion-item mt-4'>
-                    <h2 class='accordion-header' id='experienceOne'>
-                      <button
-                        class='accordion-button'
-                        type='button'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#experience'
-                        aria-expanded='true'
-                        aria-controls='experience'
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#experience"
+                        aria-expanded="true"
+                        aria-controls="experience"
                       >
                         Work experience
                       </button>
                     </h2>
                     <div
-                      id='experience'
-                      class='accordion-collapse collapse show'
-                      aria-labelledby='experienceOne'
+                      id="experience"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="experienceOne"
                     >
-                      <div class='accordion-body'>
-                        <div class='side-title'>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              value=''
-                              id='flexCheckChecked1'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked1'
-                            >
-                              No experience
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              value=''
-                              id='flexCheckChecked2'
-                              checked
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked2'
-                            >
-                              0-3 years
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              value=''
-                              id='flexCheckChecked3'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked3'
-                            >
-                              3-6 years
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              value=''
-                              id='flexCheckChecked4'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked4'
-                            >
-                              More than 6 years
-                            </label>
-                          </div>
-                        </div>
+                      <div class="accordion-body">
+                        {Array.isArray(experiences) &&
+                          experiences.map((experience) => (
+                            <div class="side-title" key={experience.id}>
+                              <div class="form-check mt-2">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  id={`flexCheckChecked1${experience.id}`}
+                                  value={experience.id}
+                                  onChange={handleExperience}
+                                  checked={selectedExperience.includes(
+                                    experience.id
+                                  )}
+                                />
+                                <label
+                                  class="form-check-label ms-2 text-muted"
+                                  for={`flexCheckChecked1${experience.id}`}
+                                >
+                                  {experience.year} years
+                                </label>
+                              </div>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   </div>
 
-                  <div class='accordion-item mt-3'>
-                    <h2 class='accordion-header' id='jobType'>
+                  {/* WorkMode */}
+                  <div class="accordion-item mt-4">
+                    <h2 class="accordion-header" id="workmode">
                       <button
-                        class='accordion-button'
-                        type='button'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#jobtype'
-                        aria-expanded='false'
-                        aria-controls='jobtype'
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#workmode"
+                        aria-expanded="true"
+                        aria-controls="workmode"
+                      >
+                        Work Mode
+                      </button>
+                    </h2>
+                    <div
+                      id="workmode"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="workmode"
+                    >
+                      <div class="accordion-body">
+                        {Array.isArray(workModes) &&
+                          workModes.map((modes) => (
+                            <div class="side-title" key={modes.id}>
+                              <div class="form-check mt-2">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  id={`flexCheckChecked2${modes.id}`}
+                                  value={modes.id}
+                                  onChange={handleWorkMode}
+                                  checked={selectedWorkMode.includes(
+                                    modes.id
+                                    )}
+                                />
+                                <label
+                                  class="form-check-label ms-2 text-muted"
+                                  for={`flexCheckChecked2${modes.id}`}
+                                >
+                                  {modes.name}
+                                </label>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Salary range */}
+                  <div class="accordion-item mt-4">
+                    <h2 class="accordion-header" id="salary">
+                      <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#salary"
+                        aria-expanded="true"
+                        aria-controls="salary"
+                      >
+                        Salary range
+                      </button>
+                    </h2>
+                    <div
+                      id="salary"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="salary"
+                    >
+                      <div class="accordion-body">
+                        {Array.isArray(salaries) &&
+                          salaries.map((salary) => (
+                            <div class="side-title" key={salary.id}>
+                              <div class="form-check mt-2">
+                                <input
+                                  class="form-check-input"
+                                  type="checkbox"
+                                  id={`flexCheckChecked${salary.id}`}
+                                  value={salary.id}
+                                  onChange={handleSalaryChange}
+                                  checked={selectedSalaries.includes(salary.id)}
+                                />
+                                <label
+                                  class="form-check-label ms-2 text-muted"
+                                  for={`flexCheckChecked${salary.id}`}
+                                >
+                                  {salary.name}
+                                </label>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Employment */}
+                  <div class="accordion-item mt-3">
+                    <h2 class="accordion-header" id="jobType">
+                      <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#jobtype"
+                        aria-expanded="false"
+                        aria-controls="jobtype"
                       >
                         Type of employment
                       </button>
                     </h2>
-                    <div
-                      id='jobtype'
-                      class='accordion-collapse collapse show'
-                      aria-labelledby='jobType'
-                    >
-                      <div class='accordion-body'>
-                        <div class='side-title'>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='radio'
-                              name='flexRadioDefault'
-                              id='flexRadioDefault6'
-                              checked
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexRadioDefault6'
-                            >
-                              Freelance
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='radio'
-                              name='flexRadioDefault'
-                              id='flexRadioDefault2'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexRadioDefault2'
-                            >
-                              Full Time
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='radio'
-                              name='flexRadioDefault'
-                              id='flexRadioDefault3'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexRadioDefault3'
-                            >
-                              Internship
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='radio'
-                              name='flexRadioDefault'
-                              id='flexRadioDefault4'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexRadioDefault4'
-                            >
-                              Part Time
-                            </label>
+                    {Array.isArray(employmentTypes) &&
+                      employmentTypes.map((employment) => (
+                        <div
+                          id="jobtype"
+                          class="accordion-collapse collapse show"
+                          aria-labelledby="jobType"
+                        >
+                          <div class="accordion-body">
+                            <div class="side-title">
+                              <div class="form-check mt-2">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="flexRadioDefault"
+                                  id="flexRadioDefault6"
+                                  value={employment.id}
+                                  onChange={(e) => {
+                                    
+                                    setEmployment(e.target.value);
+                                  }}
+                                />
+                                <label
+                                  class="form-check-label ms-2 text-muted"
+                                  for="flexRadioDefault6"
+                                >
+                                  {employment.name}
+                                </label>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      ))}
                   </div>
 
-                  <div class='accordion-item mt-3'>
-                    <h2 class='accordion-header' id='datePosted'>
+                  {/* Date posted */}
+                  <div class="accordion-item mt-3">
+                    <h2 class="accordion-header" id="datePosted">
                       <button
-                        class='accordion-button'
-                        type='button'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#dateposted'
-                        aria-expanded='false'
-                        aria-controls='dateposted'
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#dateposted"
+                        aria-expanded="false"
+                        aria-controls="dateposted"
                       >
                         Date Posted
                       </button>
                     </h2>
                     <div
-                      id='dateposted'
-                      class='accordion-collapse collapse show'
-                      aria-labelledby='datePosted'
+                      id="dateposted"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="datePosted"
                     >
-                      <div class='accordion-body'>
-                        <div class='side-title form-check-all'>
-                          <div class='form-check'>
+                      <div class="accordion-body">
+                        <div class="side-title form-check-all">
+                          <div class="form-check mt-2">
                             <input
-                              class='form-check-input'
-                              type='checkbox'
-                              id='checkAll'
-                              value=''
+                              class="form-check-input"
+                              type="radio"
+                              name="datePosted"
+                              value={7}
+                              id="flexRadioChecked8"
+                              onChange={(e) => {
+                                
+                                setPostDate(e.target.value);
+                              }}
                             />
                             <label
-                              class='form-check-label ms-2 text-muted'
-                              for='checkAll'
-                            >
-                              All
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              name='datePosted'
-                              value='last'
-                              id='flexCheckChecked5'
-                              checked
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked5'
-                            >
-                              Last Hour
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              name='datePosted'
-                              value='last'
-                              id='flexCheckChecked6'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked6'
-                            >
-                              Last 24 hours
-                            </label>
-                          </div>
-                          <div class='form-check mt-2'>
-                            <input
-                              class='form-check-input'
-                              type='checkbox'
-                              name='datePosted'
-                              value='last'
-                              id='flexCheckChecked7'
-                            />
-                            <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked7'
+                              class="form-check-label ms-2 text-muted"
+                              for="flexRadioChecked8"
                             >
                               Last 7 days
                             </label>
                           </div>
-                          <div class='form-check mt-2'>
+                          <div class="form-check mt-2">
                             <input
-                              class='form-check-input'
-                              type='checkbox'
-                              name='datePosted'
-                              value='last'
-                              id='flexCheckChecked8'
+                              class="form-check-input"
+                              type="radio"
+                              name="datePosted"
+                              value={14}
+                              id="flexRadioChecked8"
+                              onChange={(e) => {
+                                
+                                setPostDate(e.target.value);
+                              }}
                             />
                             <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked8'
+                              class="form-check-label ms-2 text-muted"
+                              for="flexCheckChecked8"
                             >
                               Last 14 days
                             </label>
                           </div>
-                          <div class='form-check mt-2'>
+                          <div class="form-check mt-2">
                             <input
-                              class='form-check-input'
-                              type='checkbox'
-                              name='datePosted'
-                              value='last'
-                              id='flexCheckChecked9'
+                              class="form-check-input"
+                              type="radio"
+                              name="datePosted"
+                              value={30}
+                              id="flexRadioChecked9"
+                              onChange={(e) => {
+                                
+                                setPostDate(e.target.value);
+                              }}
                             />
                             <label
-                              class='form-check-label ms-2 text-muted'
-                              for='flexCheckChecked9'
+                              class="form-check-label ms-2 text-muted"
+                              for="flexRadioChecked9"
                             >
                               Last 30 days
                             </label>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class='accordion-item mt-3'>
-                    <h2 class='accordion-header' id='tagCloud'>
-                      <button
-                        class='accordion-button'
-                        type='button'
-                        data-bs-toggle='collapse'
-                        data-bs-target='#tagcloud'
-                        aria-expanded='false'
-                        aria-controls='tagcloud'
-                      >
-                        Tags Cloud
-                      </button>
-                    </h2>
-                    <div
-                      id='tagcloud'
-                      class='accordion-collapse collapse show'
-                      aria-labelledby='tagCloud'
-                    >
-                      <div class='accordion-body'>
-                        <div class='side-title'>
-                          <Link to='' class='badge tag-cloud fs-13 mt-2'>
-                            design
-                          </Link>
-                          <Link to='' class='badge tag-cloud fs-13 mt-2'>
-                            marketing
-                          </Link>
-                          <Link to='' class='badge tag-cloud fs-13 mt-2'>
-                            business
-                          </Link>
-                          <Link to='' class='badge tag-cloud fs-13 mt-2'>
-                            developer
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -889,75 +795,74 @@ export default function Jobs() {
         </div>
       </section>
       <div
-        class='modal fade'
-        id='applyNow'
-        tabindex='-1'
-        aria-labelledby='applyNow'
-        aria-hidden='true'
+        class="modal fade"
+        id="applyNow"
+        tabindex="-1"
+        aria-labelledby="applyNow"
+        aria-hidden="true"
       >
-        <div class='modal-dialog modal-dialog-centered'>
-          <div class='modal-content'>
-            <div class='modal-body p-5'>
-              <div class='text-center mb-4'>
-                <h5 class='modal-title' id='staticBackdropLabel'>
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body p-5">
+              <div class="text-center mb-4">
+                <h5 class="modal-title" id="staticBackdropLabel">
                   Apply For This Job
                 </h5>
               </div>
-              <div class='position-absolute end-0 top-0 p-3'>
+              <div class="position-absolute end-0 top-0 p-3">
                 <button
-                  type='button'
-                  class='btn-close'
-                  data-bs-dismiss='modal'
-                  aria-label='Close'
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
                 ></button>
               </div>
-              <div class='mb-3'>
-                <label for='nameControlInput' class='form-label'>
+              <div class="mb-3">
+                <label for="nameControlInput" class="form-label">
                   Name
                 </label>
                 <input
-                  type='text'
-                  class='form-control'
-                  id='nameControlInput'
-                  placeholder='Enter your name'
+                  type="text"
+                  class="form-control"
+                  id="nameControlInput"
+                  placeholder="Enter your name"
                 />
               </div>
-              <div class='mb-3'>
-                <label for='emailControlInput2' class='form-label'>
+              <div class="mb-3">
+                <label for="emailControlInput2" class="form-label">
                   Email Address
                 </label>
                 <input
-                  type='email'
-                  class='form-control'
-                  id='emailControlInput2'
-                  placeholder='Enter your email'
+                  type="email"
+                  class="form-control"
+                  id="emailControlInput2"
+                  placeholder="Enter your email"
                 />
               </div>
-              <div class='mb-3'>
-                <label for='messageControlTextarea' class='form-label'>
+              <div class="mb-3">
+                <label for="messageControlTextarea" class="form-label">
                   Message
                 </label>
                 <textarea
-                  class='form-control'
-                  id='messageControlTextarea'
-                  rows='4'
-                  placeholder='Enter your message'
+                  class="form-control"
+                  id="messageControlTextarea"
+                  rows="4"
+                  placeholder="Enter your message"
                 ></textarea>
               </div>
-              <div class='mb-4'>
-                <label class='form-label' for='inputGroupFile01'>
+              <div class="mb-4">
+                <label class="form-label" for="inputGroupFile01">
                   Resume Upload
                 </label>
-                <input type='file' class='form-control' id='inputGroupFile01' />
+                <input type="file" class="form-control" id="inputGroupFile01" />
               </div>
-              <button type='submit' class='btn btn-primary w-100'>
+              <button type="submit" class="btn btn-primary w-100">
                 Send Application
               </button>
             </div>
           </div>
         </div>
       </div>
-      ]
     </div>
   );
 }

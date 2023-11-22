@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ApiService from "../../services/ApiService";
 
+// Icons
+import { FaBan } from "react-icons/fa";
+
 const MyTickets = () => {
   const [tickets, setTickets] = useState([]);
   useEffect(() => {
@@ -73,7 +76,7 @@ const MyTickets = () => {
           {/*end row*/}
 
           <div className='row'>
-            {Array.isArray(tickets) &&
+            {Array.isArray(tickets) && tickets.length > 0 ?
               tickets.map((ticket) => (
                 <div key={ticket.id} className='col-md-12 mt-4'>
                   <Link
@@ -83,9 +86,24 @@ const MyTickets = () => {
                     <div className='card mb-4'>
                       <div className='card-body d-flex justify-content-between align-items-center'>
                         <div>
-                          <h5 className='card-title'>
+                        <span style={{
+                              fontSize: "12px"
+                            }}> #{ticket.id}</span>
+                          <h5 style={{
+                              fontSize: "14px"
+                            }}>
                             {ticket.title}
-                            <span> ({ticket.status})</span>
+                            <span style={{
+                              fontSize: "10px",
+                              marginLeft: "10px",
+                              backgroundColor: "#333",
+                              color: "#fff",
+                              paddingLeft: "3px",
+                              paddingRight: "3px",
+                              paddingTop: "3px",
+                              paddingBottom: "3px",
+                              borderRadius: "3px"
+                            }}> {ticket.status}</span>
                           </h5>
                           <h6 className='card-text'></h6>
                         </div>
@@ -108,47 +126,25 @@ const MyTickets = () => {
                     </div>
                   </Link>
                 </div>
-              ))}
-          </div>
-
-          <div class='row'>
-            <div class='col-lg-12 mt-4 pt-2'>
-              <nav aria-label='Page navigation example'>
-                <ul class='pagination job-pagination mb-0 justify-content-center'>
-                  <li class='page-item disabled'>
-                    <Link class='page-link' to='' tabindex='-1'>
-                      <i class='mdi mdi-chevron-double-left fs-15'></i>
-                    </Link>
-                  </li>
-                  <li class='page-item active'>
-                    <Link class='page-link' to=''>
-                      1
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      2
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      3
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      4
-                    </Link>
-                  </li>
-                  <li class='page-item'>
-                    <Link class='page-link' to=''>
-                      <i class='mdi mdi-chevron-double-right fs-15'></i>
-                    </Link>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            {/*end col*/}
+              )) : (
+                <div
+                style={{
+                  marginTop: "50px",
+                  textAlign: "center",
+                }}
+              >
+                <FaBan className="text-muted" />
+                <p
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "center",
+                  }}
+                  className="text-muted"
+                >
+                  No tickets created <Link to="/raise-new-ticket" className="text-primary">Raise new ticket</Link>
+                </p>
+              </div>
+              )}
           </div>
           {/*end row*/}
         </div>
