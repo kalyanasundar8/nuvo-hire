@@ -101,10 +101,11 @@ export default function VerifyOtp() {
 
       const response = await ApiService("verify-otp", "POST", payload, false);
 
-      if (response.status === 200) {
+      if (response?.data?.status === true) {
         setLoading(false);
         dispatch(setIsAuthenticated(true));
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("user", JSON.stringify(response?.data));
+        console.log(response?.data)
         console.log("Successfully verified");
 
         setAlertMessage(
@@ -226,7 +227,7 @@ export default function VerifyOtp() {
                               }`}
                               disabled={loading || !formik.isValid}
                             >
-                              {loading ? "Verifying..." : "verify"}
+                              {loading ? "Verifying..." : "Verify"}
                             </button>
                           </div>
                         </form>

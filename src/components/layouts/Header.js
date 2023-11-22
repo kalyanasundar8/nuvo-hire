@@ -21,7 +21,7 @@ function Header() {
     }
   }, [isAuth]);
 
-  console.log(user);
+  // console.log(user);
 
   const logOut = () => {
     localStorage.removeItem("user");

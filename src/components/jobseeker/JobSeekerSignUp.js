@@ -6,11 +6,14 @@ import * as Yup from "yup";
 import { Alert } from "react-bootstrap";
 import GoogleSignInBtn from "../atoms/GoogleSignIn/GoogleSignInBtn";
 import useScrollToTop from "../../hooks/useScrollToTop";
+import { setIsAuthenticated } from "../../redux/actions/AuthAction";
+import { useDispatch, useSelector } from "react-redux";
 import ApiService from "../../services/ApiService";
 import "./JobSeeker.css";
 
 export default function JobSeekerSignUp() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [supportDocs, setSupportDocs] = useState("");
 
@@ -22,7 +25,7 @@ export default function JobSeekerSignUp() {
     jobseeker_type: Yup.string().required(
       "Please choose you are worker (or) professional"
     ),
-    first_name: Yup.string().min(3, "First name must be atleast 3 characters").max(25, "First name must be within 25 characters").required("Please enter the first name"),
+    first_name: Yup.string().matches(/^[a-zA-Z\s]+$/, 'Please enter a valid first name (only letters allowed)').min(3, "First name must be atleast 3 characters").max(25, "First name must be within 25 characters").required("Please enter the first name"),
     // last_name: Yup.string().min().max(25, "Last name must be within 25 characters").required('Please enter the last name'),
     email: Yup.string()
       .email("Please enter the valid email address")

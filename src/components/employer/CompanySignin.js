@@ -74,6 +74,7 @@ export default function CompanySignin() {
         setAlertMessage(
           <Alert variant='success'>{response?.response?.data?.message}</Alert>
         );
+        console.log(response?.data)
         navigate("/dashboard");
         window.location.reload();
       } else {

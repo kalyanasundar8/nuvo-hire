@@ -6,6 +6,8 @@ import "./CompanySignup.css";
 import * as Yup from "yup";
 import ApiService from "../../services/ApiService";
 
+import { Alert } from "react-bootstrap";
+
 import { setIsAuthenticated } from "../../redux/actions/AuthAction";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -59,9 +61,6 @@ export default function CompanySignup() {
     formik.setFieldValue("terms", e.target.checked);
   };
 
-  let isAuth =
-    useSelector((state) => state?.auth?.isAuthenticated) ||
-    JSON.parse(localStorage.getItem("isAuthenticated"));
   // Signup form integration
 
   const [loading, setLoading] = useState(false);
@@ -83,22 +82,26 @@ export default function CompanySignup() {
     };
     console.log(payload);
     try {
+
+      setLoading(true);
+
       const response = await ApiService(
         "signup-as-employer",
         "POST",
         payload,
         false
       );
+      console.log(response);
       if (response.status === 200) {
         navigate("/verify-otp", { state: values.mobile_no });
         console.log(response);
       } else {
-        dispatch(setIsAuthenticated(true));
-        const user = localStorage.setItem("user", JSON.stringify(response?.data));
-        console.log(user);
+        setLoading(false);
         console.log(response?.response?.data?.message);
         setError(response?.response?.data?.message);
-        setAlertMessage(response?.response?.data?.message);
+        setAlertMessage(
+          <Alert variant = "danger">{response?.response?.data?.message}</Alert>
+        );
         setTimeout(() => {
           setAlertMessage("");
         }, 5000)
@@ -151,11 +154,11 @@ export default function CompanySignup() {
                         </p>
                       </div>
                       <form onSubmit={formik.handleSubmit} class='auth-form'>
-                        {alertMessage && (
-                          <div className='alert alert-danger mt-4' role='alert'>
+                        {alertMessage && 
+                          <div>
                             {alertMessage}
                           </div>
-                        )}
+                        }
                         <div className='row'>
                           <div className='col-lg-12'>
                             <div className='mb-3'>
@@ -372,7 +375,7 @@ export default function CompanySignup() {
                           <div class='text-center'>
                             <button
                               type='submit'
-                              disabled={!formik.isValid}
+                              disabled={loading || !formik.isValid}
                               class={`btn btn-white btn-hover w-100 ${
                                 loading ? "disabled" : ""
                               }`}

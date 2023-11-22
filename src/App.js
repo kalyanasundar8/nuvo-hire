@@ -61,7 +61,7 @@ function App() {
           <Route path='/jobseeker-signup' element={<JobSeekerSignUp />}></Route>
           <Route path='/my-jobs' element={<MyJobs />}></Route>
           <Route path='/forget-password' element={<ForgetPassword />} />
-          <Route path='/reset-password/:token' element={<ResetPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/verify-otp' element={<VerifyOtp />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/applied-jobs/:id?' element={<AppliedJobsList />} />
