@@ -58,9 +58,13 @@ export default function JobSeekerSignIn() {
 
       const response = await ApiService("login", "POST", payload, false);
 
+      console.log(response)
+
       if (response?.response?.data?.is_otp_verified == false) {
         navigate("/verify-otp", { state: response?.response?.data?.phone_no });
       }
+
+      console.log(response);
 
       if (response?.data?.status == true) {
         setLoading(false);
@@ -68,7 +72,7 @@ export default function JobSeekerSignIn() {
         localStorage.setItem("user", JSON.stringify(response.data));
         setError("");
         navigate("/");
-        window.location.reload();
+        // window.location.reload();
       } else {
         setLoading(false)
         console.log(response?.response?.data?.message);

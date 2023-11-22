@@ -67,16 +67,13 @@ export default function CompanySignin() {
         navigate("/verify-otp", { state: response?.response?.data?.phone_no });
       }
 
-      if (response?.data?.status_code == 200) {
+      if (response?.data?.status == true) {
         setLoading(false);
         dispatch(setIsAuthenticated(true));
         localStorage.setItem("user", JSON.stringify(response?.data));
-        setAlertMessage(
-          <Alert variant='success'>{response?.response?.data?.message}</Alert>
-        );
         console.log(response?.data)
         navigate("/dashboard");
-        window.location.reload();
+        // window.location.reload();
       } else {
         setLoading(false);
         setError(response?.response?.data?.message);
