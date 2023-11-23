@@ -178,7 +178,7 @@ export default function ForgetPassword() {
                           <p className="mb-0">
                             Back to{" "}
                             <Link
-                              to="/home"
+                              to="/"
                               className="fw-medium text-white text-decoration-underline"
                             >
                               {" "}

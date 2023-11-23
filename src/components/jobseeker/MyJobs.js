@@ -1,25 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Apiservice from "../../services/ApiService";
-import { FaBan, FaBuilding } from "react-icons/fa";
+import {
+  FaBan,
+  FaBuilding,
+  FaExclamationCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExclamationTriangle,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { fetchJoseekerAppliedJobs } from "../../services/JobService";
+import Loading from "../layouts/Loading";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 export default function MyJobs() {
   const [appliedJobs, setAppliedJobs] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchJobsData = async () => {
       try {
+        setLoading(true);
+
+        const timoutId = setTimeout(() => {
+          setLoading(false);
+          setError(new Error("Network error"));
+        }, 20000);
+
         const response = await fetchJoseekerAppliedJobs();
-        console.log(response.data.data);
+        console.log(response);
+
+        clearTimeout(timoutId);
         setAppliedJobs(response.data.data);
+
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
     };
 
     fetchJobsData();
   }, []);
+
+  useScrollToTop();
 
   return (
     <div class="page-content">
@@ -56,22 +84,40 @@ export default function MyJobs() {
 
       {/*START MANAGE-JOBS */}
       <section class="section">
-        <div class="container">
-          <div class="row align-items-center">
+        <div class="container" style={{ height: "40vh" }}>
+          {/* <div class="row align-items-center">
             <div class="col-lg-8">
               <div class="mb-4 mb-lg-0">
                 <h6 class="mb-0">Applied Jobs</h6>
               </div>
-            </div>
-            {/*end col*/}
+            </div> */}
+          {/*end col*/}
 
-            {/*end col*/}
-          </div>
+          {/*end col*/}
+          {/* </div> */}
           {/*end row*/}
-          <div class="row">
-            {Array.isArray(appliedJobs) && appliedJobs.length > 0 ? (
-              appliedJobs.map((appliedJob) =>
-                appliedJob.status === "approved" ? (
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "130px",
+                textAlign: "center",
+              }}
+              className="text-muted"
+            >
+              <div>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <p>Check your newtwork</p>
+              </div>
+            </div>
+          ) : (
+            <div class="row">
+              {Array.isArray(appliedJobs) && appliedJobs.length > 0 ? (
+                appliedJobs.map((appliedJob) => (
                   <div key={appliedJob.job_id} className="col-lg-12">
                     <div className="job-box card mt-4">
                       <div className="card-body p-4">
@@ -131,27 +177,43 @@ export default function MyJobs() {
                       </div>
                     </div>
                   </div>
-                ) : ""
-              )
-            ) : (
-              <div
-                style={{
-                  marginTop: "50px",
-                  textAlign: "center",
-                }}
-              >
-                <p
+                ))
+              ) : (
+                <div
                   style={{
-                    marginTop: "10px",
-                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                  className="text-muted"
                 >
-                  No jobs found
-                </p>
-              </div>
-            )}
-          </div>
+                  <div
+                    style={{
+                      marginTop: "130px",
+                      textAlign: "center",
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faInfoCircle}
+                      className="text-muted"
+                    />
+                    <p
+                      style={{
+                        marginTop: "10px",
+                        textAlign: "center",
+                        fontSize: "18px",
+                      }}
+                      className="text-muted"
+                    >
+                      No active application{" "}
+                      <Link to="/jobs" className="text-primary">
+                        Find jobs
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {/*end row*/}
         </div>
         {/*end container*/}

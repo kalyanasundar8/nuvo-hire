@@ -1,56 +1,50 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-
 // Validations
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
-// Services
 import useFetch from "../components/useFetch";
-import { createJobPostService } from "../services/JobService";
-
-// Bootstrap
 import { Badge } from "react-bootstrap";
 
 // Editor
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { createJobPostService } from "../services/JobService";
 
-// Models
-import SuccessModel from "../components/layouts/SuccessModel";
-import ErrorModel from "../components/layouts/ErrorModel";
 
 // ValidationSchema
+
 const validationSchema = Yup.object({
   jobtitle: Yup.string()
     .required("Job Title is required")
     .min(1, "Job title is required"),
   jobdescription: Yup.string().required("Job Description is required"),
   categories: Yup.string().required("Categories is required"),
-  // subcategories: Yup.string().required("Subcategories is required"),
+  subcategories: Yup.string().required("Subcategories is required"),
   jobtype: Yup.string().required("Job type is required"),
   designation: Yup.string().required("Designation is required"),
   responsibilities: Yup.string().required("Responsibilities is required"),
   salary: Yup.string().required("Salary is required"),
   experience: Yup.string().required("Experience is required"),
   workmode: Yup.string().required("Workmode is required"),
-  // employment: Yup.string().required("Employment is required"),
-  // industry: Yup.string().required("Industry is required"),
-  // // degree: Yup.string().required("Degree is required"),
-  // // course: Yup.string().required("Course is required"),
-  // education: Yup.string().required("Education is required"),
+  employment: Yup.array().min(1, "Select atleast one employment").required("Employment is required"),
+  industry: Yup.string().required("Industry is required"),
+  // degree: Yup.array().min(1, "Select atleast one degree").required("Degree is required"),
+  // course: Yup.array().min(1, "Select atleast one course").required("Course is required"),
+  // education: Yup.array().min(1, "Select atleast one education").required("Education is required"),
   // skills: Yup.array()
   //   .required("Skills is required")
   //   .min(1, "Select at least one skill"),
-  // vacancy: Yup.number()
-  //   .required("Vacancy is required")
-  //   .typeError("Vacancy must be a number"),
-  // lastdate: Yup.string().required("LastDate is required"),
-  // country: Yup.string().required("Country is required"),
-  // state: Yup.string().required("state is required"),
-  // city: Yup.string().required("City is required"),
-  // zipcode: Yup.string().required("ZipCode is required"),
+  vacancy: Yup.number()
+    .required("Vacancy is required")
+    .typeError("Vacancy must be a number"),
+  lastdate: Yup.string().required("LastDate is required"),
+  country: Yup.string().required("Country is required"),
+  state: Yup.string().required("state is required"),
+  city: Yup.string().required("City is required"),
+  zipcode: Yup.number().min(6, "Pincode must be 6 characters").required("ZipCode is required").typeError("Pincode must be a number"),
+  // jobLocation: Yup.array().required("Joblocation is required")
 });
 
 export default function CreateNewJobs() {
@@ -80,6 +74,7 @@ export default function CreateNewJobs() {
       city: "",
       joblocation: [],
       zipcode: "",
+      tags: [],
       postLater: false,
     },
     validationSchema: validationSchema,
@@ -134,7 +129,6 @@ export default function CreateNewJobs() {
   const [tags, setTags] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [postLater, setPostLater] = useState(0);
-  const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -257,6 +251,12 @@ export default function CreateNewJobs() {
     // Extract the id values of selected options
     const selectedCourseIds = courseOptions.map((option) => option.value);
 
+    if (selectedCourse.length === 0) {
+      formik.setFieldError("course", "Course is required");
+    } else {
+      formik.setFieldError("course", "");
+    }
+
     // Set the selected options in the state
     setSelectedCourse(courseOptions);
 
@@ -289,6 +289,12 @@ export default function CreateNewJobs() {
     // Extract the id values of selected options
     const selectedDegreeIds = degreeOptions.map((option) => option.value);
 
+    if (selectedDegree.length === 0) {
+      formik.setFieldError("degree", "Degree is required");
+    } else {
+      formik.setFieldError("degree", "");
+    }
+
     // Set the selected options in the state
     setSelectedDegree(degreeOptions);
 
@@ -320,6 +326,12 @@ export default function CreateNewJobs() {
   const handleEducationSelect = (educationOptions) => {
     // Extract the id values of selected options
     const selectedEducationIds = educationOptions.map((option) => option.value);
+
+    if (selectedEducation.length === 0) {
+      formik.setFieldError("education", "Education is required");
+    } else {
+      formik.setFieldError("education", "");
+    }
 
     // Set the selected options in the state
     setSelectedEducation(educationOptions);
@@ -453,7 +465,7 @@ export default function CreateNewJobs() {
       country_id: values.country,
       state_id: values.state,
       city_id: values.city,
-      job_location: jobLocations,
+      job_locations: jobLocations,
       zipcode: values.zipcode,
       tags_id: tagsValue,
       is_post_later: postLater,
@@ -484,7 +496,6 @@ export default function CreateNewJobs() {
 
   return (
     <div class='page-content'>
-      {/*END SHAPE */}
       <section class='section'>
         <div class='container'>
           <div class='row'>
@@ -517,6 +528,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setJobTitle(e.target.value);
                       }}
+                      autoComplete="off"
                     />
                     {formik.touched.jobtitle && formik.errors.jobtitle && (
                       <span className='error'>{formik.errors.jobtitle}</span>
@@ -538,6 +550,7 @@ export default function CreateNewJobs() {
                       }
                       style={{ height: "200px" }}
                       name='jobdescription'
+                      autoComplete="off"
                     />
                   </div>
                   {formik.touched.jobdescription &&
@@ -564,6 +577,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setCategories(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(category)
@@ -596,6 +610,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setSubCategories(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(subCategoriesData.data) &&
@@ -630,6 +645,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setJobType(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option disabled></option>
                       <option>Professional</option>
@@ -657,6 +673,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setDesignation(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(designations)
@@ -690,6 +707,7 @@ export default function CreateNewJobs() {
                       }
                       style={{ height: "200px" }}
                       name='responsibilities'
+                      autoComplete="off"
                     />
                   </div>
                   {formik.touched.responsibilities &&
@@ -716,6 +734,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setSalary(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(salaries)
@@ -748,6 +767,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setExperience(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(experiences)
@@ -780,6 +800,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setWorkMode(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(workModes)
@@ -805,8 +826,10 @@ export default function CreateNewJobs() {
                       options={employmentOptions}
                       value={selectedEmployment}
                       onChange={handleEmploymentSelect}
+                      onBlur={formik.handleBlur}
                       isMulti={true}
                       name='employment'
+                      autoComplete="off"
                     />
                     {formik.touched.employment && formik.errors.employment && (
                       <span className='error'>{formik.errors.employment}</span>
@@ -830,6 +853,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setIndustry(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(industries)
@@ -855,8 +879,10 @@ export default function CreateNewJobs() {
                       options={degreeOptions}
                       value={selectedDegree}
                       onChange={handleDegreeSelect}
+                      onBlur={formik.handleBlur}
                       isMulti={true}
                       name='degree'
+                      autoComplete="off"
                     />
                     {formik.touched.degree && formik.errors.degree && (
                       <span className='error'>{formik.errors.degree}</span>
@@ -873,8 +899,10 @@ export default function CreateNewJobs() {
                       options={courseOptions}
                       value={selectedCourse}
                       onChange={handleCourseSelect}
+                      onBlur={formik.handleBlur}
                       isMulti={true}
                       name='course'
+                      autoComplete="off"
                     />
                     {formik.touched.course && formik.errors.course && (
                       <span className='error'>{formik.errors.course}</span>
@@ -891,9 +919,14 @@ export default function CreateNewJobs() {
                       options={educationOptions}
                       value={selectedEducation}
                       onChange={handleEducationSelect}
+                      onBlur={formik.handleBlur}
                       isMulti={true}
                       name='education'
+                      autoComplete="off"
                     />
+                    {formik.touched.education && formik.errors.education && (
+                      <span className='error'>{formik.errors.education}</span>
+                    )}
                   </div>
                 </div>
                 <div class='col-lg-6'>
@@ -908,6 +941,7 @@ export default function CreateNewJobs() {
                       onChange={handleSelect}
                       isMulti={true}
                       name='skills'
+                      autoComplete="off"
                     />
                     {formik.touched.skills && formik.errors.skills && (
                       <div className='invalid-feedback'>
@@ -932,6 +966,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setVacancy(e.target.value);
                       }}
+                      autoComplete="off"
                     />
                     {formik.touched.vacancy && formik.errors.vacancy && (
                       <span className='error'>{formik.errors.vacancy}</span>
@@ -939,14 +974,17 @@ export default function CreateNewJobs() {
                   </div>
                 </div>
                 <div class='col-lg-6'>
-                  <div class='mb-4'>
+                  <div class='mb-4' style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
                     <label for='vacancy' class='form-label'>
                       FeaturedJob
-                      <span className='text-danger font-weight-bold'>*</span>
                     </label>
                     <input
                       type='checkbox'
-                      class='form-check-input'
+                      // class='form-check-input'
                       id='featuredjob'
                       name='featuredjob'
                       checked={featuredJob}
@@ -954,6 +992,7 @@ export default function CreateNewJobs() {
                         const isChecked = e.target.checked;
                         setFeaturedJob(isChecked ? 1 : 0);
                       }}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -973,6 +1012,8 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setLastDate(e.target.value);
                       }}
+                      min={new Date().toISOString().split('T')[0]}
+                      autoComplete="off"
                     />
                     {formik.touched.lastdate && formik.errors.lastdate && (
                       <span className='error'>{formik.errors.lastdate}</span>
@@ -996,6 +1037,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setCountry(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(countries)
@@ -1028,6 +1070,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setState(e.target.value);
                       }}
+                      autoComplete="off"
                     >
                       <option></option>
                       {Array.isArray(statesData.data) &&
@@ -1059,10 +1102,9 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setCity(e.target.value);
                       }}
+                      autoComplete="off"
                     >
-                      <option value='' disabled selected>
-                        City
-                      </option>
+                      <option></option>
                       {Array.isArray(cityData.data) &&
                         cityData.data.map((cities) => (
                           <option key={cities.id} value={cities.id}>
@@ -1092,6 +1134,7 @@ export default function CreateNewJobs() {
                         formik.handleChange(e);
                         setZipCode(e.target.value);
                       }}
+                      autoComplete="off"
                     />
                     {formik.touched.zipcode && formik.errors.zipcode && (
                       <span className='error'>{formik.errors.zipcode}</span>
@@ -1102,7 +1145,7 @@ export default function CreateNewJobs() {
                   <div class='mb-4'>
                     <label for='joblocation' class='form-label'>
                       JobLocation
-                      <span className='text-danger font-weight-bold'>*</span>
+                      {/* <span className='text-danger font-weight-bold'>*</span> */}
                     </label>
                     <input
                       type='text'
@@ -1113,6 +1156,7 @@ export default function CreateNewJobs() {
                       value={locationInput}
                       onChange={handleInputChange}
                       onKeyPress={handleInputKeyPress}
+                      autoComplete="off"
                     />
                     <div>
                       {jobLocations.map((jobLocation) => (
@@ -1138,8 +1182,8 @@ export default function CreateNewJobs() {
                         </Badge>
                       ))}
                     </div>
-                    {formik.touched.zipcode && formik.errors.zipcode && (
-                      <span className='error'>{formik.errors.zipcode}</span>
+                    {formik.touched.joblocation && formik.errors.joblocation && (
+                      <span className='error'>{formik.errors.joblocation}</span>
                     )}
                   </div>
                 </div>
@@ -1154,6 +1198,7 @@ export default function CreateNewJobs() {
                       onChange={handleTagSelect}
                       isMulti={true}
                       name='tags'
+                      autoComplete="off"
                     />
                     {formik.touched.tags && formik.errors.tags && (
                       <div className='invalid-feedback'>
@@ -1174,18 +1219,9 @@ export default function CreateNewJobs() {
                     >
                       Save
                     </button>
-                    { loading ? (
-                      <button type='submit' disabled class='btn btn-primary mx-1'>
-                      Loading...
-                    </button>  
-                    ) : (
-                      <button type='submit' class='btn btn-primary mx-1'>
+                    <button type='submit' class='btn btn-primary mx-1'>
                       Post Now <i class='mdi mdi-send'></i>
                     </button>
-                    )}
-                    <div className="mt-3">
-                    { success ? (<SuccessModel success={success}/>) : error ? (<ErrorModel error={error}/>) : ""}
-                    </div>      
                   </div>
                 </div>
               </div>

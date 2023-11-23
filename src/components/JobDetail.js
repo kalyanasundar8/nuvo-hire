@@ -6,11 +6,18 @@ import ApiService from "../services/ApiService";
 // Popups for the apply message
 import { Modal, Button } from "react-bootstrap";
 
-export default function JobDetail() {
+// Icons
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBrain } from "@fortawesome/free-solid-svg-icons";
+import {
+  fetchBookmarkJob,
+  fetchJoseekerAppliedJobs,
+} from "../services/JobService";
 
-  const userData = (JSON.parse(localStorage.getItem("user")));
+export default function JobDetail() {
+  const userData = JSON.parse(localStorage.getItem("user"));
   const userId = userData.data.id;
-  console.log(userData.data.id)
+  console.log(userData.data.id);
 
   const { id } = useParams();
   console.log(id);
@@ -26,6 +33,30 @@ export default function JobDetail() {
   const relatedJobs = relatesJobsData.data;
   console.log(relatedJobs);
 
+  // Applied jobs list
+  const [appliedList, setAppliedList] = useState([]);
+  const appliedJobsList = async () => {
+    try {
+      const response = await fetchJoseekerAppliedJobs();
+      console.log(response.data.data);
+      setAppliedList(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Bookmarked job list
+  const [bookMarked, setBookmarked] = useState([]);
+  const bookmarkedJobsList = async () => {
+    try {
+      const response = await fetchBookmarkJob();
+      console.log(response.data.data);
+      setBookmarked(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       const response = await ApiService(
@@ -40,9 +71,9 @@ export default function JobDetail() {
       const companyDetails = jobDetailsData.data.company_details;
       console.log(responseData, jobOverView, companyDetails);
       console.log(response.data.data);
-      
-      if(Array.isArray(appliedCandidate.applied_candidate)) {
-        console.log("ok")
+
+      if (Array.isArray(appliedCandidate.applied_candidate)) {
+        console.log("ok");
       }
 
       setAppliedCandidate(response.data.data);
@@ -56,6 +87,8 @@ export default function JobDetail() {
 
   useEffect(() => {
     fetchData();
+    appliedJobsList();
+    bookmarkedJobsList();
   }, []);
 
   // Apply jobs
@@ -64,6 +97,7 @@ export default function JobDetail() {
   const [showPopUpMessage, setShowPopUpMessage] = useState("");
   const [status, setStatus] = useState("");
   const [isApplyButtonDisabled, setApplyButtonDisabled] = useState(false);
+  const [isBookmarkedDisabled, setIsBookmarkedDisabled] = useState(false);
 
   const handleApplyJob = async () => {
     const jobId = id;
@@ -73,16 +107,15 @@ export default function JobDetail() {
     console.log(payload);
     try {
       const response = await ApiService("apply-jobs", "POST", payload, true);
-      console.log(response.response.data.message);
-      if(response.response.data.status === false) {
-        setApplyButtonDisabled(true)
-        setShowPopUpMessage(response.response.data.message)
+      console.log(response.response.data);
+      if (response.response.data.status === false) {
+        setApplyButtonDisabled(true);
+        setShowPopUpMessage(response.response.data.message);
       }
 
-      if(response.status === true) {
+      if (response.status === true) {
         setShowPopUp(response.message);
       }
-
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -95,7 +128,8 @@ export default function JobDetail() {
   };
 
   // Bookmark job
-  const handleJobBookMark = async (jobId) => {
+  const handleJobBookMark = async () => {
+    const jobId = id;
     const payload = {
       manage_job_id: jobId,
     };
@@ -107,12 +141,13 @@ export default function JobDetail() {
         payload,
         true
       );
-      console.log(response.data.message);
+      console.log(response.data);
       if (response.status === true) {
-        setApplyButtonDisabled(true)
-        setShowPopUpMessage(response.data.message);
+        setIsBookmarkedDisabled(true);
+        // setShowPopUpMessage(response.data.message);
       } else {
-        setShowPopUpMessage(response.data.message);
+        // setIsBookmarkedDisabled(false);
+        // setShowPopUpMessage(response.data.message);
       }
     } catch (error) {
       console.log("Error: " + error);
@@ -122,9 +157,9 @@ export default function JobDetail() {
   };
 
   return (
-    <div class='page-content'>
+    <div class="page-content">
       {/* PopUp Model */}
-      <Modal show={showPopUp} onHide={handleClosePopUp}>
+      {/* <Modal show={showPopUp} onHide={handleClosePopUp}>
         <Modal.Header closeButton>
           <Modal.Title>Application Status</Modal.Title>
         </Modal.Header>
@@ -134,16 +169,16 @@ export default function JobDetail() {
             Close
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
       {/* PopUp model end */}
 
       {/* Start home  */}
-      <section class='page-title-box'>
-        <div class='container'>
-          <div class='row justify-content-center'>
-            <div class='col-md-6'>
-              <div class='text-center text-white'>
-                <h3 class='mb-4'>Job Details</h3>
+      <section class="page-title-box">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="text-center text-white">
+                <h3 class="mb-4">Job Details</h3>
               </div>
             </div>
           </div>
@@ -152,108 +187,121 @@ export default function JobDetail() {
       {/* end home  */}
 
       {/* START SHAPE  */}
-      <div class='position-relative' style={{ zIndex: 1 }}>
-        <div class='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
+      <div class="position-relative" style={{ zIndex: 1 }}>
+        <div class="shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
             <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
+              fill=""
+              fill-opacity="1"
+              d="M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
             ></path>
           </svg>
         </div>
       </div>
       {/* END SHAPE  */}
 
-      <section class='section'>
-        <div class='container'>
-          <div class='row'>
-            <div class='col-lg-8'>
-              <div class='card job-detail overflow-hidden'>
+      <section class="section">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card job-detail overflow-hidden">
                 <div>
                   <img
-                    src='assets/images/job-detail.jpg'
-                    alt=''
-                    class='img-fluid'
+                    src="assets/images/job-detail.jpg"
+                    alt=""
+                    class="img-fluid"
                   />
-                  <div class='job-details-compnay-profile'>
+                  <div class="job-details-compnay-profile">
                     <img
-                      src='assets/images/featured-job/img-10.png'
-                      alt=''
-                      class='img-fluid rounded-3 rounded-3'
+                      src="assets/images/featured-job/img-10.png"
+                      alt=""
+                      class="img-fluid rounded-3 rounded-3"
                     />
                   </div>
                 </div>
-                <div class='card-body p-4'>
+                <div class="card-body p-4">
                   <div>
-                    <div class='row'>
-                      <div class='col-md-8'>
-                        <h5 class='mb-1'>{jobDetails.job_title ? jobDetails.job_title : "Not disclosed"}</h5>
-                        <ul class='list-inline text-muted mb-0'>
-                          <li class='list-inline-item'>
-                            <i class='mdi mdi-account'></i>
-                            {jobDetails.vacancy ? jobDetails.vacancy : "Not disclosed"} vacancy
+                    <div class="row">
+                      <div class="col-md-8">
+                        <h5 class="mb-1">
+                          {jobDetails.job_title
+                            ? jobDetails.job_title
+                            : "Not disclosed"}
+                        </h5>
+                        <ul class="list-inline text-muted mb-0">
+                          <li class="list-inline-item">
+                            <i class="mdi mdi-account"></i>
+                            {jobDetails.vacancy
+                              ? jobDetails.vacancy
+                              : "Not disclosed"}{" "}
+                            vacancy
                           </li>
-                          <li class='list-inline-item text-warning review-rating'>
-                            <span class='badge bg-warning'>4.8</span>{" "}
-                            <i class='mdi mdi-star align-middle'></i>
-                            <i class='mdi mdi-star align-middle'></i>
-                            <i class='mdi mdi-star align-middle'></i>
-                            <i class='mdi mdi-star align-middle'></i>
-                            <i class='mdi mdi-star-half-full align-middle'></i>
+                          <li class="list-inline-item text-warning review-rating">
+                            <span class="badge bg-warning">4.8</span>{" "}
+                            <i class="mdi mdi-star align-middle"></i>
+                            <i class="mdi mdi-star align-middle"></i>
+                            <i class="mdi mdi-star align-middle"></i>
+                            <i class="mdi mdi-star align-middle"></i>
+                            <i class="mdi mdi-star-half-full align-middle"></i>
                           </li>
                         </ul>
                       </div>
                     </div>
                   </div>
 
-                  <div class='mt-4'>
-                    <div class='row g-2'>
-                      <div class='col-lg-3'>
-                        <div class='border rounded-start p-3'>
-                          <p class='text-muted mb-0 fs-13'>Experience</p>
-                          <p class='fw-medium fs-15 mb-0'>
+                  <div class="mt-4">
+                    <div class="row g-2">
+                      <div class="col-lg-3">
+                        <div class="border rounded-start p-3">
+                          <p class="text-muted mb-0 fs-13">Experience</p>
+                          <p class="fw-medium fs-15 mb-0">
                             Minimum{" "}
                             {jobDetails.experience_id &&
-                              jobDetails.experience_id.year ? jobDetails.experience_id.year : "Not disclosed"}
+                            jobDetails.experience_id.year
+                              ? jobDetails.experience_id.year
+                              : "Not disclosed"}
                           </p>
                         </div>
                       </div>
-                      <div class='col-lg-3'>
-                        <div class='border p-3'>
-                          <p class='text-muted fs-13 mb-0'>
-                            Application Deadline
-                          </p>
-                          {jobOverView.application_deadline_date ? jobOverView.application_deadline_date : "Not disclosed"}
+                      <div class="col-lg-3">
+                        <div class="border p-3">
+                          <p class="text-muted fs-13 mb-0">Last date</p>
+                          {jobOverView.application_deadline_date
+                            ? jobOverView.application_deadline_date
+                            : "Not disclosed"}
                         </div>
                       </div>
-                      <div class='col-lg-3'>
-                        <div class='border p-3'>
-                          <p class='text-muted fs-13 mb-0'>Position</p>
-                          <p class='fw-medium mb-0'>
+                      <div class="col-lg-3">
+                        <div class="border p-3">
+                          <p class="text-muted fs-13 mb-0">Position</p>
+                          <p class="fw-medium mb-0">
                             {jobDetails.designation_id &&
-                              jobDetails.designation_id.name ? jobDetails.designation_id.name : "Not disclosed"}
+                            jobDetails.designation_id.name
+                              ? jobDetails.designation_id.name
+                              : "Not disclosed"}
                           </p>
                         </div>
                       </div>
-                      <div class='col-lg-3'>
-                        <div class='border rounded-end p-3'>
-                          <p class='text-muted fs-13 mb-0'>Offer Salary</p>
-                          <p class='fw-medium mb-0'>
+                      <div class="col-lg-3">
+                        <div class="border rounded-end p-3">
+                          <p class="text-muted fs-13 mb-0">Offer Salary</p>
+                          <p class="fw-medium mb-0">
                             ${" "}
-                            {jobOverView.salary_id && jobOverView.salary_id.name ? jobOverView.salary_id.name : "Not disclosed"}/
-                            Month
+                            {jobOverView.salary_id && jobOverView.salary_id.name
+                              ? jobOverView.salary_id.name
+                              : "Not disclosed"}
+                            / Month
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class='mt-4'>
-                    <h5 class='mb-3'>Job Description</h5>
-                    <div class='job-detail-desc'>
+                  <div class="mt-4">
+                    <h5 class="mb-3">Job Description</h5>
+                    <div class="job-detail-desc">
                       <div
-                        class='text-muted mb-0'
+                        class="text-muted mb-0"
                         dangerouslySetInnerHTML={{
                           __html: jobDetails.job_description,
                         }}
@@ -261,11 +309,11 @@ export default function JobDetail() {
                     </div>
                   </div>
 
-                  <div class='mt-4'>
-                    <h5 class='mb-3'>Responsibilities</h5>
-                    <div class='job-detail-desc mt-2'>
+                  <div class="mt-4">
+                    <h5 class="mb-3">Responsibilities</h5>
+                    <div class="job-detail-desc mt-2">
                       <div
-                        class='text-muted'
+                        class="text-muted"
                         dangerouslySetInnerHTML={{
                           __html: jobDetails.responsibilities,
                         }}
@@ -273,12 +321,12 @@ export default function JobDetail() {
                     </div>
                   </div>
 
-                  <div class='mt-4'>
-                    <div class='job-details-desc'>
-                      <div class='mt-4'>
+                  <div class="mt-4">
+                    <div class="job-details-desc">
+                      <div class="mt-4">
                         {Array.isArray(jobDetails.tags) &&
                           jobDetails.tags.map((tag) => (
-                            <span key={tag.tag_id} class='badge bg-primary'>
+                            <span key={tag.tag_id} class="badge bg-primary">
                               {tag.tag}
                             </span>
                           ))}
@@ -312,165 +360,188 @@ export default function JobDetail() {
                 </div>
               </div>
 
-              <div class='mt-4'>
+              <div class="mt-4">
                 <h5>Related Jobs</h5>
-                {Array.isArray(relatedJobs) && relatedJobs.length > 0
-                  ? relatedJobs.map((related) => (
-                      <div class='job-box card mt-4'>
-                        <div class='p-4'>
-                          <div key={related.id} class='row'>
-                            <div class='col-lg-1'>
-                              <img
-                                src='assets/images/featured-job/img-01.png'
-                                alt=''
-                                class='img-fluid rounded-3'
-                              />
-                            </div>
-                            <div class='col-lg-10'>
-                              <div class='mt-3 mt-lg-0'>
-                                <h5 class='fs-17 mb-1'>
-                                  <Link to={`/job-detail/${related.id}`} class='text-dark'>
-                                    {related.job_title ? related.job_title : "Not disclosed"}
-                                  </Link>{" "}
-                                  <small class='text-muted fw-normal'>
-                                    (
-                                    {related.experience_id &&
-                                      related.experience_id.year ? related.experience_id.year : "Not disclosed"}{" "}
-                                    Yrs Exp.)
-                                  </small>
-                                </h5>
-                                <ul class='list-inline mb-0'>
-                                  <li class='list-inline-item'>
-                                    <p class='text-muted fs-14 mb-0'>
-                                      {related.company_name ? related.company_name : "Not disclosed"}
-                                    </p>
-                                  </li>
-                                  <li class='list-inline-item'>
-                                    <p class='text-muted fs-14 mb-0'>
-                                      <i class='mdi mdi-map-marker'></i>{" "}
-                                      {related.city_id && related.city_id.name ? related.city_id.name : "Not disclosed"}
-                                    </p>
-                                  </li>
-                                  <li class='list-inline-item'>
-                                    <p class='text-muted fs-14 mb-0'>
-                                      <i class='uil uil-wallet'></i> $
-                                      {related.salary_id &&
-                                        related.salary_id.name ? related.salary_id.name : "Not disclosed"}
-                                      / month
-                                    </p>
-                                  </li>
-                                </ul>
-                                <div class='mt-2'>
-                                  <span class='badge bg-success-subtle text-success mt-1'>
-                                    {related.employment_type_id &&
-                                      related.employment_type_id.name ? related.employment_type_id.name : ""}
-                                  </span>
-                                  <span class='badge bg-warning-subtle text-warning mt-1'>
-                                    Urgent
-                                  </span>
-                                  <span class='badge bg-info-subtle text-info mt-1'>
-                                    Private
-                                  </span>
-                                </div>
+                {Array.isArray(relatedJobs) && relatedJobs.length > 0 ? (
+                  relatedJobs.map((related) => (
+                    <div class="job-box card mt-4">
+                      <div class="p-4">
+                        <div key={related.id} class="row">
+                          <div class="col-lg-1">
+                            <img
+                              src="assets/images/featured-job/img-01.png"
+                              alt=""
+                              class="img-fluid rounded-3"
+                            />
+                          </div>
+                          <div class="col-lg-10">
+                            <div class="mt-3 mt-lg-0">
+                              <h5 class="fs-17 mb-1">
+                                <Link
+                                  to={`/job-detail/${related.id}`}
+                                  class="text-dark"
+                                >
+                                  {related.job_title
+                                    ? related.job_title
+                                    : "Not disclosed"}
+                                </Link>{" "}
+                                <small class="text-muted fw-normal">
+                                  (
+                                  {related.experience_id &&
+                                  related.experience_id.year
+                                    ? related.experience_id.year
+                                    : "Not disclosed"}{" "}
+                                  Yrs Exp.)
+                                </small>
+                              </h5>
+                              <ul class="list-inline mb-0">
+                                <li class="list-inline-item">
+                                  <p class="text-muted fs-14 mb-0">
+                                    {related.company_name
+                                      ? related.company_name
+                                      : "Not disclosed"}
+                                  </p>
+                                </li>
+                                <li class="list-inline-item">
+                                  <p class="text-muted fs-14 mb-0">
+                                    <i class="mdi mdi-map-marker"></i>{" "}
+                                    {related.city_id && related.city_id.name
+                                      ? related.city_id.name
+                                      : "Not disclosed"}
+                                  </p>
+                                </li>
+                                <li class="list-inline-item">
+                                  <p class="text-muted fs-14 mb-0">
+                                    <i class="uil uil-wallet"></i> $
+                                    {related.salary_id && related.salary_id.name
+                                      ? related.salary_id.name
+                                      : "Not disclosed"}
+                                    / month
+                                  </p>
+                                </li>
+                              </ul>
+                              <div class="mt-2">
+                                <span class="badge bg-success-subtle text-success mt-1">
+                                  {related.employment_type_id &&
+                                  related.employment_type_id.name
+                                    ? related.employment_type_id.name
+                                    : ""}
+                                </span>
+                                <span class="badge bg-warning-subtle text-warning mt-1">
+                                  Urgent
+                                </span>
+                                <span class="badge bg-info-subtle text-info mt-1">
+                                  Private
+                                </span>
                               </div>
                             </div>
-                          </div>
-                          <div class='favorite-icon'>
-                            <Link to=''>
-                              <i class='uil uil-heart-alt fs-18'></i>
-                            </Link>
                           </div>
                         </div>
-                        <div class='p-3 bg-light'>
-                          <div class='row justify-content-between'>
-                            <div class='col-md-8'>
-                              <div>
-                                <ul class='list-inline mb-0'>
-                                  <li class='list-inline-item'>
-                                    <i class='uil uil-tag'></i> Keywords :
-                                  </li>
-                                  <li class='list-inline-item'>
-                                    <Link to='' class='primary-link text-muted'>
-                                      Ui designer
-                                    </Link>
-                                    ,
-                                  </li>
-                                  <li class='list-inline-item'>
-                                    <Link to='' class='primary-link text-muted'>
-                                      developer
-                                    </Link>
-                                  </li>
-                                </ul>
-                              </div>
+                        <div class="favorite-icon">
+                          <Link to="">
+                            <i class="uil uil-heart-alt fs-18"></i>
+                          </Link>
+                        </div>
+                      </div>
+                      <div class="p-3 bg-light">
+                        <div class="row justify-content-between">
+                          <div class="col-md-8">
+                            <div>
+                              <ul class="list-inline mb-0">
+                                <li class="list-inline-item">
+                                  <i class="uil uil-tag"></i> Keywords :
+                                </li>
+                                <li class="list-inline-item">
+                                  <Link to="" class="primary-link text-muted">
+                                    Ui designer
+                                  </Link>
+                                  ,
+                                </li>
+                                <li class="list-inline-item">
+                                  <Link to="" class="primary-link text-muted">
+                                    developer
+                                  </Link>
+                                </li>
+                              </ul>
                             </div>
                           </div>
                         </div>
                       </div>
-                    ))
-                  : (
-                    <div style={{
+                    </div>
+                  ))
+                ) : (
+                  <div
+                    style={{
                       marginTop: "50px",
                       textAlign: "center",
-                    }} className="text-muted">
-                      <p>No jobs found </p>
-                    </div>
-                  )}
+                    }}
+                    className="text-muted"
+                  >
+                    <p>No jobs found </p>
+                  </div>
+                )}
               </div>
-              <div class='text-center mt-4'>
-                <Link to='/jobs' class='primary-link form-text'>
-                  View More <i class='mdi mdi-arrow-right'></i>
+              <div class="text-center mt-4">
+                <Link to="/jobs" class="primary-link form-text">
+                  View More <i class="mdi mdi-arrow-right"></i>
                 </Link>
               </div>
             </div>
 
-            <div class='col-lg-4 mt-4 mt-lg-0'>
-              <div class='side-bar ms-lg-4'>
-                <div class='card job-overview'>
-                  <div class='card-body p-4'>
-                    <h6 class='fs-17'>Job Overview</h6>
-                    <ul class='list-unstyled mt-4 mb-0'>
+            <div class="col-lg-4 mt-4 mt-lg-0">
+              <div class="side-bar ms-lg-4">
+                <div class="card job-overview">
+                  <div class="card-body p-4">
+                    <h6 class="fs-17">Job Overview</h6>
+                    <ul class="list-unstyled mt-4 mb-0">
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-user icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Job Title</h6>
-                            <p class='text-muted mb-0'>
-                              {jobDetails.job_title ? jobDetails.job_title : "Not disclosed"}
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-user icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Job Title</h6>
+                            <p class="text-muted mb-0">
+                              {jobDetails.job_title
+                                ? jobDetails.job_title
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-star-half-alt icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Experience</h6>
-                            <p class='text-muted mb-0'>
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-star-half-alt icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Experience</h6>
+                            <p class="text-muted mb-0">
                               {jobDetails.experience_id &&
-                                jobDetails.experience_id.year ? jobDetails.experience_id.year : "Not disclosed"}
+                              jobDetails.experience_id.year
+                                ? jobDetails.experience_id.year
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-location-point icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Location</h6>
-                            <p class='text-muted mb-0'>
-                              {jobOverView.job_locations ? jobOverView.job_locations : "Not disclosed"}
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-location-point icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Location</h6>
+                            <p class="text-muted mb-0">
+                              {jobOverView.job_locations
+                                ? jobOverView.job_locations
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i className='bi bi-wrench icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Skills</h6>
+                        <div class="d-flex mt-4">
+                          <i className="uil uil-brain icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Skills</h6>
                             {Array.isArray(jobOverView.skills) &&
                               jobOverView.skills.map((skill) => (
-                                <p key={skill.id} class='text-muted mb-0'>
+                                <p key={skill.id} class="text-muted mb-0">
                                   {skill.skill}
                                 </p>
                               ))}
@@ -478,154 +549,199 @@ export default function JobDetail() {
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-usd-circle icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Offered Salary</h6>
-                            <p class='text-muted mb-0'>
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-usd-circle icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Offered Salary</h6>
+                            <p class="text-muted mb-0">
                               $
                               {jobOverView.salary_id &&
-                                jobOverView.salary_id.name ? jobOverView.salary_id.name : "Not disclosed"}
+                              jobOverView.salary_id.name
+                                ? jobOverView.salary_id.name
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-graduation-cap icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Qualification</h6>
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-graduation-cap icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Qualification</h6>
                             {Array.isArray(jobOverView.education_id) &&
                               jobOverView.education_id.map((education) => (
-                                <p key={education.id} class='text-muted mb-0'>
-                                  {education.education ? education.education : "Not disclosed"}
+                                <p key={education.id} class="text-muted mb-0">
+                                  {education.education
+                                    ? education.education
+                                    : "Not disclosed"}
                                 </p>
                               ))}
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-building icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Industry</h6>
-                            <p class='text-muted mb-0'>
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-building icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Industry</h6>
+                            <p class="text-muted mb-0">
                               {jobDetails.industry_id &&
-                                jobDetails.industry_id.name ? jobDetails.industry_id.name : "Not disclosed"}
+                              jobDetails.industry_id.name
+                                ? jobDetails.industry_id.name
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                       <li>
-                        <div class='d-flex mt-4'>
-                          <i class='uil uil-history icon bg-primary-subtle text-primary'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Date Posted</h6>
-                            <p class='text-muted mb-0'>
-                              {jobOverView.created_at ? jobOverView.created_at : "Not disclosed"}
+                        <div class="d-flex mt-4">
+                          <i class="uil uil-history icon bg-primary-subtle text-primary"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Date Posted</h6>
+                            <p class="text-muted mb-0">
+                              {jobOverView.created_at
+                                ? jobOverView.created_at
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
                     </ul>
-                    <div class='mt-3'>
-                      { Array.isArray(appliedCandidate.applied_candidate) ? appliedCandidate.applied_candidate.map ((candidate) => (
-                        candidate.user_id === userId ? (
-                          <Link
-                        to=''
-                        data-bs-toggle='modal'
-                        className="btn btn-primary btn-hover w-100 mt-2"
-                        disabled
-                      >
-                        Applied... <i class='uil uil-arrow-right'></i>
-                      </Link>
-                        ) : (
-                          <Link
-                        to=''
-                        data-bs-toggle='modal'
-                        className={`btn btn-primary btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
-                        onClick={handleApplyJob}
-                      >
-                        Apply Now <i class='uil uil-arrow-right'></i>
-                      </Link>
-                        )
-                      )) : ""}
-                      <Link
-                        to=''
-                        data-bs-toggle='modal'
-                        className={`btn btn-primary btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
-                        onClick={handleApplyJob}
-                      >
-                        Apply Now <i class='uil uil-arrow-right'></i>
-                      </Link>
-                      <Link
-                        to=''
-                        class={`btn btn-soft-warning btn-hover w-100 mt-2 ${isApplyButtonDisabled ? 'disabled' : ''}`}
-                        onClick={() => handleJobBookMark(id)}
-                      >
-                        <i class='uil uil-bookmark'></i> Add Bookmark
-                      </Link>
+                    <div class="mt-3">
+                      {Array.isArray(appliedList) && appliedList.length > 0
+                        ? appliedList.map((applied) => (
+                            <React.Fragment key={applied.id}>
+                              {applied.job_id === id ? (
+                                <Link
+                                  to=""
+                                  data-bs-toggle="modal"
+                                  className="btn btn-primary w-100 mt-2"
+                                  style={{ opacity: "20%" }}
+                                >
+                                  Applied
+                                </Link>
+                              ) : (
+                                <Link
+                                  to=""
+                                  data-bs-toggle="modal"
+                                  className={`btn btn-primary btn-hover w-100 mt-2 ${
+                                    isApplyButtonDisabled ? "disabled" : ""
+                                  }`}
+                                  onClick={handleApplyJob}
+                                >
+                                  Apply Now <i class="uil uil-arrow-right"></i>
+                                </Link>
+                              )}
+                            </React.Fragment>
+                          ))
+                        : ""}
+
+                      {/* Bookmark */}
+
+                      {Array.isArray(bookMarked) && bookMarked.length > 0
+                        ? bookMarked.map((marked) => (
+                            <React.Fragment>
+                              {marked.id === id ? (
+                                <Link
+                                to=""
+                                data-bs-toggle="modal"
+                                className={`btn btn-primary btn-hover w-100 mt-2 ${
+                                  isBookmarkedDisabled ? "disabled" : ""
+                                }`}
+                                onClick={handleJobBookMark}
+                                style={{ opacity: "20%" }}
+                              >
+                              Bookmarked
+                              </Link>
+                              ) : (
+                                <Link
+                                  to=""
+                                  data-bs-toggle="modal"
+                                  className={`btn btn-primary btn-hover w-100 mt-2 ${
+                                    isBookmarkedDisabled ? "disabled" : ""
+                                  }`}
+                                  onClick={handleJobBookMark}
+                                >
+                                  <i class="uil uil-bookmark"></i> Add Bookmark
+                                </Link>
+                              )}
+                            </React.Fragment>
+                          ))
+                        : ""}
+                        
                     </div>
                   </div>
                 </div>
 
-                <div class='card company-profile mt-4'>
-                  <div class='card-body p-4'>
-                    <div class='text-center'>
+                <div class="card company-profile mt-4">
+                  <div class="card-body p-4">
+                    <div class="text-center">
                       <img
-                        src='assets/images/featured-job/img-02.png'
-                        alt=''
-                        class='img-fluid rounded-3'
+                        src="assets/images/featured-job/img-02.png"
+                        alt=""
+                        class="img-fluid rounded-3"
                       />
 
-                      <div class='mt-4'>
-                        <h6 class='fs-17 mb-1'>
-                          {companyDetails.company_name ? companyDetails.company_name : "Not disclosed"}
+                      <div class="mt-4">
+                        <h6 class="fs-17 mb-1">
+                          {companyDetails.company_name
+                            ? companyDetails.company_name
+                            : "Not disclosed"}
                         </h6>
-                        <p class='text-muted'>Since July 2017</p>
+                        <p class="text-muted">Since July 2017</p>
                       </div>
                     </div>
-                    <ul class='list-unstyled mt-4'>
+                    <ul class="list-unstyled mt-4">
                       <li>
-                        <div class='d-flex'>
-                          <i class='uil uil-phone-volume text-primary fs-4'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Phone</h6>
-                            <p class='text-muted fs-14 mb-0'>
-                              +{companyDetails.phone ? companyDetails.phone : "Not disclosed"}
+                        <div class="d-flex">
+                          <i class="uil uil-phone-volume text-primary fs-4"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Phone</h6>
+                            <p class="text-muted fs-14 mb-0">
+                              +
+                              {companyDetails.phone
+                                ? companyDetails.phone
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
-                      <li class='mt-3'>
-                        <div class='d-flex'>
-                          <i class='uil uil-envelope text-primary fs-4'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Email</h6>
-                            <p class='text-muted fs-14 mb-0'>
-                              {companyDetails.email ? companyDetails.email : "Not disclosed"}
+                      <li class="mt-3">
+                        <div class="d-flex">
+                          <i class="uil uil-envelope text-primary fs-4"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Email</h6>
+                            <p class="text-muted fs-14 mb-0">
+                              {companyDetails.email
+                                ? companyDetails.email
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
-                      <li class='mt-3'>
-                        <div class='d-flex'>
-                          <i class='uil uil-globe text-primary fs-4'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Website</h6>
-                            <p class='text-muted fs-14 text-break mb-0'>
-                              {companyDetails.website ? companyDetails.website : "Not disclosed"}
+                      <li class="mt-3">
+                        <div class="d-flex">
+                          <i class="uil uil-globe text-primary fs-4"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Website</h6>
+                            <p class="text-muted fs-14 text-break mb-0">
+                              {companyDetails.website
+                                ? companyDetails.website
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>
                       </li>
-                      <li class='mt-3'>
-                        <div class='d-flex'>
-                          <i class='uil uil-map-marker text-primary fs-4'></i>
-                          <div class='ms-3'>
-                            <h6 class='fs-14 mb-2'>Location</h6>
-                            <p class='text-muted fs-14 mb-0'>
-                              {companyDetails.city_id && companyDetails.city_id.name ? companyDetails.city_id.name : "Not disclosed"}
+                      <li class="mt-3">
+                        <div class="d-flex">
+                          <i class="uil uil-map-marker text-primary fs-4"></i>
+                          <div class="ms-3">
+                            <h6 class="fs-14 mb-2">Location</h6>
+                            <p class="text-muted fs-14 mb-0">
+                              {companyDetails.city_id &&
+                              companyDetails.city_id.name
+                                ? companyDetails.city_id.name
+                                : "Not disclosed"}
                             </p>
                           </div>
                         </div>

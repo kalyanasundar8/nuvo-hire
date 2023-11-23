@@ -9,7 +9,11 @@ import {
   fetchAllSubCategories,
   fetchCategoriesJob,
 } from "../services/JobService";
+import { FaBan, FaBuilding } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
+import Loading from "./layouts/Loading";
 
 export default function Jobs() {
   const { id } = useParams();
@@ -24,10 +28,21 @@ export default function Jobs() {
   const searchedResult = location.state;
 
   const [jobsData, setJobsData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+
+        const timeoutId = setTimeout(() => {
+          setLoading(false);
+          setError(new Error("Network timeout"));
+        }, 10000);
+
+        let response;
+
         if (subCategoryId) {
           const response = await fetchCategoriesJob(subCategoryId);
           console.log(response);
@@ -40,13 +55,19 @@ export default function Jobs() {
           console.log(response.data);
           setJobsData(response.data);
         }
+
+        clearTimeout(timeoutId);
+
+        setJobsData(response.data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.log("Error: ", error);
       }
     };
 
     fetchData();
-  }, [subCategoryId]);
+  }, [subCategoryId, searchedResult]);
 
   let title = "";
 
@@ -215,7 +236,15 @@ export default function Jobs() {
   //   },
   // });
 
-  console.log(selectedJob, countryId, selectedSalaries, category, selectedExperience, selectedWorkMode, datePosted)
+  console.log(
+    selectedJob,
+    countryId,
+    selectedSalaries,
+    category,
+    selectedExperience,
+    selectedWorkMode,
+    datePosted
+  );
 
   const filterJobs = async () => {
     const payload = {
@@ -230,14 +259,9 @@ export default function Jobs() {
     console.log(payload);
 
     try {
-      const response = await ApiService(
-        "jobs-filter",
-        "POST",
-        payload,
-        true
-      );
+      const response = await ApiService("jobs-filter", "POST", payload, true);
       console.log(response);
-      setJobsData(response.data.data)
+      setJobsData(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -323,11 +347,14 @@ export default function Jobs() {
           <div class="row">
             <div class="col-lg-9">
               <div class="me-lg-5">
-                <div class="job-list-header" style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around"
-                }}>
+                <div
+                  class="job-list-header"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                  }}
+                >
                   <form>
                     <div class="row g-2">
                       <div class="col-lg-4 col-md-4">
@@ -358,7 +385,6 @@ export default function Jobs() {
                             onChange={(e) => {
                               setCountry(e.target.value);
                             }}
-                           
                           >
                             {Array.isArray(countries)
                               ? countries.map((country) => (
@@ -383,7 +409,6 @@ export default function Jobs() {
                             onChange={(e) => {
                               setCategory(e.target.value);
                             }}
-                            
                           >
                             {Array.isArray(categories) &&
                               categories.map((cat) => (
@@ -395,124 +420,119 @@ export default function Jobs() {
                     </div>
                   </form>
                   <div class="col-lg-2 col-md-2">
-                        <Link to="" class="btn btn-primary w-100" onClick={filterJobs}>
-                          <i class="uil uil-filter"></i> Fliter
-                        </Link>
-                      </div>
+                    <Link
+                      to=""
+                      class="btn btn-primary w-100"
+                      onClick={filterJobs}
+                    >
+                      <i class="uil uil-filter"></i> Fliter
+                    </Link>
+                  </div>
                 </div>
 
-                <div>
-                  {Array.isArray(jobsData) && jobData.length > 0 ? (
-                    jobsData.map((jobs) => (
-                      <div key={jobs.id} class="job-box card mt-5">
-                        <div class="bookmark-label text-center">
-                          <Link to="" class="align-middle text-white">
-                            <i class="mdi mdi-star"></i>
-                          </Link>
-                        </div>
-                        <div class="p-4">
-                          <div class="row align-items-center">
-                            <div class="col-md-2">
-                              <div class="text-center mb-4 mb-lg-0">
-                                <Link to="company-details.php">
-                                  <img
-                                    src="assets/images/featured-job/img-01.png"
-                                    alt=""
-                                    class="img-fluid rounded-3"
-                                  />
-                                </Link>
-                              </div>
-                            </div>
-
-                            <div class="col-md-3">
-                              <div class="mb-2 mb-md-0">
-                                <h5 class="fs-18 mb-0">
-                                  {" "}
-                                  <Link
-                                    to={`/job-detail/${jobs.id}`}
-                                    class="text-dark"
-                                  >
-                                    {jobs.job_title}
-                                  </Link>
-                                </h5>
-                                <p class="text-muted fs-14 mb-0">
-                                  {jobs.company_name}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div class="col-md-3">
-                              <div class="d-flex mb-2">
-                                <div class="flex-shrink-0">
-                                  <i class="mdi mdi-map-marker text-primary me-1"></i>
-                                </div>
-                                <p class="text-muted">
-                                  {" "}
-                                  {jobs.city_id && jobs.city_id.name}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div class="col-md-2">
-                              <div class="d-flex mb-0">
-                                <div class="flex-shrink-0">
-                                  <i class="uil uil-clock-three text-primary me-1"></i>
-                                </div>
-                                <p class="text-muted mb-0"> 3 min ago</p>
-                              </div>
-                            </div>
-                            {Array.isArray(jobs.employment_type_id) &&
-                              jobs.employment_type_id.map((employment) => (
+                {loading ? (
+                  <Loading />
+                ) : error ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: "100px",
+                      textAlign: "center"
+                    }}
+                    className="text-muted"
+                  >
+                    <div>
+                      <FontAwesomeIcon icon={faExclamationTriangle} />
+                      <p>Check your newtwork</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {Array.isArray(jobsData) && jobsData.length > 0
+                      ? jobsData.map((jobs) => (
+                          <div key={jobs.id} class="job-box card mt-5">
+                            <div class="p-4">
+                              <div class="row align-items-center">
                                 <div class="col-md-2">
-                                  <div key={employment.employment_type_id}>
-                                    <span class="badge bg-success-subtle text-success fs-13 mt-1">
-                                      {employment.employment_type}
-                                    </span>
+                                  <div class="text-center mb-4 mb-lg-0">
+                                    <Link to="company-details.php">
+                                      {jobs.company_logo ? (
+                                        <img
+                                          src={jobs.company_logo}
+                                          alt=""
+                                          className="img-fluid rounded-3"
+                                        />
+                                      ) : (
+                                        <div style={{ color: "grey" }}>
+                                          <FaBuilding size={32} />
+                                        </div> // Replace this with your desired icon
+                                      )}
+                                    </Link>
                                   </div>
                                 </div>
-                              ))}
-                          </div>
-                        </div>
-                        <div class="p-3 bg-light">
-                          <div class="row justify-content-between">
-                            <div class="col-md-4">
-                              <div>
-                                <p class="text-muted mb-0">
-                                  <span class="text-dark">Experience :</span>{" "}
-                                  {jobs.experience_id &&
-                                    jobs.experience_id.year}
-                                </p>
-                              </div>
-                            </div>
 
-                            <div class="col-lg-2 col-md-3">
-                              <div class="text-start text-md-end">
-                                <Link
-                                  to="#applyNow"
-                                  data-bs-toggle="modal"
-                                  class="primary-link"
-                                >
-                                  Apply Now{" "}
-                                  <i class="mdi mdi-chevron-double-right"></i>
-                                </Link>
+                                <div class="col-md-3">
+                                  <div class="mb-2 mb-md-0">
+                                    <h5 class="fs-18 mb-0">
+                                      {" "}
+                                      <Link
+                                        to={`/job-detail/${jobs.id}`}
+                                        class="text-dark"
+                                      >
+                                        {jobs.job_title}
+                                      </Link>
+                                    </h5>
+                                    <p class="text-muted fs-14 mb-0">
+                                      {jobs.company_name}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                  <div class="d-flex mb-2">
+                                    <div class="flex-shrink-0">
+                                      <i class="mdi mdi-map-marker text-primary me-1"></i>
+                                    </div>
+                                    <p class="text-muted">
+                                      {" "}
+                                      {jobs.city_id && jobs.city_id.name}
+                                    </p>
+                                  </div>
+                                </div>
+                                {Array.isArray(jobs.employment_type_id) &&
+                                  jobs.employment_type_id.map((employment) => (
+                                    <div class="col-lg-2 col-md-2">
+                                      <div key={employment.employment_type_id}>
+                                        <span class="badge bg-success-subtle text-success fs-13 mt-1">
+                                          {employment.employment_type}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                            <div class="p-3 bg-light">
+                              <div class="row justify-content-between">
+                                <div class="col-md-4">
+                                  <div>
+                                    <p class="text-muted mb-0">
+                                      <span class="text-dark">
+                                        Experience :
+                                      </span>{" "}
+                                      {jobs.experience_id &&
+                                        jobs.experience_id.year}
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p
-                      style={{
-                        marginTop: "50px",
-                        textAlign: "center",
-                      }}
-                      className="text-muted"
-                    >
-                      No jobs found
-                    </p>
-                  )}
-                </div>
+                        ))
+                      : "No jobs found"}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -596,9 +616,7 @@ export default function Jobs() {
                                   id={`flexCheckChecked2${modes.id}`}
                                   value={modes.id}
                                   onChange={handleWorkMode}
-                                  checked={selectedWorkMode.includes(
-                                    modes.id
-                                    )}
+                                  checked={selectedWorkMode.includes(modes.id)}
                                 />
                                 <label
                                   class="form-check-label ms-2 text-muted"
@@ -689,7 +707,6 @@ export default function Jobs() {
                                   id="flexRadioDefault6"
                                   value={employment.id}
                                   onChange={(e) => {
-                                    
                                     setEmployment(e.target.value);
                                   }}
                                 />
@@ -735,7 +752,6 @@ export default function Jobs() {
                               value={7}
                               id="flexRadioChecked8"
                               onChange={(e) => {
-                                
                                 setPostDate(e.target.value);
                               }}
                             />
@@ -754,7 +770,6 @@ export default function Jobs() {
                               value={14}
                               id="flexRadioChecked8"
                               onChange={(e) => {
-                                
                                 setPostDate(e.target.value);
                               }}
                             />
@@ -773,7 +788,6 @@ export default function Jobs() {
                               value={30}
                               id="flexRadioChecked9"
                               onChange={(e) => {
-                                
                                 setPostDate(e.target.value);
                               }}
                             />

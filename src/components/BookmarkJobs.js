@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchBookmarkJob } from "../services/JobService";
-import {
-  FaBan,
-  FaBuilding
-} from "react-icons/fa";
+import { FaBan, FaBuilding } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import Loading from "./layouts/Loading";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 export default function BookmarkJobs() {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBookmarkedJobs = async () => {
       try {
+        setLoading(true);
+
+        const timeoutId = setTimeout(() => {
+          setLoading(false);
+          setError(new Error("Network error"));
+        }, 20000);
+
         const response = await fetchBookmarkJob();
         console.log(response.data.data);
+
+        clearTimeout(timeoutId);
+
         setBookmarkedJobs(response.data.data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.log("Error: ", error);
       }
     };
@@ -23,15 +38,17 @@ export default function BookmarkJobs() {
     fetchBookmarkedJobs();
   }, []);
 
+  useScrollToTop()
+
   return (
-    <div class='page-content'>
+    <div class="page-content">
       {/*Start home */}
-      <section class='page-title-box'>
-        <div class='container'>
-          <div class='row justify-content-center'>
-            <div class='col-md-6'>
-              <div class='text-center text-white'>
-                <h3 class='mb-4'>Bookmark Jobs</h3>
+      <section class="page-title-box">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="text-center text-white">
+                <h3 class="mb-4">Bookmark Jobs</h3>
               </div>
             </div>
             {/*end col*/}
@@ -43,13 +60,13 @@ export default function BookmarkJobs() {
       {/*end home */}
 
       {/*START SHAPE */}
-      <div class='position-relative' style={{ zIndex: 1 }}>
-        <div class='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
+      <div class="position-relative" style={{ zIndex: 1 }}>
+        <div class="shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
             <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
+              fill=""
+              fill-opacity="1"
+              d="M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
             ></path>
           </svg>
         </div>
@@ -57,22 +74,40 @@ export default function BookmarkJobs() {
       {/*END SHAPE */}
 
       {/*START MANAGE-JOBS */}
-      <section class='section'>
-        <div class='container'>
-          <div class='row align-items-center'>
+      <section class="section">
+        <div class="container" style={{ height: "40vh" }}>
+          {/* <div class='row align-items-center'>
             <div class='col-lg-8'>
               <div class='mb-4 mb-lg-0'>
                 <h6 class='mb-0'>Bookmarked Jobs</h6>
               </div>
-            </div>
-            {/*end col*/}
-            {/*end col*/}
-          </div>
+            </div> */}
+          {/*end col*/}
+          {/*end col*/}
+          {/* </div> */}
           {/*end row*/}
-          <div class='row'>
-          {Array.isArray(bookmarkedJobs) && bookmarkedJobs.length > 0 ? (
-              bookmarkedJobs.map((bookmarkedJob) =>
-                bookmarkedJob.status === "approved" ? (
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "130px",
+                textAlign: "center",
+              }}
+              className="text-muted"
+            >
+              <div>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <p>Check your newtwork</p>
+              </div>
+            </div>
+          ) : (
+            <div class="row">
+              {Array.isArray(bookmarkedJobs) && bookmarkedJobs.length > 0 ? (
+                bookmarkedJobs.map((bookmarkedJob) => (
                   <div key={bookmarkedJob.job_id} className="col-lg-12">
                     <div className="job-box card mt-4">
                       <div className="card-body p-4">
@@ -132,27 +167,35 @@ export default function BookmarkJobs() {
                       </div>
                     </div>
                   </div>
-                ) : <p>Waitin</p>
-              )
-            ) : (
-              <div
-                style={{
-                  marginTop: "50px",
-                  textAlign: "center",
-                }}
-              >
-                <p
+                ))
+              ) : (
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  <div
                   style={{
-                    marginTop: "10px",
+                    marginTop: "130px",
                     textAlign: "center",
                   }}
-                  className="text-muted"
                 >
-                  No jobs found
-                </p>
-              </div>
-            )}
-          </div>
+                  <FontAwesomeIcon icon={faInfoCircle} className="text-muted"/>
+                  <p
+                    style={{
+                      marginTop: "10px",
+                      textAlign: "center",
+                      fontSize: "18px"
+                    }}
+                    className="text-muted"
+                  >
+                    No bookmarked jobs <Link to="/jobs" className="text-primary">Find jobs</Link>
+                  </p>
+                </div>
+                </div>
+              )}
+            </div>
+          )}
           {/*end row*/}
           {/*end row*/}
         </div>
@@ -162,32 +205,32 @@ export default function BookmarkJobs() {
 
       {/*DELETE Modal */}
       <div
-        class='modal fade'
-        id='deleteModal'
-        tabindex='-1'
-        aria-labelledby='deleteModal'
-        aria-hidden='true'
+        class="modal fade"
+        id="deleteModal"
+        tabindex="-1"
+        aria-labelledby="deleteModal"
+        aria-hidden="true"
       >
-        <div class='modal-dialog modal-dialog-centered'>
-          <div class='modal-content'>
-            <div class='modal-header'>
-              <h5 class='modal-title' id='staticBackdropLabel'>
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">
                 Delete Jobs ?
               </h5>
               <button
-                type='button'
-                class='btn-close'
-                data-bs-dismiss='modal'
-                aria-label='Close'
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
               ></button>
             </div>
-            <div class='modal-body'>
+            <div class="modal-body">
               <div>
-                <h6 class='text-danger'>
-                  <i class='uil uil-exclamation-triangle'></i> Warning: Are you
+                <h6 class="text-danger">
+                  <i class="uil uil-exclamation-triangle"></i> Warning: Are you
                   sure you want to delete job Post ?
                 </h6>
-                <p class='text-muted'>
+                <p class="text-muted">
                   {" "}
                   Your jobs post will be permenently removed and you won't be
                   able to see them again, including the once you're shared with
@@ -195,15 +238,15 @@ export default function BookmarkJobs() {
                 </p>
               </div>
             </div>
-            <div class='modal-footer'>
+            <div class="modal-footer">
               <button
-                type='button'
-                class='btn btn-primary btn-sm'
-                data-bs-dismiss='modal'
+                type="button"
+                class="btn btn-primary btn-sm"
+                data-bs-dismiss="modal"
               >
                 Cancel
               </button>
-              <button type='button' class='btn btn-danger btn-sm'>
+              <button type="button" class="btn btn-danger btn-sm">
                 Yes, delete
               </button>
             </div>

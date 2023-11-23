@@ -38,8 +38,8 @@ export default function Dashboard() {
       className="container-fluid"
       style={{ marginTop: "150px", marginBottom: "50px" }}
     >
-      <div className="row">
-        <nav className="col-md-3 col-lg-2 d-md-block sidebar bg-light">
+      <div className="row" style={{ height: "80vh"}}>
+        <nav className="col-md-3 col-lg-2 d-md-block sidebar bg-light" style={{ height: "75vh"}}>
           <div className="position-sticky">
             <h1 className="h2 text-center my-4">Dashboard</h1>
             <ul className="nav flex-column text-start fs-7">
