@@ -84,7 +84,7 @@ export default function MyJobs() {
 
       {/*START MANAGE-JOBS */}
       <section class="section">
-        <div class="container" style={{ height: "40vh" }}>
+        <div class="container" style={{ marginBottom: "100px" }}>
           {/* <div class="row align-items-center">
             <div class="col-lg-8">
               <div class="mb-4 mb-lg-0">
@@ -119,7 +119,7 @@ export default function MyJobs() {
               {Array.isArray(appliedJobs) && appliedJobs.length > 0 ? (
                 appliedJobs.map((appliedJob) => (
                   <div key={appliedJob.job_id} className="col-lg-12">
-                    <div className="job-box card mt-4">
+                    <div className="job-box card mt-2">
                       <div className="card-body p-4">
                         <div className="row" key={appliedJob.id}>
                           <div className="col-lg-1">
