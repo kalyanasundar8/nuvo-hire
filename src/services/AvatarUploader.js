@@ -5,6 +5,7 @@ import { FaUserEdit, FaUser } from "react-icons/fa";
 import { fetchAvatar } from "./ProfilePageService";
 
 const AvatarUploader = ({ onAvatarUpload }) => {
+
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [avatarSource, setAvatarSource] = useState("");
@@ -47,9 +48,10 @@ const AvatarUploader = ({ onAvatarUpload }) => {
   const fetchAvatarImage = async () => {
     try {
       const response = await fetchAvatar();
+      console.log(response);
       if (response.data.data && response.data.data.length > 0) {
         const { avatar, company_logo } = response.data.data[0];
-        if (company_logo === null) {
+        if (company_logo === "") {
           setAvatarSource(avatar); // Use the avatar path
         } else {
           setAvatarSource(company_logo); // Use the company_logo path
@@ -77,8 +79,9 @@ const AvatarUploader = ({ onAvatarUpload }) => {
           style={{
             border: "1px solid #ccc",
             borderRadius: "100px",
-            height: "140px",
-            padding: "40px",
+            width: "100px",
+            height: "100px",
+            padding: "5px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -86,9 +89,14 @@ const AvatarUploader = ({ onAvatarUpload }) => {
         >
           {avatarSource ? (
             <img
-              src={`storage/${avatarSource}`}
+              src={avatarSource}
               alt='Avatar'
               className='avatarImage'
+              width={400}
+              style={{
+                height: "90px",
+                borderRadius: "100px"
+              }}
             />
           ) : (
             <div className='edit-avatar'>

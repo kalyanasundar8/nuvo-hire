@@ -11,25 +11,30 @@ export default function JobCategories() {
 
   const { id } = useParams();
 
-  const [jobCategory, setJobCategory] = useState("");
+  const [jobCategory, setJobCategory] = useState([]);
 
-  useEffect(() => {
-    const fetchingSubCategories = async () => {
-      if (id === "all") {
-        await fetchAllSubCategories().then((data) => {
-          console.log(data);
-          setJobCategory(data);
-        });
-      } else {
-        await fetchSingleSubCategories(id).then((data) => {
-          console.log(data);
-          setJobCategory(data);
-        });
-      }
-    };
+  const categoriesData = useFetch("categories");
+  setJobCategory(categoriesData.data);
 
-    fetchingSubCategories();
-  }, [id]);
+  // const jobCategory = categoriesData.data;
+
+  // useEffect(() => {
+    // const fetchingSubCategories = async () => {
+    //   if (id === "all") {
+    //     await fetchAllSubCategories().then((data) => {
+    //       console.log(data);
+    //       setJobCategory(data);
+    //     });
+    //   } else {
+    //     await fetchSingleSubCategories(id).then((data) => {
+    //       console.log(data);
+    //       setJobCategory(data);
+    //     });
+    //   }
+    // };
+
+    // fetchingSubCategories();
+  // }, []);
 
   return (
     <div class='page-content'>

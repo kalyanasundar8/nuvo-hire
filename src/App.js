@@ -83,7 +83,7 @@ function App() {
           <Route path='/blog' element={<Blog />} />
           <Route path='/jobs/:id?' element={<Jobs />} />
           <Route path='/contact-us' element={<Contact />} />
-          <Route path='/sub-categories/:id?' element={<JobCategories />} />
+          <Route path='/sub-categories' element={<JobCategories />} />
           <Route path='/job-detail/:id' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
           <Route path='/create-new-job' element={<CreateNewJobs />} />

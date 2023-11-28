@@ -141,7 +141,7 @@ export default function MyJobs() {
                             <div className="mt-3 mt-lg-0">
                               <h5 className="d-flex fs-17 mb-1">
                                 <Link
-                                  to={`/job-detail/${appliedJob.id}`}
+                                  to={`/job-detail/${appliedJob.job_id}`}
                                   className="text-dark"
                                   key={appliedJob.id} // Move the key attribute here
                                 >

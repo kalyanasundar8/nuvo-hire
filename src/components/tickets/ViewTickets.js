@@ -3,6 +3,7 @@ import ApiService from "../../services/ApiService";
 import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import FileUploader from "../layouts/FileUploader";
+import { loadingIndicatorCSS } from "react-select/dist/declarations/src/components/indicators";
 
 const ViewTickets = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const ViewTickets = () => {
   const [addComment, setAddComment] = useState("");
   const [supportDocs, setSupportDocs] = useState([]);
   const [comments, setComments] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Fetching tickets data from the DB
   const fetchTicketsData = async () => {
@@ -48,9 +50,11 @@ const ViewTickets = () => {
 
     console.log(payload);
     try {
+      setLoading(true)
       const commentResponse = await ApiService("post-comment", "POST", payload, true);
       console.log(commentResponse);
     } catch (error){
+      setLoading(false);
       console.log("Error: ", error);
     }
   };
@@ -140,8 +144,10 @@ const ViewTickets = () => {
                           attachments={supportDocs}
                           type='support-ticket'
                         />
-                        <button type='submit' className='btn btn-primary mt-3'>
-                          Submit
+                        <button type='submit' className="btn btn-primary mt-3"
+                        // disabled={ loading || !formik.isValid }
+                        >
+                           Submit
                         </button>
                       </form>
                     </div>
@@ -149,7 +155,7 @@ const ViewTickets = () => {
                     {/* Comment Section */}
                     {Array.isArray(comments) ? (
                       comments.map((comment) => (
-                        <div key={comment.user_id} className='card mb-3'>
+                        <div key={comment.user_id} className='mb-3'>
                           <div className='card-body'>
                             <h6 className='card-subtitle mb-2 text-muted'>
                               {comment.user_name}

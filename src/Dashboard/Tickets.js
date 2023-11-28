@@ -58,18 +58,20 @@ const Tickets = () => {
     }
   };
 
+  const [supportDocs, setSupportDocs] = useState([]);
+
+  const handleSupportDocsChange = (files) => {
+    setSupportDocs(files);
+  };
+
   let title = "";
   let description = "";
-  let supportTickets = [];
 
   if (Array.isArray(details)) {
     const ticketDetails = details[0];
     console.log(ticketDetails.attachment);
     title = ticketDetails.title || "";
     description = ticketDetails.description || "";
-    supportTickets = [...ticketDetails.attachment];
-    // setDocs(supportTickets);
-    console.log(supportTickets);
   }
 
   const editTicketFormik = useFormik({
@@ -89,21 +91,15 @@ const Tickets = () => {
     const payload = {
       title: editTicketFormik.values.title,
       description: editTicketFormik.values.description,
-      attachment: supportTickets,
+      attachment: supportDocs,
     };
     console.log(payload);
-    // try {
-    //   const response = await editTicket(payload, ticketId);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
-
-  const [supportDocs, setSupportDocs] = useState([]);
-
-  const handleSupportDocsChange = (files) => {
-    setSupportDocs(files);
+    try {
+      const response = await editTicket(payload, ticketId);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [tickets, setTickets] = useState([]);
@@ -190,11 +186,11 @@ const Tickets = () => {
                 setAttachmentFiles={handleSupportDocsChange}
                 type="support-ticket"
               />
-              {Array.isArray(supportTickets) && supportTickets.length > 0
+              {/* {Array.isArray(supportTickets) && supportTickets.length > 0
                 ? supportTickets.map((docs) => (
-                    <a href="#">{docs.attachment}</a>
+                    <a href={docs.attachment} target="blank">{docs.attachment}</a>
                   ))
-                : ""}
+                : ""} */}
               <div className="text-end mt-4">
                 <button className="btn btn-primary" type="submit">
                   Update
@@ -252,7 +248,7 @@ const Tickets = () => {
                       to={`/view-tickets/${ticket.id}`}
                       className="primary-link"
                     >
-                      <div className="card mb-4">
+                      <div className="card mb-1">
                         <div className="card-body d-flex justify-content-between align-items-center">
                           <div>
                             <span
@@ -298,13 +294,6 @@ const Tickets = () => {
                               className="primary-link"
                             >
                               Edit <i className="mdi mdi-pencil"></i>
-                            </Link>
-                            <span className="mx-2">|</span>
-                            <Link
-                              to={`/delete-ticket/${ticket.id}`}
-                              className="primary-link"
-                            >
-                              Delete <i className="mdi mdi-delete"></i>
                             </Link>
                           </div>
                         </div>

@@ -970,7 +970,7 @@ export default function MyProfile() {
                         <div class="candidate-profile text-center">
                           <div>
                             <AvatarUploader
-                              onAvatarUpload={handleUserAvatarUpload}
+                              onAvatarUpload={handleAvatarUpload}
                             />
                           </div>
                           <Modal
@@ -1276,7 +1276,7 @@ export default function MyProfile() {
                           </ul>
                           <div class="mt-3">
                             <a
-                              onClick={() => downloadResume()}
+                              onClick={downloadResume}
                               href=""
                               class="btn btn-primary btn-hover w-100 mt-2"
                             >
@@ -1624,7 +1624,7 @@ export default function MyProfile() {
                             {Array.isArray(aboutMe) ? (
                               aboutMe.map((about) => (
                                 <p key={about.id}>
-                                  {about.about_me || "No about"}
+                                  {about.about_me || (<p>Unlock the full potential of your profile by adding an 'About' section! Share your story, skills, and aspirations to make meaningful connections.</p>)}
                                 </p>
                               ))
                             ) : (
@@ -1634,10 +1634,7 @@ export default function MyProfile() {
                           <div className="mt-4">
                             <h5>Upload Your Resume</h5>
                             <p>
-                              Upload your resume here. Lorem ipsum dolor sit
-                              amet, consectetur adipiscing elit. Nullam nec
-                              justo in metus sagittis suscipit. Vivamus tempor,
-                              ex ut faucibus.
+                            Elevate your resume by providing a comprehensive overview of your skills, experience, and accomplishments. A well-crafted resume opens doors to new opportunities
                             </p>
                             <div
                               onDragOver={handleDragOver}
@@ -1753,7 +1750,7 @@ export default function MyProfile() {
                                   onClick={handleAddEducation}
                                 />
                               </h6>
-                              {Array.isArray(education) &&
+                              {Array.isArray(education) && education.length > 0 ?
                                 education.map((educationDetails) => (
                                   <div class="candidate-education-content mt-4 d-flex">
                                     <div class="circle flex-shrink-0 bg-primary-subtle text-primary">
@@ -1796,7 +1793,9 @@ export default function MyProfile() {
                                       </p>
                                     </div>
                                   </div>
-                                ))}
+                                )) : (<p className="mt-2 text-muted">
+                                  Enhance your profile's completeness by adding your education details. Highlight your academic achievements and showcase your commitment to learning and growth.
+                                </p>)}
                             </div>
                           </div>
                         </div>
@@ -2441,7 +2440,7 @@ export default function MyProfile() {
                                   onClick={handleExperienceForm}
                                 />
                               </h6>
-                              {Array.isArray(experience) &&
+                              {Array.isArray(experience) && experience.length > 0 ?
                                 experience.map((experienceDetails) => (
                                   <div
                                     key={experienceDetails.id}
@@ -2482,7 +2481,9 @@ export default function MyProfile() {
                                       </p>
                                     </div>
                                   </div>
-                                ))}
+                                )) : (<p className="mt-2 text-muted">
+                                  Maximize the impact of your profile by adding your work experience. Share your professional journey, accomplishments, and expertise to stand out in the professional community.
+                                </p>)}
                             </div>
                           </div>
                         </div>
@@ -2623,7 +2624,7 @@ export default function MyProfile() {
                           onClick={handleProjectForm}
                         />
                       </h6>
-                      {Array.isArray(projects) &&
+                      {Array.isArray(projects) && projects.length > 0 ?
                         projects.map((projectDetails) => (
                           <div
                             key={projectDetails.project_id}
@@ -2653,7 +2654,9 @@ export default function MyProfile() {
                               </p>
                             </div>
                           </div>
-                        ))}
+                        )) : (<p className="mt-2 text-muted">
+                          Complete your profile with project details to showcase your hands-on experience and accomplishments. Let your projects speak volumes about your skills and expertise.
+                        </p>)}
                     </div>
                     {/* --- Projects information tab end --- */}
 
@@ -2767,10 +2770,10 @@ export default function MyProfile() {
                     >
                       {Array.isArray(resume)
                         ? resume.map((resumeDetails) => (
-                            <div className="container mt-4">
-                              <header className="bg-primary text-white text-center p-4">
+                            <div className="container">
+                              <header className="text-dark text-center p-4">
                                 <h1>
-                                  {resumeDetails.resume_title}
+                                  {resumeDetails.resume_title ? resumeDetails.resume_title : "Your Name"}
                                   <FaPencilAlt
                                     class="text-muted"
                                     style={{
@@ -2785,7 +2788,7 @@ export default function MyProfile() {
                                 <p>{resumeDetails.designation}</p>
                               </header>
                               <main className="p-4">
-                                <section className="mb-4">
+                                <section className="">
                                   <h2>Contact Information</h2>
                                   <ul className="list-unstyled">
                                     <li>

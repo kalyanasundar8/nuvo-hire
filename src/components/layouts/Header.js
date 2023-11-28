@@ -222,7 +222,7 @@ function Header() {
 
       <nav className='navbar navbar-expand-lg fixed-top sticky' id='navbar'>
         <div className='container-fluid custom-container'>
-          <Link className='navbar-brand text-dark fw-bold me-auto' to='/'>
+          {/* <Link className='navbar-brand text-dark fw-bold me-auto' to='/'>
             <img
               src='assets/images/nuvo_logo.png'
               height='100'
@@ -235,7 +235,8 @@ function Header() {
               alt=''
               className='logo-light'
             />
-          </Link>
+          </Link> */}
+          {/* <h4>LOGO</h4> */}
           <div>
             <button
               className='navbar-toggler me-3'

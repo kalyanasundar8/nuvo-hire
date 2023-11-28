@@ -119,7 +119,7 @@ export default function VerifyOtp() {
         if (response?.data?.data?.user_type === "JobSeeker") {
           navigate("/");
         } else {
-          navigate("/manage-jobs");
+          navigate("/dashboard");
         }
 
         // navigate("/dashboard");

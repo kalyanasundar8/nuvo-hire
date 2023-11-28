@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ApiService from "../../services/ApiService";
+import { Modal } from "react-bootstrap";
 
 // Icons
 import { FaBan } from "react-icons/fa";
@@ -11,11 +12,88 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Loading from "../layouts/Loading";
+import { editTicket, fetchTicketDetails } from "../../services/TicketServices";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import FileUploader from "../layouts/FileUploader";
 
 const MyTickets = () => {
+  const ticketValidation = Yup.object({
+    title: Yup.string().required("Please enter title"),
+    description: Yup.string().required("Please enter description"),
+  });
+
+  const [ticketForm, setTicketForm] = useState(false);
+  const [ticketId, setTicketId] = useState("");
+  const [details, setDetails] = useState("");
+
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleTicketForm = (id) => {
+    setTicketForm(true);
+    setTicketId(id);
+  };
+
+  const handleTicketFormClose = () => {
+    setTicketForm(false);
+  };
+
+  const fetchTicketDet = async (ticketId) => {
+    console.log(ticketId);
+    try {
+      const response = await fetchTicketDetails(ticketId);
+      console.log(response.data.data.response);
+      setDetails(response.data.data.response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [supportDocs, setSupportDocs] = useState([]);
+
+  const handleSupportDocsChange = (files) => {
+    setSupportDocs(files);
+  };
+
+  let title = "";
+  let description = "";
+
+  if (Array.isArray(details)) {
+    const ticketDetails = details[0];
+    console.log(ticketDetails.attachment);
+    title = ticketDetails.title || "";
+    description = ticketDetails.description || "";
+  }
+
+  const editTicketFormik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      title: title,
+      description: description,
+    },
+    validationSchema: ticketValidation,
+    onSubmit: (values) => {
+      console.log(values);
+      editTicketDetails(values);
+    },
+  });
+
+  const editTicketDetails = async (id) => {
+    const payload = {
+      title: editTicketFormik.values.title,
+      description: editTicketFormik.values.description,
+      attachment: supportDocs,
+    };
+    console.log(payload);
+    try {
+      const response = await editTicket(payload, ticketId);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -46,6 +124,72 @@ const MyTickets = () => {
 
   return (
     <div class="page-content">
+      <Modal
+        show={ticketForm}
+        onHide={handleTicketFormClose}
+        dialogClassName="centered-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Edit ticket</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* { error ? (<ErrorModel error={error}/>) : success ? (<SuccessModel success={success}/>) : ""} */}
+          <div className="p-4">
+            <form onSubmit={editTicketFormik.handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="title" className="form-label">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="title"
+                  name="title"
+                  placeholder="Enter your first name"
+                  value={editTicketFormik.values.title}
+                  onBlur={editTicketFormik.handleBlur}
+                  onChange={editTicketFormik.handleChange}
+                />
+                {editTicketFormik.touched.title &&
+                  editTicketFormik.errors.title && (
+                    <span className="error" style={{ fontSize: "12px" }}>
+                      {editTicketFormik.errors.title}
+                    </span>
+                  )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="description" className="form-label">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="description"
+                  name="description"
+                  placeholder="Enter your last name"
+                  value={editTicketFormik.values.description}
+                  onBlur={editTicketFormik.handleBlur}
+                  onChange={editTicketFormik.handleChange}
+                />
+              </div>
+              <FileUploader
+                setAttachmentFiles={handleSupportDocsChange}
+                type="support-ticket"
+              />
+              {/* {Array.isArray(supportTickets) && supportTickets.length > 0
+                ? supportTickets.map((docs) => (
+                    <a href={docs.attachment} target="blank">{docs.attachment}</a>
+                  ))
+                : ""} */}
+              <div className="text-end mt-4">
+                <button className="btn btn-primary" type="submit">
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal.Body>
+      </Modal>
       {/*Start home */}
       <section class="page-title-box">
         <div class="container">
@@ -122,7 +266,7 @@ const MyTickets = () => {
                       to={`/view-tickets/${ticket.id}`}
                       className="primary-link"
                     >
-                      <div className="card mb-4">
+                      <div className="card mb-1">
                         <div className="card-body d-flex justify-content-between align-items-center">
                           <div>
                             <span
@@ -160,17 +304,14 @@ const MyTickets = () => {
                           </div>
                           <div>
                             <Link
-                              to={`/edit-ticket/${ticket.id}`}
+                              // to={`/edit-ticket/${ticket.id}`}
+                              onClick={() => {
+                                handleTicketForm(ticket.id);
+                                fetchTicketDet(ticket.id);
+                              }}
                               className="primary-link"
                             >
                               Edit <i className="mdi mdi-pencil"></i>
-                            </Link>
-                            <span className="mx-2">|</span>
-                            <Link
-                              to={`/delete-ticket/${ticket.id}`}
-                              className="primary-link"
-                            >
-                              Delete <i className="mdi mdi-delete"></i>
                             </Link>
                           </div>
                         </div>

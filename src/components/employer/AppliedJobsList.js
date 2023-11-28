@@ -3,29 +3,60 @@ import {
   fetchAppliedJobs,
   addSorlistedCandidates,
   fetchApplicationDetails,
+  candidateSelection,
 } from "../../services/JobService";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+
 import { FaUsers } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExclamationTriangle,
+  faExclamationCircle,
+} from "@fortawesome/free-solid-svg-icons";
+
+import Loading from "../layouts/Loading";
 
 const AppliedJobsList = () => {
   const { id } = useParams();
 
-  const [appliedJobList, setAppliedJobList] = useState("");
+  const [appliedJobList, setAppliedJobList] = useState([]);
+  console.log(appliedJobList);
 
-  const fetchAppliedJobsList = async () => {
+  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const selectCandidate = async (shortlistedId, statusCode) => {
+    console.log(shortlistedId, statusCode);
+    const payload = {
+      selected: 0,
+      joined: 0,
+      not_joined: 0,
+    };
+
+    if (statusCode === "selected") {
+      payload.selected = 1;
+    } else if (statusCode === "joined") {
+      payload.joined = 1;
+    } else if (statusCode === "not_joined") {
+      payload.joined = 1;
+    }
+
+    console.log(payload);
     try {
-      const response = await fetchAppliedJobs(id);
-      console.log(response?.data?.data);
-      setAppliedJobList(response?.data?.data);
+      setButtonLoading(true);
+      const response = await candidateSelection(payload, shortlistedId);
+      console.log(response);
+
+      // if(response?.response?.data?.status === false) {
+      //   set
+      // }
+      setButtonLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchAppliedJobsList();
-  }, []);
 
   const shortListCandidate = async (candidateId, jobId) => {
     console.log(candidateId, jobId);
@@ -43,7 +74,8 @@ const AppliedJobsList = () => {
     }
   };
 
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("applied");
+  console.log(status);
 
   const fetchDetails = async (list_type) => {
     const payload = {
@@ -56,12 +88,29 @@ const AppliedJobsList = () => {
     setStatus(list_type);
 
     try {
+      setLoading(true);
+
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+        setError(new Error("Network error"));
+      }, 20000);
+
       const response = await fetchApplicationDetails(payload);
-      console.log(response);
+      console.log(response.data.data);
+      setAppliedJobList(response?.data?.data);
+
+      clearTimeout(timeoutId);
+
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchDetails(status);
+  }, [status]);
 
   return (
     <div class="page-content">
@@ -98,9 +147,8 @@ const AppliedJobsList = () => {
 
       {/*START MANAGE-JOBS */}
       <section class="section">
-        <div class="container">
-          <div className="d-flex justify-content-between align-items-center">
-            <h1 className="mb-0">Application Status</h1>
+        <div class="container" style={{ marginBottom: "100px" }}>
+          <div className="d-flex justify-content-end align-items-center">
             <select
               className="form-select"
               style={{ width: "200px" }}
@@ -114,14 +162,36 @@ const AppliedJobsList = () => {
             </select>
           </div>
           {/*end row*/}
-          {status === "applied"
-            ? Array.isArray(appliedJobList) && appliedJobList.length > 0
-              ? appliedJobList.map((appliedList) => (
+
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "100px",
+                textAlign: "center",
+              }}
+              className="text-muted"
+            >
+              <div>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+                <p>Check your newtwork</p>
+              </div>
+            </div>
+          ) : (
+            <React.Fragment>
+              {status === "applied" &&
+              Array.isArray(appliedJobList) &&
+              appliedJobList.length > 0 ? (
+                appliedJobList.map((applied) => (
                   <div class="row">
                     <div class="col-lg-12">
                       <div class="job-box card mt-4">
                         <div class="card-body p-4">
-                          <div key={appliedList.id} class="row">
+                          <div key={applied.manage_job_id} class="row">
                             <div class="col-lg-1">
                               <div style={{ color: "grey" }}>
                                 <FaUsers size={32} />
@@ -135,25 +205,25 @@ const AppliedJobsList = () => {
                                     // to={`/job-detail/${manage.id}`}
                                     class="text-dark"
                                   >
-                                    {appliedList.candidate_name}
+                                    {applied.candidate_name}
                                   </Link>
                                 </h5>
                                 <ul class="list-inline mb-0">
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
-                                      {appliedList.designation}
+                                      {applied.designation}
                                     </p>
                                   </li>
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
                                       <i class="mdi mdi-map-marker"></i>{" "}
-                                      {appliedList.jobseeker_type}
+                                      {applied.jobseeker_type}
                                     </p>
                                   </li>
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
                                       <i class="uil uil-wallet"></i> $
-                                      {appliedList.salary_range} / month
+                                      {applied.salary_range} / month
                                     </p>
                                   </li>
                                 </ul>
@@ -163,10 +233,241 @@ const AppliedJobsList = () => {
                             <div class="col-lg-2 align-self-center">
                               <button
                                 onClick={() =>
-                                  shortListCandidate(
-                                    appliedList.candidate_id,
-                                    id
+                                  shortListCandidate(applied.candidate_id, id)
+                                }
+                                className="sortlist-btn-hover"
+                                style={{
+                                  border: "none",
+                                  padding: "6px 10px",
+                                  borderRadius: "10px",
+                                }}
+                              >
+                                Shortlist
+                              </button>
+                              <button
+                                className="reject-btn-hover"
+                                style={{
+                                  border: "none",
+                                  marginLeft: "10px",
+                                  padding: "6px 10px",
+                                  borderRadius: "10px",
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                            {/*end col*/}
+                          </div>
+                        </div>
+                      </div>
+                      {/*end job-box*/}
+                    </div>
+                    {/*end col*/}
+                  </div>
+                ))
+              ) : status === "shortlisted" &&
+                Array.isArray(appliedJobList) &&
+                appliedJobList.length > 0 ? (
+                appliedJobList.map((shortlisted) => (
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="job-box card mt-4">
+                        <div class="card-body p-4">
+                          <div key={shortlisted.manage_job_id} class="row">
+                            <div class="col-lg-1">
+                              <div style={{ color: "grey" }}>
+                                <FaUsers size={32} />
+                              </div>
+                            </div>
+                            {/*end col*/}
+                            <div class="col-lg-7">
+                              <div class="mt-3 mt-lg-0">
+                                <h5 class="d-flex fs-17 mb-1">
+                                  <Link
+                                    // to={`/job-detail/${manage.id}`}
+                                    class="text-dark"
+                                  >
+                                    {shortlisted.candidate_name}
+                                  </Link>
+                                </h5>
+                                <ul class="list-inline mb-0">
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      {shortlisted.designation}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="mdi mdi-map-marker"></i>{" "}
+                                      {shortlisted.jobseeker_type}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="uil uil-wallet"></i>
+                                      {`$ ${
+                                        shortlisted.salary_range
+                                          ? shortlisted.salary_range
+                                          : "Not disclosed"
+                                      } / month`}
+                                    </p>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            {/*end col*/}
+                            <div class="col-lg-4 align-self-center">
+                              <button
+                                onClick={() =>
+                                  selectCandidate(
+                                    shortlisted.shortlist_id,
+                                    "selected"
                                   )
+                                }
+                                className="sortlist-btn-hover"
+                                style={{
+                                  border: "none",
+                                  padding: "6px 10px",
+                                  borderRadius: "10px",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                Select
+                              </button>
+                            </div>
+                            {/*end col*/}
+                          </div>
+                        </div>
+                      </div>
+                      {/*end job-box*/}
+                    </div>
+                    {/*end col*/}
+                  </div>
+                ))
+              ) : status === "joined" &&
+                Array.isArray(appliedJobList) &&
+                appliedJobList.length > 0 ? (
+                appliedJobList.map((joined) => (
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="job-box card mt-4">
+                        <div class="card-body p-4">
+                          <div key={joined.id} class="row">
+                            <div class="col-lg-1">
+                              <div style={{ color: "grey" }}>
+                                <FaUsers size={32} />
+                              </div>
+                            </div>
+                            {/*end col*/}
+                            <div class="col-lg-9">
+                              <div class="mt-3 mt-lg-0">
+                                <h5 class="d-flex fs-17 mb-1">
+                                  <Link
+                                    // to={`/job-detail/${manage.id}`}
+                                    class="text-dark"
+                                  >
+                                    {joined.candidate_name}
+                                  </Link>
+                                </h5>
+                                <ul class="list-inline mb-0">
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      {joined.designation}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="mdi mdi-map-marker"></i>{" "}
+                                      {joined.jobseeker_type}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="uil uil-wallet"></i> $
+                                      {joined.salary_range} / month
+                                    </p>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+
+                            <div class="col-lg-1 align-self-center">
+                              <p
+                                style={{
+                                  backgroundColor: "#C1FFC1",
+                                  color: "#2E7D32",
+                                  fontWeight: "bold",
+                                  border: "none",
+                                  padding: "6px 6px",
+                                  borderRadius: "5px",
+                                  fontSize: "10px",
+                                  display: "flex",
+                                  textAlign: "center",
+                                  alignItems: "center"
+                                }}
+                              >
+                                Joined
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/*end job-box*/}
+                    </div>
+                    {/*end col*/}
+                  </div>
+                ))
+              ) : status === "not_joined" &&
+                Array.isArray(appliedJobList) &&
+                appliedJobList.length > 0 ? (
+                appliedJobList.map((notjoined) => (
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="job-box card mt-4">
+                        <div class="card-body p-4">
+                          <div key={notjoined.id} class="row">
+                            <div class="col-lg-1">
+                              <div style={{ color: "grey" }}>
+                                <FaUsers size={32} />
+                              </div>
+                            </div>
+                            {/*end col*/}
+                            <div class="col-lg-9">
+                              <div class="mt-3 mt-lg-0">
+                                <h5 class="d-flex fs-17 mb-1">
+                                  <Link
+                                    // to={`/job-detail/${manage.id}`}
+                                    class="text-dark"
+                                  >
+                                    {notjoined.candidate_name}
+                                  </Link>
+                                </h5>
+                                <ul class="list-inline mb-0">
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      {notjoined.designation}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="mdi mdi-map-marker"></i>{" "}
+                                      {notjoined.jobseeker_type}
+                                    </p>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <p class="text-muted fs-14 mb-0">
+                                      <i class="uil uil-wallet"></i> $
+                                      {notjoined.salary_range} / month
+                                    </p>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            {/*end col*/}
+                            <div class="col-lg-2 align-self-center">
+                              <button
+                                onClick={() =>
+                                  shortListCandidate(notjoined.candidate_id, id)
                                 }
                                 className="sortlist-btn-hover"
                                 style={{
@@ -198,13 +499,15 @@ const AppliedJobsList = () => {
                     {/*end col*/}
                   </div>
                 ))
-              : status === "shortlisted"
-              ? appliedJobList.map((appliedList) => (
+              ) : status === "selected" &&
+                Array.isArray(appliedJobList) &&
+                appliedJobList.length > 0 ? (
+                appliedJobList.map((selected) => (
                   <div class="row">
                     <div class="col-lg-12">
                       <div class="job-box card mt-4">
                         <div class="card-body p-4">
-                          <div key={appliedList.id} class="row">
+                          <div key={selected.id} class="row">
                             <div class="col-lg-1">
                               <div style={{ color: "grey" }}>
                                 <FaUsers size={32} />
@@ -218,25 +521,25 @@ const AppliedJobsList = () => {
                                     // to={`/job-detail/${manage.id}`}
                                     class="text-dark"
                                   >
-                                    {appliedList.candidate_name}
+                                    {selected.candidate_name}
                                   </Link>
                                 </h5>
                                 <ul class="list-inline mb-0">
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
-                                      {appliedList.designation}
+                                      {selected.designation}
                                     </p>
                                   </li>
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
                                       <i class="mdi mdi-map-marker"></i>{" "}
-                                      {appliedList.jobseeker_type}
+                                      {selected.jobseeker_type}
                                     </p>
                                   </li>
                                   <li class="list-inline-item">
                                     <p class="text-muted fs-14 mb-0">
                                       <i class="uil uil-wallet"></i> $
-                                      {appliedList.salary_range} / month
+                                      {selected.salary_range} / month
                                     </p>
                                   </li>
                                 </ul>
@@ -246,9 +549,9 @@ const AppliedJobsList = () => {
                             <div class="col-lg-2 align-self-center">
                               <button
                                 onClick={() =>
-                                  shortListCandidate(
-                                    appliedList.candidate_id,
-                                    id
+                                  selectCandidate(
+                                    selected.shortlist_id,
+                                    "joined"
                                   )
                                 }
                                 className="sortlist-btn-hover"
@@ -256,20 +559,29 @@ const AppliedJobsList = () => {
                                   border: "none",
                                   padding: "6px 10px",
                                   borderRadius: "10px",
+                                  fontSize: "12px",
+                                  marginLeft: "8px",
                                 }}
                               >
-                                Sortlist
+                                Joined
                               </button>
                               <button
-                                className="reject-btn-hover"
+                                onClick={() =>
+                                  selectCandidate(
+                                    selected.shortlist_id,
+                                    "selected"
+                                  )
+                                }
+                                className="sortlist-btn-hover"
                                 style={{
                                   border: "none",
-                                  marginLeft: "10px",
                                   padding: "6px 10px",
                                   borderRadius: "10px",
+                                  fontSize: "12px",
+                                  marginLeft: "8px",
                                 }}
                               >
-                                Reject
+                                Not joined
                               </button>
                             </div>
                             {/*end col*/}
@@ -281,259 +593,21 @@ const AppliedJobsList = () => {
                     {/*end col*/}
                   </div>
                 ))
-              : status === "joined"
-              ? appliedJobList.map((appliedList) => (
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <div class="job-box card mt-4">
-                        <div class="card-body p-4">
-                          <div key={appliedList.id} class="row">
-                            <div class="col-lg-1">
-                              <div style={{ color: "grey" }}>
-                                <FaUsers size={32} />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-9">
-                              <div class="mt-3 mt-lg-0">
-                                <h5 class="d-flex fs-17 mb-1">
-                                  <Link
-                                    // to={`/job-detail/${manage.id}`}
-                                    class="text-dark"
-                                  >
-                                    {appliedList.candidate_name}
-                                  </Link>
-                                </h5>
-                                <ul class="list-inline mb-0">
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      {appliedList.designation}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="mdi mdi-map-marker"></i>{" "}
-                                      {appliedList.jobseeker_type}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="uil uil-wallet"></i> $
-                                      {appliedList.salary_range} / month
-                                    </p>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-2 align-self-center">
-                              <button
-                                onClick={() =>
-                                  shortListCandidate(
-                                    appliedList.candidate_id,
-                                    id
-                                  )
-                                }
-                                className="sortlist-btn-hover"
-                                style={{
-                                  border: "none",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Sortlist
-                              </button>
-                              <button
-                                className="reject-btn-hover"
-                                style={{
-                                  border: "none",
-                                  marginLeft: "10px",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Reject
-                              </button>
-                            </div>
-                            {/*end col*/}
-                          </div>
-                        </div>
-                      </div>
-                      {/*end job-box*/}
-                    </div>
-                    {/*end col*/}
-                  </div>
-                ))
-              : status === "not_joined"
-              ? appliedJobList.map((appliedList) => (
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <div class="job-box card mt-4">
-                        <div class="card-body p-4">
-                          <div key={appliedList.id} class="row">
-                            <div class="col-lg-1">
-                              <div style={{ color: "grey" }}>
-                                <FaUsers size={32} />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-9">
-                              <div class="mt-3 mt-lg-0">
-                                <h5 class="d-flex fs-17 mb-1">
-                                  <Link
-                                    // to={`/job-detail/${manage.id}`}
-                                    class="text-dark"
-                                  >
-                                    {appliedList.candidate_name}
-                                  </Link>
-                                </h5>
-                                <ul class="list-inline mb-0">
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      {appliedList.designation}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="mdi mdi-map-marker"></i>{" "}
-                                      {appliedList.jobseeker_type}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="uil uil-wallet"></i> $
-                                      {appliedList.salary_range} / month
-                                    </p>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-2 align-self-center">
-                              <button
-                                onClick={() =>
-                                  shortListCandidate(
-                                    appliedList.candidate_id,
-                                    id
-                                  )
-                                }
-                                className="sortlist-btn-hover"
-                                style={{
-                                  border: "none",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Sortlist
-                              </button>
-                              <button
-                                className="reject-btn-hover"
-                                style={{
-                                  border: "none",
-                                  marginLeft: "10px",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Reject
-                              </button>
-                            </div>
-                            {/*end col*/}
-                          </div>
-                        </div>
-                      </div>
-                      {/*end job-box*/}
-                    </div>
-                    {/*end col*/}
-                  </div>
-                ))
-              : status === "selected"
-              ? appliedJobList.map((appliedList) => (
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <div class="job-box card mt-4">
-                        <div class="card-body p-4">
-                          <div key={appliedList.id} class="row">
-                            <div class="col-lg-1">
-                              <div style={{ color: "grey" }}>
-                                <FaUsers size={32} />
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-9">
-                              <div class="mt-3 mt-lg-0">
-                                <h5 class="d-flex fs-17 mb-1">
-                                  <Link
-                                    // to={`/job-detail/${manage.id}`}
-                                    class="text-dark"
-                                  >
-                                    {appliedList.candidate_name}
-                                  </Link>
-                                </h5>
-                                <ul class="list-inline mb-0">
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      {appliedList.designation}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="mdi mdi-map-marker"></i>{" "}
-                                      {appliedList.jobseeker_type}
-                                    </p>
-                                  </li>
-                                  <li class="list-inline-item">
-                                    <p class="text-muted fs-14 mb-0">
-                                      <i class="uil uil-wallet"></i> $
-                                      {appliedList.salary_range} / month
-                                    </p>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                            {/*end col*/}
-                            <div class="col-lg-2 align-self-center">
-                              <button
-                                onClick={() =>
-                                  shortListCandidate(
-                                    appliedList.candidate_id,
-                                    id
-                                  )
-                                }
-                                className="sortlist-btn-hover"
-                                style={{
-                                  border: "none",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Sortlist
-                              </button>
-                              <button
-                                className="reject-btn-hover"
-                                style={{
-                                  border: "none",
-                                  marginLeft: "10px",
-                                  padding: "6px 10px",
-                                  borderRadius: "10px",
-                                }}
-                              >
-                                Reject
-                              </button>
-                            </div>
-                            {/*end col*/}
-                          </div>
-                        </div>
-                      </div>
-                      {/*end job-box*/}
-                    </div>
-                    {/*end col*/}
-                  </div>
-                ))
-              : ""
-            : <p style={{
-              marginTop: "20px",
-            }} className="text-muted">{`No ${status} application is in here!`}</p>}
+              ) : (
+                <div
+                  style={{
+                    marginTop: "50px",
+                    textAlign: "center",
+                  }}
+                  className="text-muted"
+                >
+                  <FontAwesomeIcon icon={faExclamationCircle} />
+                  <p>No applications</p>
+                </div>
+              )}
+            </React.Fragment>
+          )}
+
           {/*end row*/}
         </div>
         {/*end container*/}

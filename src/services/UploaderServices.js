@@ -60,7 +60,7 @@ const UploaderServices = ({ onFileUpload, Filetype }) => {
     >
       <label htmlFor={`${Filetype}-input`}>
         <Button as="span" style={buttonStyle}>
-          Drag and drop (or) Choose File
+          Choose File
         </Button>
       </label>
       <input

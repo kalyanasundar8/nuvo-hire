@@ -113,7 +113,21 @@ export const fetchApplicationDetails = async (payload) => {
   try {
     const response = await ApiService(
       "view-shortlisted-candidates", 
-      "GET", 
+      "POST", 
+      payload, 
+      true
+      );
+    return response;
+  } catch (error) {
+    throw "Error while fetching AppliedJobs: " + error;
+  }
+}
+
+export const candidateSelection = async (payload, shortlistedId) => {
+  try {
+    const response = await ApiService(
+      `candidate-selection-update?shortlist_id=${shortlistedId}`, 
+      "POST", 
       payload, 
       true
       );

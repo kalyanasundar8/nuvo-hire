@@ -3,11 +3,15 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService";
 import FileUploader from "../layouts/FileUploader";
+import { useNavigate } from "react-router-dom";
 
 const RaiseNewTicket = () => {
+
+  const navigate = useNavigate();
+
   const validationSchema = Yup.object({
     title: Yup.string().required("Enter a title"),
-    description: Yup.string().required("Enter a description"),
+    // description: Yup.string().required("Enter a description"),
   });
 
   const formik = useFormik({
@@ -26,6 +30,8 @@ const RaiseNewTicket = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [supportDocs, setSupportDocs] = useState([]);
+  const [loading, setLoading] = useState(false);
+
 
   const raiseNewTicket = async (values) => {
     const payload = {
@@ -34,6 +40,7 @@ const RaiseNewTicket = () => {
       attachment: supportDocs,
     };
     try {
+      setLoading(true);
       const response = await ApiService(
         "raise-new-ticket",
         "POST",
@@ -41,11 +48,15 @@ const RaiseNewTicket = () => {
         true
       );
       if (response.status === 200) {
+        setLoading(false)
         console.log("Ticket created successfully");
+        navigate("/my-tickets")
       } else {
+        setLoading(false);
         console.log("Your ticket is not created");
       }
     } catch (error) {
+      setLoading(false)
       console.log("Error: ", error);
     }
   };
@@ -148,8 +159,10 @@ const RaiseNewTicket = () => {
                   setAttachmentFiles={handleSupportDocsChange}
                   type='support-ticket'
                 />
-                <button type='submit' className='btn btn-primary'>
-                  Submit
+                <button type='submit' className={`btn btn-primary ${ loading ? 'disabled' : ""}`}
+                disabled={ loading || !formik.isValid }
+                >
+                  { loading ? "Poting..." : "Submit" }
                 </button>
               </form>
             </div>

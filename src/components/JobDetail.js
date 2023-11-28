@@ -4,7 +4,7 @@ import useFetch from "./useFetch";
 import ApiService from "../services/ApiService";
 
 // Popups for the apply message
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Alert } from "react-bootstrap";
 
 // Icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -107,10 +107,10 @@ export default function JobDetail() {
     console.log(payload);
     try {
       const response = await ApiService("apply-jobs", "POST", payload, true);
-      console.log(response.response.data);
+      console.log(response.response);
       if (response.response.data.status === false) {
         setApplyButtonDisabled(true);
-        setShowPopUpMessage(response.response.data.message);
+        setShowPopUpMessage(<Alert>{response.response.data.message}</Alert>);
       }
 
       if (response.status === true) {
@@ -122,6 +122,10 @@ export default function JobDetail() {
 
     setShowPopUp(true);
   };
+
+  const isJobApplied = appliedList.some((applied) => applied.job_id === id);
+  const isBookmarked = bookMarked.some((marked) => marked.job_id === id);
+  console.log(isBookmarked)
 
   const handleClosePopUp = () => {
     setShowPopUp(false);
@@ -608,67 +612,47 @@ export default function JobDetail() {
                       </li>
                     </ul>
                     <div class="mt-3">
-                      {Array.isArray(appliedList) && appliedList.length > 0
-                        ? appliedList.map((applied) => (
-                            <React.Fragment key={applied.id}>
-                              {applied.job_id === id ? (
-                                <Link
-                                  to=""
-                                  data-bs-toggle="modal"
-                                  className="btn btn-primary w-100 mt-2"
-                                  style={{ opacity: "20%" }}
-                                >
-                                  Applied
-                                </Link>
-                              ) : (
-                                <Link
-                                  to=""
-                                  data-bs-toggle="modal"
-                                  className={`btn btn-primary btn-hover w-100 mt-2 ${
-                                    isApplyButtonDisabled ? "disabled" : ""
-                                  }`}
-                                  onClick={handleApplyJob}
-                                >
-                                  Apply Now <i class="uil uil-arrow-right"></i>
-                                </Link>
-                              )}
-                            </React.Fragment>
-                          ))
-                        : ""}
+                      {isJobApplied ? (
+                        <Link
+                          className="btn btn-primary btn-hover w-100 mt-2"
+                          style={{ opacity: "20%" }}
+                        >
+                          Applied
+                          <i className="uil uil-arrow-right"></i>
+                        </Link>
+                      ) : (
+                        <Link
+                          className={`btn btn-primary btn-hover w-100 mt-2`}
+                          onClick={() => handleApplyJob(id)}
+                          disabled={isApplyButtonDisabled}
+                        >
+                          Apply Now
+                          <i className="uil uil-arrow-right"></i>
+                        </Link>
+                      )}
 
                       {/* Bookmark */}
-
-                      {Array.isArray(bookMarked) && bookMarked.length > 0
-                        ? bookMarked.map((marked) => (
-                            <React.Fragment>
-                              {marked.id === id ? (
-                                <Link
-                                to=""
-                                data-bs-toggle="modal"
-                                className={`btn btn-primary btn-hover w-100 mt-2 ${
-                                  isBookmarkedDisabled ? "disabled" : ""
-                                }`}
-                                onClick={handleJobBookMark}
-                                style={{ opacity: "20%" }}
-                              >
-                              Bookmarked
-                              </Link>
-                              ) : (
-                                <Link
-                                  to=""
-                                  data-bs-toggle="modal"
-                                  className={`btn btn-primary btn-hover w-100 mt-2 ${
-                                    isBookmarkedDisabled ? "disabled" : ""
-                                  }`}
-                                  onClick={handleJobBookMark}
-                                >
-                                  <i class="uil uil-bookmark"></i> Add Bookmark
-                                </Link>
-                              )}
-                            </React.Fragment>
-                          ))
-                        : ""}
-                        
+                      {isBookmarked ? (
+                        <Link
+                          to=""
+                          data-bs-toggle="modal"
+                          className="btn btn-primary btn-hover w-100 mt-2"
+                          style={{ opacity: "20%" }}
+                        >
+                          Bookmarked
+                        </Link>
+                      ) : (
+                        <Link
+                          to=""
+                          data-bs-toggle="modal"
+                          className={`btn btn-primary btn-hover w-100 mt-2 ${
+                            isBookmarkedDisabled ? "disabled" : ""
+                          }`}
+                          onClick={handleJobBookMark}
+                        >
+                          Bookmark
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
