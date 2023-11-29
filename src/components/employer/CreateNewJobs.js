@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import useFetch from "../useFetch";
 import ApiService from "../../services/ApiService";
-import { Badge } from "react-bootstrap";
+import { Alert, Badge } from "react-bootstrap";
 
 // Editor
 import ReactQuill from "react-quill";
@@ -29,7 +29,9 @@ const validationSchema = Yup.object({
   salary: Yup.string().required("Salary is required"),
   experience: Yup.string().required("Experience is required"),
   workmode: Yup.string().required("Workmode is required"),
-  employment: Yup.array().min(1, "Select atleast one employment").required("Employment is required"),
+  employment: Yup.array()
+    .min(1, "Select atleast one employment")
+    .required("Employment is required"),
   industry: Yup.string().required("Industry is required"),
   // degree: Yup.array().min(1, "Select atleast one degree").required("Degree is required"),
   // course: Yup.array().min(1, "Select atleast one course").required("Course is required"),
@@ -44,7 +46,10 @@ const validationSchema = Yup.object({
   country: Yup.string().required("Country is required"),
   state: Yup.string().required("state is required"),
   city: Yup.string().required("City is required"),
-  zipcode: Yup.number().min(6, "Pincode must be 6 characters").required("ZipCode is required").typeError("Pincode must be a number"),
+  zipcode: Yup.number()
+    .min(6, "Pincode must be 6 characters")
+    .required("ZipCode is required")
+    .typeError("Pincode must be a number"),
   // jobLocation: Yup.array().required("Joblocation is required")
 });
 
@@ -131,6 +136,7 @@ export default function CreateNewJobs() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [postLater, setPostLater] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -441,6 +447,8 @@ export default function CreateNewJobs() {
     setButtonClicked(!buttonClicked);
   };
 
+  const [alertMessage, setAlertMessage] = useState("");
+
   // Create a jobPost
   const createJobPost = async (values) => {
     const payload = {
@@ -473,24 +481,40 @@ export default function CreateNewJobs() {
     };
     console.log(payload);
     try {
+      setButtonLoading(true);
       const response = await createJobPostService(payload);
       console.log(response);
-      if(response.data.status === true) {
-        setTimeout(() => {
-          setLoading(false);
-        setSuccess("Job post was created successfuly");
-        }, 3000)
+      if (response.data.status === true) {
+        
+        setAlertMessage(
+          <Alert variant="success">Job post was created successfuly</Alert>
+        );
+
+        const timeout = setTimeout(() => {
+          setAlertMessage("");
+        }, 3000);
+
+        clearTimeout(timeout);
+        setButtonLoading(false);
       } else {
-        setLoading(true);
-        setTimeout(() => {
-          setError("We are not able to create this job post")
-        }, 3000)
+        setButtonLoading(false)
+        setAlertMessage(
+          <Alert variant="danger">
+            We are not able to create this job post
+          </Alert>
+        );
+
+        const timeout = setTimeout(() => {
+          setAlertMessage("")
+        }, 3000);
+
+        clearTimeout(timeout);
       }
     } catch (error) {
       setTimeout(() => {
         setLoading(false);
-        setError("We are not able to create this job post")
-      }, 3000)
+        setError("We are not able to create this job post");
+      }, 3000);
       console.log("Error ", error);
     }
   };
@@ -498,14 +522,14 @@ export default function CreateNewJobs() {
   useScrollToTop();
 
   return (
-    <div class='page-content'>
+    <div class="page-content">
       {/*Start home */}
-      <section class='page-title-box'>
-        <div class='container'>
-          <div class='row justify-content-center'>
-            <div class='col-md-6'>
-              <div class='text-center text-white'>
-                <h3 class='mb-4'>Create new job</h3>
+      <section class="page-title-box">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="text-center text-white">
+                <h3 class="mb-4">Create new job</h3>
                 {/* <div class='page-next'>
                   <nav
                     class='d-inline-block'
@@ -536,45 +560,45 @@ export default function CreateNewJobs() {
       {/*end home */}
 
       {/*START SHAPE */}
-      <div class='position-relative' style={{ zIndex: 1 }}>
-        <div class='shape'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'>
+      <div class="position-relative" style={{ zIndex: 1 }}>
+        <div class="shape">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
             <path
-              fill=''
-              fill-opacity='1'
-              d='M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z'
+              fill=""
+              fill-opacity="1"
+              d="M0,192L120,202.7C240,213,480,235,720,234.7C960,235,1200,213,1320,202.7L1440,192L1440,320L1320,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"
             ></path>
           </svg>
         </div>
       </div>
       {/*END SHAPE */}
-      <section class='section'>
-        <div class='container'>
-          <div class='row'>
-            <div class='col-lg-12'>
-              <div class='primary-bg-subtle p-3'>
-                <h5 class='mb-0 fs-17'>Create a New Job!</h5>
+      <section class="section">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="primary-bg-subtle p-3">
+                <h5 class="mb-0 fs-17">Create a New Job!</h5>
               </div>
             </div>
           </div>
           <form
             onSubmit={formik.handleSubmit}
-            class='job-post-form shadow mt-4'
+            class="job-post-form shadow mt-4"
           >
-            <div class='job-post-content box-shadow-md rounded-3 p-4'>
-              <div class='row'>
-                <div class='col-lg-12'>
-                  <div class='mb-4'>
-                    <label for='jobtitle' class='form-label'>
+            <div class="job-post-content box-shadow-md rounded-3 p-4">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="mb-4">
+                    <label for="jobtitle" class="form-label">
                       Job Title
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <input
-                      type='text'
-                      class='form-control'
-                      id='jobtitle'
-                      name='jobtitle'
-                      placeholder='Title'
+                      type="text"
+                      class="form-control"
+                      id="jobtitle"
+                      name="jobtitle"
+                      placeholder="Title"
                       value={jobtitle}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -583,15 +607,15 @@ export default function CreateNewJobs() {
                       autoComplete="off"
                     />
                     {formik.touched.jobtitle && formik.errors.jobtitle && (
-                      <span className='error'>{formik.errors.jobtitle}</span>
+                      <span className="error">{formik.errors.jobtitle}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-12 mb-4'>
+                <div class="col-lg-12 mb-4">
                   <div style={{ marginBottom: "3rem" }}>
-                    <label for='jobdescription' class='form-label'>
+                    <label for="jobdescription" class="form-label">
                       Job Description
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <ReactQuill
                       modules={modules}
@@ -601,29 +625,29 @@ export default function CreateNewJobs() {
                         formik.setFieldValue("jobdescription", value)
                       }
                       style={{ height: "200px" }}
-                      name='jobdescription'
+                      name="jobdescription"
                       autoComplete="off"
                     />
                   </div>
                   {formik.touched.jobdescription &&
                     formik.errors.jobdescription && (
-                      <span className='error'>
+                      <span className="error">
                         {formik.errors.jobdescription}
                       </span>
                     )}
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='choices-single-categories' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="choices-single-categories" class="form-label">
                       Categories
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='categories'
-                      id='choices-single-categories'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="categories"
+                      id="choices-single-categories"
+                      aria-label="Default select example"
                       value={categories}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -641,22 +665,22 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.categories && formik.errors.categories && (
-                      <span className='error'>{formik.errors.categories}</span>
+                      <span className="error">{formik.errors.categories}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='subcategories' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="subcategories" class="form-label">
                       SubCategories
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='subcategories'
-                      id='subcategories'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="subcategories"
+                      id="subcategories"
+                      aria-label="Default select example"
                       value={subCategories}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -674,24 +698,24 @@ export default function CreateNewJobs() {
                     </select>
                     {formik.touched.subCategories &&
                       formik.errors.subCategories && (
-                        <span className='error'>
+                        <span className="error">
                           {formik.errors.subCategories}
                         </span>
                       )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='jobtype' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="jobtype" class="form-label">
                       JobType
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='jobtype'
-                      id='jobtype'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="jobtype"
+                      id="jobtype"
+                      aria-label="Default select example"
                       value={jobtype}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -704,22 +728,22 @@ export default function CreateNewJobs() {
                       <option>Worker</option>
                     </select>
                     {formik.touched.jobtype && formik.errors.jobtype && (
-                      <span className='error'>{formik.errors.jobtype}</span>
+                      <span className="error">{formik.errors.jobtype}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='designation' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="designation" class="form-label">
                       Designation
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='designation'
-                      id='designation'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="designation"
+                      id="designation"
+                      aria-label="Default select example"
                       value={designation}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -738,17 +762,17 @@ export default function CreateNewJobs() {
                     </select>
                     {formik.touched.designation &&
                       formik.errors.designation && (
-                        <span className='error'>
+                        <span className="error">
                           {formik.errors.designation}
                         </span>
                       )}
                   </div>
                 </div>
-                <div class='col-lg-12 mb-4'>
+                <div class="col-lg-12 mb-4">
                   <div style={{ marginBottom: "3rem" }}>
-                    <label for='responsibilities' class='form-label'>
+                    <label for="responsibilities" class="form-label">
                       Responsibilities
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <ReactQuill
                       modules={modules}
@@ -758,29 +782,29 @@ export default function CreateNewJobs() {
                         formik.setFieldValue("responsibilities", value)
                       }
                       style={{ height: "200px" }}
-                      name='responsibilities'
+                      name="responsibilities"
                       autoComplete="off"
                     />
                   </div>
                   {formik.touched.responsibilities &&
                     formik.errors.responsibilities && (
-                      <span className='error'>
+                      <span className="error">
                         {formik.errors.responsibilities}
                       </span>
                     )}
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='salary' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="salary" class="form-label">
                       Salary
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='salary'
-                      id='salary'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="salary"
+                      id="salary"
+                      aria-label="Default select example"
                       value={salary}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -798,22 +822,22 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.salary && formik.errors.salary && (
-                      <span className='error'>{formik.errors.salary}</span>
+                      <span className="error">{formik.errors.salary}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='experience' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="experience" class="form-label">
                       Experience
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='experience'
-                      id='experience'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="experience"
+                      id="experience"
+                      aria-label="Default select example"
                       value={experience}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -831,22 +855,22 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.experience && formik.errors.experience && (
-                      <span className='error'>{formik.errors.experience}</span>
+                      <span className="error">{formik.errors.experience}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='workmode' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="workmode" class="form-label">
                       Work mode
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='workmode'
-                      id='workmode'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="workmode"
+                      id="workmode"
+                      aria-label="Default select example"
                       value={workmode}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -864,15 +888,15 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.workmode && formik.errors.workmode && (
-                      <span className='error'>{formik.errors.workmode}</span>
+                      <span className="error">{formik.errors.workmode}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='employment' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="employment" class="form-label">
                       Employment
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <Select
                       options={employmentOptions}
@@ -880,26 +904,26 @@ export default function CreateNewJobs() {
                       onChange={handleEmploymentSelect}
                       onBlur={formik.handleBlur}
                       isMulti={true}
-                      name='employment'
+                      name="employment"
                       autoComplete="off"
                     />
                     {formik.touched.employment && formik.errors.employment && (
-                      <span className='error'>{formik.errors.employment}</span>
+                      <span className="error">{formik.errors.employment}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='industry' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="industry" class="form-label">
                       Industry
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
-                      data-trigger=''
-                      name='industry'
-                      id='industry'
-                      aria-label='Default select example'
+                      class="form-select"
+                      data-trigger=""
+                      name="industry"
+                      id="industry"
+                      aria-label="Default select example"
                       value={industry}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -917,15 +941,15 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.industry && formik.errors.industry && (
-                      <span className='error'>{formik.errors.industry}</span>
+                      <span className="error">{formik.errors.industry}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='degree' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="degree" class="form-label">
                       Degree
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <Select
                       options={degreeOptions}
@@ -933,19 +957,19 @@ export default function CreateNewJobs() {
                       onChange={handleDegreeSelect}
                       onBlur={formik.handleBlur}
                       isMulti={true}
-                      name='degree'
+                      name="degree"
                       autoComplete="off"
                     />
                     {formik.touched.degree && formik.errors.degree && (
-                      <span className='error'>{formik.errors.degree}</span>
+                      <span className="error">{formik.errors.degree}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='course' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="course" class="form-label">
                       Course
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <Select
                       options={courseOptions}
@@ -953,19 +977,19 @@ export default function CreateNewJobs() {
                       onChange={handleCourseSelect}
                       onBlur={formik.handleBlur}
                       isMulti={true}
-                      name='course'
+                      name="course"
                       autoComplete="off"
                     />
                     {formik.touched.course && formik.errors.course && (
-                      <span className='error'>{formik.errors.course}</span>
+                      <span className="error">{formik.errors.course}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='education' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="education" class="form-label">
                       Education
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <Select
                       options={educationOptions}
@@ -973,46 +997,46 @@ export default function CreateNewJobs() {
                       onChange={handleEducationSelect}
                       onBlur={formik.handleBlur}
                       isMulti={true}
-                      name='education'
+                      name="education"
                       autoComplete="off"
                     />
                     {formik.touched.education && formik.errors.education && (
-                      <span className='error'>{formik.errors.education}</span>
+                      <span className="error">{formik.errors.education}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='skills' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="skills" class="form-label">
                       Skills
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <Select
                       options={skillsOptions}
                       value={selectedSkill}
                       onChange={handleSelect}
                       isMulti={true}
-                      name='skills'
+                      name="skills"
                       autoComplete="off"
                     />
                     {formik.touched.skills && formik.errors.skills && (
-                      <div className='invalid-feedback'>
+                      <div className="invalid-feedback">
                         {formik.errors.skills}
                       </div>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='vacancy' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="vacancy" class="form-label">
                       Vacancy
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <input
-                      type='text'
-                      class='form-control'
-                      id='vacancy'
-                      name='vacancy'
+                      type="text"
+                      class="form-control"
+                      id="vacancy"
+                      name="vacancy"
                       value={vacancy}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -1021,24 +1045,27 @@ export default function CreateNewJobs() {
                       autoComplete="off"
                     />
                     {formik.touched.vacancy && formik.errors.vacancy && (
-                      <span className='error'>{formik.errors.vacancy}</span>
+                      <span className="error">{formik.errors.vacancy}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4' style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between"
-                }}>
-                    <label for='vacancy' class='form-label'>
+                <div class="col-lg-6">
+                  <div
+                    class="mb-4"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <label for="vacancy" class="form-label">
                       FeaturedJob
                     </label>
                     <input
-                      type='checkbox'
+                      type="checkbox"
                       // class='form-check-input'
-                      id='featuredjob'
-                      name='featuredjob'
+                      id="featuredjob"
+                      name="featuredjob"
                       checked={featuredJob}
                       onChange={(e) => {
                         const isChecked = e.target.checked;
@@ -1048,42 +1075,42 @@ export default function CreateNewJobs() {
                     />
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='lastdate' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="lastdate" class="form-label">
                       Application Deadline Date
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <input
-                      type='date'
-                      class='form-control'
-                      id='lastdate'
-                      name='lastdate'
+                      type="date"
+                      class="form-control"
+                      id="lastdate"
+                      name="lastdate"
                       value={lastdate}
                       onChange={(e) => {
                         formik.handleChange(e);
                         setLastDate(e.target.value);
                       }}
-                      min={new Date().toISOString().split('T')[0]}
+                      min={new Date().toISOString().split("T")[0]}
                       autoComplete="off"
                     />
                     {formik.touched.lastdate && formik.errors.lastdate && (
-                      <span className='error'>{formik.errors.lastdate}</span>
+                      <span className="error">{formik.errors.lastdate}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='country' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="country" class="form-label">
                       Country
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
+                      class="form-select"
                       data-trigger
-                      name='country'
-                      id='country'
-                      aria-label='Default select example'
+                      name="country"
+                      id="country"
+                      aria-label="Default select example"
                       value={country}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -1101,22 +1128,22 @@ export default function CreateNewJobs() {
                         : null}
                     </select>
                     {formik.touched.country && formik.errors.country && (
-                      <span className='error'>{formik.errors.country}</span>
+                      <span className="error">{formik.errors.country}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='state' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="state" class="form-label">
                       State
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
+                      class="form-select"
                       data-trigger
-                      name='state'
-                      id='state'
-                      aria-label='Default select example'
+                      name="state"
+                      id="state"
+                      aria-label="Default select example"
                       value={state}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -1133,22 +1160,22 @@ export default function CreateNewJobs() {
                         ))}
                     </select>
                     {formik.touched.state && formik.errors.state && (
-                      <span className='error'>{formik.errors.state}</span>
+                      <span className="error">{formik.errors.state}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='city' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="city" class="form-label">
                       City
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <select
-                      class='form-select'
+                      class="form-select"
                       data-trigger
-                      name='city'
-                      id='city'
-                      aria-label='Default select example'
+                      name="city"
+                      id="city"
+                      aria-label="Default select example"
                       value={city}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -1165,22 +1192,22 @@ export default function CreateNewJobs() {
                         ))}
                     </select>
                     {formik.touched.city && formik.errors.city && (
-                      <span className='error'>{formik.errors.city}</span>
+                      <span className="error">{formik.errors.city}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-3'>
-                  <div class='mb-4'>
-                    <label for='zipcode' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="zipcode" class="form-label">
                       Zipcode
-                      <span className='text-danger font-weight-bold'>*</span>
+                      <span className="text-danger font-weight-bold">*</span>
                     </label>
                     <input
-                      type='text'
-                      class='form-control'
-                      id='zipcode'
-                      name='zipcode'
-                      placeholder='ZipCode'
+                      type="text"
+                      class="form-control"
+                      id="zipcode"
+                      name="zipcode"
+                      placeholder="ZipCode"
                       value={zipcode}
                       onChange={(e) => {
                         formik.handleChange(e);
@@ -1189,22 +1216,22 @@ export default function CreateNewJobs() {
                       autoComplete="off"
                     />
                     {formik.touched.zipcode && formik.errors.zipcode && (
-                      <span className='error'>{formik.errors.zipcode}</span>
+                      <span className="error">{formik.errors.zipcode}</span>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='joblocation' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="joblocation" class="form-label">
                       JobLocation
                       {/* <span className='text-danger font-weight-bold'>*</span> */}
                     </label>
                     <input
-                      type='text'
-                      class='form-control'
-                      id='joblocation'
-                      name='joblocation'
-                      placeholder='Enter Locations...'
+                      type="text"
+                      class="form-control"
+                      id="joblocation"
+                      name="joblocation"
+                      placeholder="Enter Locations..."
                       value={locationInput}
                       onChange={handleInputChange}
                       onKeyPress={handleInputKeyPress}
@@ -1214,12 +1241,12 @@ export default function CreateNewJobs() {
                       {jobLocations.map((jobLocation) => (
                         <Badge
                           key={jobLocation}
-                          variant='light'
-                          className='tag-badge mt-2'
+                          variant="light"
+                          className="tag-badge mt-2"
                         >
                           {jobLocation}
                           <span
-                            className='badge-remove'
+                            className="badge-remove"
                             onClick={() => handleLocationRemove(jobLocation)}
                             style={{
                               fontSize: "15px",
@@ -1234,14 +1261,17 @@ export default function CreateNewJobs() {
                         </Badge>
                       ))}
                     </div>
-                    {formik.touched.joblocation && formik.errors.joblocation && (
-                      <span className='error'>{formik.errors.joblocation}</span>
-                    )}
+                    {formik.touched.joblocation &&
+                      formik.errors.joblocation && (
+                        <span className="error">
+                          {formik.errors.joblocation}
+                        </span>
+                      )}
                   </div>
                 </div>
-                <div class='col-lg-6'>
-                  <div class='mb-4'>
-                    <label for='skills' class='form-label'>
+                <div class="col-lg-6">
+                  <div class="mb-4">
+                    <label for="skills" class="form-label">
                       Tags
                     </label>
                     <Select
@@ -1249,35 +1279,43 @@ export default function CreateNewJobs() {
                       value={selectedTags}
                       onChange={handleTagSelect}
                       isMulti={true}
-                      name='tags'
+                      name="tags"
                       autoComplete="off"
                     />
                     {formik.touched.tags && formik.errors.tags && (
-                      <div className='invalid-feedback'>
+                      <div className="invalid-feedback">
                         {formik.errors.tags}
                       </div>
                     )}
                   </div>
                 </div>
-                <div class='col-lg-12'>
-                  <div class='text-end'>
-                    <a href='' class='btn btn-success mx-1'>
+                <div class="col-lg-12">
+                  <div class="text-end">
+                    <a href="" class="btn btn-success mx-1">
                       Back
                     </a>
                     <button
-                      type='submit'
-                      className='btn btn-primary mx-1'
+                      type="submit"
+                      className="btn btn-primary mx-1"
                       onClick={handleButtonClick}
                     >
                       Save
                     </button>
-                    <button type='submit' class='btn btn-primary mx-1'>
-                      Post Now <i class='mdi mdi-send'></i>
+                    <button
+                      type="submit"
+                      class={`btn btn-primary mx-1 ${
+                        loading ? "disabled" : ""
+                      }`}
+                      disabled={buttonLoading || !formik.isValid}
+                    >
+                      {buttonLoading ? "Posting..." : "Post Now "}{" "}
+                      <i class="mdi mdi-send"></i>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
+            {alertMessage ? <div>{alertMessage}</div> : ""}
           </form>
         </div>
       </section>

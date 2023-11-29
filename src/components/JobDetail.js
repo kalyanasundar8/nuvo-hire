@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useFetch from "./useFetch";
 import ApiService from "../services/ApiService";
 
@@ -15,9 +15,7 @@ import {
 } from "../services/JobService";
 
 export default function JobDetail() {
-  const userData = JSON.parse(localStorage.getItem("user"));
-  const userId = userData.data.id;
-  console.log(userData.data.id);
+  const navigate = useNavigate();
 
   const { id } = useParams();
   console.log(id);
@@ -32,6 +30,7 @@ export default function JobDetail() {
   const relatesJobsData = useFetch("jobs");
   const relatedJobs = relatesJobsData.data;
   console.log(relatedJobs);
+
 
   // Applied jobs list
   const [appliedList, setAppliedList] = useState([]);
@@ -107,10 +106,10 @@ export default function JobDetail() {
     console.log(payload);
     try {
       const response = await ApiService("apply-jobs", "POST", payload, true);
-      console.log(response.response);
-      if (response.response.data.status === false) {
+      console.log(response.data.status);
+      if (response?.data?.status === false) {
         setApplyButtonDisabled(true);
-        setShowPopUpMessage(<Alert>{response.response.data.message}</Alert>);
+        setShowPopUpMessage(response?.data?.message);
       }
 
       if (response.status === true) {
@@ -123,8 +122,9 @@ export default function JobDetail() {
     setShowPopUp(true);
   };
 
-  const isJobApplied = appliedList.some((applied) => applied.job_id === id);
-  const isBookmarked = bookMarked.some((marked) => marked.job_id === id);
+  const isJobApplied = appliedList?.some((applied) => applied.job_id === id);
+  console.log(isJobApplied);
+  const isBookmarked = bookMarked?.some((marked) => marked.job_id === id);
   console.log(isBookmarked)
 
   const handleClosePopUp = () => {
@@ -146,12 +146,12 @@ export default function JobDetail() {
         true
       );
       console.log(response.data);
-      if (response.status === true) {
+      if (response?.data?.status === true) {
         setIsBookmarkedDisabled(true);
-        // setShowPopUpMessage(response.data.message);
+        setShowPopUpMessage(response.data.message);
       } else {
-        // setIsBookmarkedDisabled(false);
-        // setShowPopUpMessage(response.data.message);
+        setIsBookmarkedDisabled(false);
+        setShowPopUpMessage(response.data.message);
       }
     } catch (error) {
       console.log("Error: " + error);
@@ -163,7 +163,7 @@ export default function JobDetail() {
   return (
     <div class="page-content">
       {/* PopUp Model */}
-      {/* <Modal show={showPopUp} onHide={handleClosePopUp}>
+      <Modal show={showPopUp} onHide={handleClosePopUp}>
         <Modal.Header closeButton>
           <Modal.Title>Application Status</Modal.Title>
         </Modal.Header>
@@ -173,7 +173,7 @@ export default function JobDetail() {
             Close
           </Button>
         </Modal.Footer>
-      </Modal> */}
+      </Modal>
       {/* PopUp model end */}
 
       {/* Start home  */}

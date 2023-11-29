@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // React bootstrap Form
-import { Modal } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
 
 // Icons from react-icons
 import {
@@ -40,6 +40,7 @@ function EmployerProfile() {
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -163,24 +164,31 @@ function EmployerProfile() {
     };
 
     try {
+      setLoading(true);
+
       const response = await updateEmployerProfile(payload);
+      console.log(response);
+      if(response?.response?.data?.status === false) {
+        setLoading(false);
+        console.log(response);
+        setError(
+          <Alert variant="danger">Please check all fields are filled</Alert>
+        );
+      }
+
       if (response?.data?.status_code === 200) {
         console.log(response?.data?.message);
-        setSuccess(response?.data?.message);
+        setSuccess(
+          <Alert variant = "success">Updated successfuly</Alert>
+        );
     
         // Clear success message after 3 seconds
         setTimeout(() => {
           setSuccess("");
         }, 3000);
-      } else {
-        console.log(response);
-        setError("Please enter the firstname field");
-    
-        // Clear error message after 3 seconds
-        setTimeout(() => {
-          setError("");
-        }, 3000);
-      }
+
+        setLoading(false);
+      } 
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -267,8 +275,36 @@ function EmployerProfile() {
     };
 
     try {
+      setLoading(true);
+
       const response = await updateCompanyOverview(payload);
       console.log(response);
+
+      if(response?.response?.data?.status === false) {
+        setLoading(false);
+
+        setError(
+          <Alert variant="danger">Chcke all the fields are filled</Alert>
+        )
+
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+
+      }
+
+      if(response?.data?.status === true) {
+        setLoading(false);
+
+        setSuccess(
+          <Alert variant="success">Updated successfuly</Alert>
+        )
+
+        setTimeout(() => {
+          setSuccess("")
+        }, 3000);
+      }
+
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -347,7 +383,7 @@ function EmployerProfile() {
           <Modal.Title>Profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        { error ? (<ErrorModel error={error}/>) : success ? (<SuccessModel success={success}/>) : ""}
+        
           <div className='p-4'>
             <form onSubmit={editProfileFormik.handleSubmit}>
               <div className='mb-3'>
@@ -396,10 +432,17 @@ function EmployerProfile() {
                 />
               </div>
               <div className='text-end mt-4'>
-                <button className='btn btn-primary' type='submit'>
-                  Update
+                <button className={`btn btn-primary mb-2 ${
+                  loading ? "disabled" : ""
+                }`} type='submit' disabled = { loading || !editProfileFormik.isValid }>
+                  { loading ? "Updating..." : "Update" }
                 </button>
               </div>
+              { success ? (
+                <div>{ success }</div>
+              ) : error ? (
+                <div>{ error }</div>
+              ) : ""}
             </form>
           </div>
         </Modal.Body>
@@ -593,10 +636,19 @@ function EmployerProfile() {
                 </div>
               </div>
               <div className='text-end mt-4'>
-                <button className='btn btn-primary' type='submit'>
-                  Update
+                <button className={`btn btn-primary mb-2 ${
+                  loading ? "disabled" : ""
+                }`} type='submit' disabled = { loading || !editOverviewFormik.isValid }>
+                  { loading ? "Updating..." : "Update" }
                 </button>
               </div>
+              { success ? (
+                <div>{ success }</div>
+              ) : error ? (
+                <div>
+                  { error }
+                </div>
+              ) : ""}
             </form>
           </div>
         </Modal.Body>

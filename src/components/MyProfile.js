@@ -8,6 +8,7 @@ import useFetch from "./useFetch";
 import Select from "react-select";
 import { FaUniversity } from "react-icons/fa";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { Alert } from "react-bootstrap";
 import { FaPencilAlt } from "react-icons/fa";
 import {
   FaUser,
@@ -281,6 +282,7 @@ export default function MyProfile() {
   const [projects, setProjects] = useState("");
   const [resume, setResume] = useState([]);
 
+  console.log(skills);
   // About
   const aboutFormik = useFormik({
     initialValues: {
@@ -338,18 +340,56 @@ export default function MyProfile() {
   };
 
   // General details form
-  const firstName = general.length > 0 ? general[0].name : "";
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
+  let firstname = "";
+  let lastname = "";
+  let Country = "";
+  let State = "";
+  let City = "";
+  let Address = "";
+  let status = "";
+  let type = "";
+  let pincode = "";
+
+  if (Array.isArray(general)) {
+    const generalDetails = general[0];
+    console.log(generalDetails);
+    firstname = generalDetails.name || "";
+    lastname = generalDetails.last_name || "";
+    Country = generalDetails.country || "";
+    State = generalDetails.state || "";
+    City = generalDetails.city || "";
+    Address = generalDetails.address || "";
+    status = generalDetails.work_status || "";
+    type = generalDetails.jobseeker_type || "";
+    pincode = generalDetails.pincode || "";
+    console.log(
+      firstname,
+      lastname,
+      Country,
+      State,
+      City,
+      Address,
+      status,
+      type,
+      pincode
+    );
+  }
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      first_name: "",
-      lastName: "",
-      country: "",
-      state: "",
-      city: "",
-      address: "",
-      work_status: "",
-      jobseeker_type: "",
+      first_name: firstname,
+      lastName: lastname,
+      country: Country,
+      state: State,
+      city: City,
+      address: Address,
+      work_status: status,
+      jobseeker_type: type,
+      pincode: pincode,
     },
     onSubmit: (values) => {
       console.log(values);
@@ -367,16 +407,42 @@ export default function MyProfile() {
       address: values.address,
       work_status: values.work_status,
       jobseeker_type: values.jobseeker_type,
+      pincode: values.pincode,
     };
     try {
       const response = candidateUpdateGeneralDetails(id, payload);
       console.log(response);
+
+      if (response?.data?.status === true) {
+        setLoading(true);
+
+        setAlertMessage(<Alert variant="success">Updated successfully</Alert>);
+
+        setTimeout(() => {
+          setAlertMessage("");
+        }, 3000);
+
+        setLoading(false);
+      }
+
+      if (response?.data?.status === false) {
+        setLoading(false);
+
+        setAlertMessage(
+          <Alert variant="danger">Please fill all the fields</Alert>
+        );
+
+        setTimeout(() => {
+          setAlertMessage("");
+        }, 3000);
+      }
     } catch (error) {
       console.log("Error: ", error);
     }
   };
 
   // Skills
+
   const skillsFormik = useFormik({
     initialValues: {
       skills: [],
@@ -404,8 +470,16 @@ export default function MyProfile() {
       skills: skillsValue,
     };
     try {
+      setLoading(true);
       const response = await updateSkills(payload);
       console.log(response);
+      setAlertMessage(<Alert variant="success">Updated successfuly</Alert>);
+
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 3000);
+
+      setLoading(false);
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -605,9 +679,18 @@ export default function MyProfile() {
 
   const fetchEducationDetails = async () => {
     try {
+      
+
       const response = await fetchEducation();
       console.log(response.data.data);
+
+      
+
+      
       setEducation(response.data.data);
+
+      
+
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -625,8 +708,17 @@ export default function MyProfile() {
     };
 
     try {
+      setLoading(true);
       const response = await createEducation(payload, id);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -646,8 +738,17 @@ export default function MyProfile() {
     const educationId = selectedEducationId;
 
     try {
+      setLoading(true);
       const response = await updateEducation(payload, educationId);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -703,8 +804,17 @@ export default function MyProfile() {
     };
 
     try {
+      setLoading(true);
       const response = await createExperience(payload, id);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -722,8 +832,17 @@ export default function MyProfile() {
     const experienceId = selectedExperienceId;
 
     try {
+      setLoading(true)
       const response = await updateExperience(payload, experienceId);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -770,8 +889,17 @@ export default function MyProfile() {
     console.log(payload);
 
     try {
+      setLoading(true)
       const response = await createProject(payload, id);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -787,9 +915,17 @@ export default function MyProfile() {
     console.log(payload);
 
     try {
-      console.log(projectId);
+      setLoading(true);
       const response = await updateProject(payload, projectId);
       console.log(response);
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+      setLoading(false);
+
+      setTimeout(() => {
+        setAlertMessage("")
+      }, 3000)
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -808,6 +944,8 @@ export default function MyProfile() {
     console.log(payload);
 
     try {
+      setLoading(true);
+
       const response = await ApiService(
         "linkedin-profile-update",
         "POST",
@@ -815,6 +953,16 @@ export default function MyProfile() {
         true
       );
       console.log(response);
+
+      setAlertMessage(
+        <Alert variant="success">Updated successfuly</Alert>
+      )
+
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 3000)
+
+      setLoading(false)
     } catch (error) {
       console.log(error);
     }
@@ -1148,16 +1296,35 @@ export default function MyProfile() {
                                         </option>
                                       </select>
                                     </div>
+
+                                    <div className="col-lg-6 mb-3">
+                                      <label htmlFor="pincode">Pincode</label>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        name="pincode"
+                                        value={formik.values.pincode}
+                                        onChange={formik.handleChange}
+                                      />
+                                    </div>
                                   </div>
 
                                   <div className="text-end">
                                     <button
-                                      className="btn btn-primary"
+                                      className={`btn btn-primary ${
+                                        loading ? "disabled" : ""
+                                      }`}
                                       type="submit"
+                                      disabled={loading || !formik.isValid}
                                     >
-                                      Update
+                                      {loading ? "Updating..." : "Update"}
                                     </button>
                                   </div>
+                                  {alertMessage ? (
+                                    <div className="mt-2">{alertMessage}</div>
+                                  ) : (
+                                    ""
+                                  )}
                                 </form>
                               </div>
                             </Modal.Body>
@@ -1190,7 +1357,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.work_status ? gen.work_status : "Not disclosed"}
+                                    {gen.work_status
+                                      ? gen.work_status
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1203,7 +1372,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.jobseeker_type ? gen.jobseeker_type : "Not disclosed"}
+                                    {gen.jobseeker_type
+                                      ? gen.jobseeker_type
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1216,7 +1387,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.country_id && gen.country_id.name ? gen.country_id.name : "Not disclosed"}
+                                    {gen.country_id && gen.country_id.name
+                                      ? gen.country_id.name
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1229,7 +1402,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.state_id && gen.state_id.name ? gen.state_id.name : "Not disclosed"}
+                                    {gen.state_id && gen.state_id.name
+                                      ? gen.state_id.name
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1242,7 +1417,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.city_id && gen.city_id.name ? gen.city_id.name : "Not disclosed"}
+                                    {gen.city_id && gen.city_id.name
+                                      ? gen.city_id.name
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1255,7 +1432,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.address ? gen.address : "Not disclosed"}
+                                    {gen.address
+                                      ? gen.address
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1268,7 +1447,9 @@ export default function MyProfile() {
                                     class="text-muted mb-0"
                                     style={{ marginLeft: "10px" }}
                                   >
-                                    {gen.pincode ? gen.pincode : "Not disclosed"}
+                                    {gen.pincode
+                                      ? gen.pincode
+                                      : "Not disclosed"}
                                   </p>
                                 </div>
                               </div>
@@ -1326,30 +1507,60 @@ export default function MyProfile() {
                             isMulti={true}
                             name="skills"
                           />
+                          <div>
+                            <div className="d-flex item-center mt-2">
+                              {Array.isArray(skills) && skills.length > 0
+                                ? skills.map((skill) => (
+                                    <div
+                                      key={skill.id}
+                                      style={{
+                                        display: "flex",
+                                      }}
+                                    >
+                                      <span class="badge bg-success-subtle text-success fs-13 mt-1 ml-1">
+                                        {skill.name}
+                                      </span>
+                                    </div>
+                                  ))
+                                : "Add skills"}
+                            </div>
+                          </div>
                           <div className="text-end mt-4">
-                            <button className="btn btn-primary" type="submit">
-                              Update
+                            <button
+                              className={`btn btn-primary ${
+                                loading ? "disabled" : ""
+                              }`}
+                              type="submit"
+                              disabled={loading || !skillsFormik.isValid}
+                            >
+                              {loading ? "Updating..." : "Update"}
                             </button>
                           </div>
+                          {alertMessage ? (
+                            <div className="mt-2">{alertMessage}</div>
+                          ) : (
+                            ""
+                          )}
                         </form>
                       </div>
                     </Modal.Body>
                   </Modal>
                   <div>
                     <div className="d-flex item-center">
-                      {Array.isArray(skills) && skills.length > 0 ?
-                        skills.map((skill) => (
-                          <div
-                            key={skill.id}
-                            style={{
-                              display: "flex",
-                            }}
-                          >
-                            <span class="badge bg-success-subtle text-success fs-13 mt-1 ml-1">
-                              {skill.name}
-                            </span>
-                          </div>
-                        )) : "Add skills"}
+                      {Array.isArray(skills) && skills.length > 0
+                        ? skills.map((skill) => (
+                            <div
+                              key={skill.id}
+                              style={{
+                                display: "flex",
+                              }}
+                            >
+                              <span class="badge bg-success-subtle text-success fs-13 mt-1 ml-1">
+                                {skill.name}
+                              </span>
+                            </div>
+                          ))
+                        : "Add skills"}
                     </div>
                   </div>
                 </div>
@@ -1381,8 +1592,10 @@ export default function MyProfile() {
                           </div>
                         </div>
                         <div className="text-end">
-                          <button className="btn btn-primary" type="submit">
-                            Update
+                          <button className={`btn btn-primary ${
+                            loading ? "disabled" : ""
+                          }`} type="submit" disabled = { loading || !linkedinFormik.isValid }>
+                            { loading ? "Updating..." : "Update" }
                           </button>
                         </div>
                       </form>
@@ -1406,7 +1619,11 @@ export default function MyProfile() {
                             </div>
                             <div class="ms-3">
                               <h6 class="fs-14 mb-1">Email</h6>
-                              <p class="text-muted mb-0">{contact.email ? contact.email : "Not disclosed"}</p>
+                              <p class="text-muted mb-0">
+                                {contact.email
+                                  ? contact.email
+                                  : "Not disclosed"}
+                              </p>
                             </div>
                           </div>
                         </li>
@@ -1417,7 +1634,11 @@ export default function MyProfile() {
                             </div>
                             <div class="ms-3">
                               <h6 class="fs-14 mb-1">Address</h6>
-                              <p class="text-muted mb-0">{contact.address ? contact.address : "Not disclosed"}</p>
+                              <p class="text-muted mb-0">
+                                {contact.address
+                                  ? contact.address
+                                  : "Not disclosed"}
+                              </p>
                             </div>
                           </div>
                         </li>
@@ -1428,7 +1649,11 @@ export default function MyProfile() {
                             </div>
                             <div class="ms-3">
                               <h6 class="fs-14 mb-1">Phone</h6>
-                              <p class="text-muted mb-0">{contact.phone ? contact.phone : "Not disclosed"}</p>
+                              <p class="text-muted mb-0">
+                                {contact.phone
+                                  ? contact.phone
+                                  : "Not disclosed"}
+                              </p>
                             </div>
                           </div>
                         </li>
@@ -1452,7 +1677,9 @@ export default function MyProfile() {
                                 />
                               </h6>
                               <p class="text-muted mb-0">
-                                {contact.linkedin_profile ? contact.linkedin_profile : "Not disclosed"}
+                                {contact.linkedin_profile
+                                  ? contact.linkedin_profile
+                                  : "Not disclosed"}
                               </p>
                             </div>
                           </div>
@@ -1624,7 +1851,14 @@ export default function MyProfile() {
                             {Array.isArray(aboutMe) ? (
                               aboutMe.map((about) => (
                                 <p key={about.id}>
-                                  {about.about_me || (<p>Unlock the full potential of your profile by adding an 'About' section! Share your story, skills, and aspirations to make meaningful connections.</p>)}
+                                  {about.about_me || (
+                                    <p>
+                                      Unlock the full potential of your profile
+                                      by adding an 'About' section! Share your
+                                      story, skills, and aspirations to make
+                                      meaningful connections.
+                                    </p>
+                                  )}
                                 </p>
                               ))
                             ) : (
@@ -1634,7 +1868,10 @@ export default function MyProfile() {
                           <div className="mt-4">
                             <h5>Upload Your Resume</h5>
                             <p>
-                            Elevate your resume by providing a comprehensive overview of your skills, experience, and accomplishments. A well-crafted resume opens doors to new opportunities
+                              Elevate your resume by providing a comprehensive
+                              overview of your skills, experience, and
+                              accomplishments. A well-crafted resume opens doors
+                              to new opportunities
                             </p>
                             <div
                               onDragOver={handleDragOver}
@@ -1750,7 +1987,8 @@ export default function MyProfile() {
                                   onClick={handleAddEducation}
                                 />
                               </h6>
-                              {Array.isArray(education) && education.length > 0 ?
+                              {Array.isArray(education) &&
+                              education.length > 0 ? (
                                 education.map((educationDetails) => (
                                   <div class="candidate-education-content mt-4 d-flex">
                                     <div class="circle flex-shrink-0 bg-primary-subtle text-primary">
@@ -1793,9 +2031,15 @@ export default function MyProfile() {
                                       </p>
                                     </div>
                                   </div>
-                                )) : (<p className="mt-2 text-muted">
-                                  Enhance your profile's completeness by adding your education details. Highlight your academic achievements and showcase your commitment to learning and growth.
-                                </p>)}
+                                ))
+                              ) : (
+                                <p className="mt-2 text-muted">
+                                  Enhance your profile's completeness by adding
+                                  your education details. Highlight your
+                                  academic achievements and showcase your
+                                  commitment to learning and growth.
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1946,10 +2190,13 @@ export default function MyProfile() {
                               </div>
                               <div className="text-center">
                                 <button
-                                  className="btn btn-primary mt-4"
+                                  className={`btn btn-primary mt-4 ${
+                                    loading ? "disabled" : ""
+                                  }`}
                                   type="submit"
+                                  disabled={ loading || !educationFormik.isValid }
                                 >
-                                  Save Changes
+                                  { loading ? "Saving..." : "Save Changes"}
                                 </button>
                               </div>
                             </form>
@@ -2125,10 +2372,13 @@ export default function MyProfile() {
                               </div>
                               <div className="text-center">
                                 <button
-                                  className="btn btn-primary mt-4"
+                                  className={`btn btn-primary mt-4 ${
+                                    loading ? "disabled" : ""
+                                  }`}
                                   type="submit"
+                                  disabled={ loading || !updateEducationFormik.isValid}
                                 >
-                                  Save Changes
+                                  { loading ? "Saving..." : "Save Changes"}
                                 </button>
                               </div>
                             </form>
@@ -2273,9 +2523,12 @@ export default function MyProfile() {
                                       <div className="mt-4 text-end">
                                         <button
                                           type="submit"
-                                          className="btn btn-primary"
+                                          className={`btn btn-primary ${
+                                            loading ? "disabled" : ""
+                                          }`}
+                                          disabled={ loading || !experienceFormik.isValid }
                                         >
-                                          Update
+                                          { loading ? "Updating" : "Update"}
                                         </button>
                                       </div>
                                     </form>
@@ -2416,9 +2669,12 @@ export default function MyProfile() {
                                       <div className="mt-4 text-end">
                                         <button
                                           type="submit"
-                                          className="btn btn-primary"
+                                          className={`btn btn-primary ${
+                                            loading ? "disabled" : ""
+                                          }`}
+                                          disabled = { loading || !editExperienceFormik.isValid }
                                         >
-                                          Update
+                                          { loading ? "Updating..." : "Update"}
                                         </button>
                                       </div>
                                     </form>
@@ -2440,7 +2696,8 @@ export default function MyProfile() {
                                   onClick={handleExperienceForm}
                                 />
                               </h6>
-                              {Array.isArray(experience) && experience.length > 0 ?
+                              {Array.isArray(experience) &&
+                              experience.length > 0 ? (
                                 experience.map((experienceDetails) => (
                                   <div
                                     key={experienceDetails.id}
@@ -2481,9 +2738,15 @@ export default function MyProfile() {
                                       </p>
                                     </div>
                                   </div>
-                                )) : (<p className="mt-2 text-muted">
-                                  Maximize the impact of your profile by adding your work experience. Share your professional journey, accomplishments, and expertise to stand out in the professional community.
-                                </p>)}
+                                ))
+                              ) : (
+                                <p className="mt-2 text-muted">
+                                  Maximize the impact of your profile by adding
+                                  your work experience. Share your professional
+                                  journey, accomplishments, and expertise to
+                                  stand out in the professional community.
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -2544,9 +2807,12 @@ export default function MyProfile() {
                               <div className="mt-4 text-end">
                                 <button
                                   type="submit"
-                                  className="btn btn-primary"
+                                  className={`btn btn-primary ${
+                                    loading ? "disabled" : ""
+                                  }`}
+                                  disabled={ loading || !projectFormik.isValid }
                                 >
-                                  Update
+                                  { loading ? "Updating..." : "Update"}
                                 </button>
                               </div>
                             </form>
@@ -2601,9 +2867,12 @@ export default function MyProfile() {
                               <div className="mt-4 text-end">
                                 <button
                                   type="submit"
-                                  className="btn btn-primary"
+                                  className={`btn btn-primary ${
+                                    loading ? "disabled" : ""
+                                  }`}
+                                  disabled={ loading || !editProjectFormik.isValid}
                                 >
-                                  Update
+                                  { loading ? "Updating..." : "Update"}
                                 </button>
                               </div>
                             </form>
@@ -2624,7 +2893,7 @@ export default function MyProfile() {
                           onClick={handleProjectForm}
                         />
                       </h6>
-                      {Array.isArray(projects) && projects.length > 0 ?
+                      {Array.isArray(projects) && projects.length > 0 ? (
                         projects.map((projectDetails) => (
                           <div
                             key={projectDetails.project_id}
@@ -2654,9 +2923,15 @@ export default function MyProfile() {
                               </p>
                             </div>
                           </div>
-                        )) : (<p className="mt-2 text-muted">
-                          Complete your profile with project details to showcase your hands-on experience and accomplishments. Let your projects speak volumes about your skills and expertise.
-                        </p>)}
+                        ))
+                      ) : (
+                        <p className="mt-2 text-muted">
+                          Complete your profile with project details to showcase
+                          your hands-on experience and accomplishments. Let your
+                          projects speak volumes about your skills and
+                          expertise.
+                        </p>
+                      )}
                     </div>
                     {/* --- Projects information tab end --- */}
 
@@ -2773,7 +3048,9 @@ export default function MyProfile() {
                             <div className="container">
                               <header className="text-dark text-center p-4">
                                 <h1>
-                                  {resumeDetails.resume_title ? resumeDetails.resume_title : "Your Name"}
+                                  {resumeDetails.resume_title
+                                    ? resumeDetails.resume_title
+                                    : "Your Name"}
                                   <FaPencilAlt
                                     class="text-muted"
                                     style={{

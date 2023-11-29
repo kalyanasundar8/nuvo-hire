@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useFetch from "./useFetch";
-import { fetchEmployeeMyJobs } from "../services/JobService";
+import { deleteEmployeeJobs, fetchEmployeeMyJobs } from "../services/JobService";
 import {
   FaBan,
   FaBuilding,
@@ -18,8 +18,27 @@ export default function ManageJobs() {
   const [manageJobs, setManageJobs] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
+
+  const deleteJob = async (jobId) => {
+    const payload = {
+      job_id: jobId,
+    };
+    try {
+      const response = await deleteEmployeeJobs(payload);
+      console.log(response);
+      if (response?.data?.status === true) {
+        setSuccess("Job was deleted successfuly");
+        window.location.reload();
+      } else {
+        console.log("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchMyJobs = async () => {
@@ -297,9 +316,7 @@ export default function ManageJobs() {
                                 >
                                   <Link
                                     to=""
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal"
-                                    class="avatar-sm danger-bg-subtle d-inline-block text-center rounded-circle fs-18"
+                                    onClick={() => deleteJob(manage.id)}
                                   >
                                     <i class="uil uil-trash-alt"></i>
                                   </Link>

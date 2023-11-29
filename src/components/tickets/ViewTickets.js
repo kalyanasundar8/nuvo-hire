@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import ApiService from "../../services/ApiService";
 import { useParams } from "react-router-dom";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import FileUploader from "../layouts/FileUploader";
-import { loadingIndicatorCSS } from "react-select/dist/declarations/src/components/indicators";
+
 
 const ViewTickets = () => {
+
+  const validationSchema = Yup.object({
+    addComment: Yup.string().required("Add a comment and submit")
+  })
   const { id } = useParams();
 
   const [showTicketDetails, setShowTicketDetails] = useState([]);
@@ -13,10 +18,12 @@ const ViewTickets = () => {
   const [supportDocs, setSupportDocs] = useState([]);
   const [comments, setComments] = useState("");
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   // Fetching tickets data from the DB
   const fetchTicketsData = async () => {
     try {
+      setLoading(true);
       const response = await ApiService(
         `view-ticket?ticket_id=${id}`,
         "GET",
@@ -36,6 +43,7 @@ const ViewTickets = () => {
     initialValues: {
       addComment: "",
     },
+    validationSchema: validationSchema,
     onSubmit: (values) => {
       createComment(values);
     },
@@ -50,11 +58,13 @@ const ViewTickets = () => {
 
     console.log(payload);
     try {
-      setLoading(true)
+      setButtonLoading(true)
       const commentResponse = await ApiService("post-comment", "POST", payload, true);
       console.log(commentResponse);
+      window.location.reload();
+      setButtonLoading(false)
     } catch (error){
-      setLoading(false);
+      setButtonLoading(false);
       console.log("Error: ", error);
     }
   };
@@ -144,10 +154,12 @@ const ViewTickets = () => {
                           attachments={supportDocs}
                           type='support-ticket'
                         />
-                        <button type='submit' className="btn btn-primary mt-3"
-                        // disabled={ loading || !formik.isValid }
+                        <button type='submit' className={`btn btn-primary mt-3 ${
+                          buttonLoading ? "disabled" : ""
+                        }`}
+                        disabled={ buttonLoading || !formik.isValid }
                         >
-                           Submit
+                          { buttonLoading ? "Posting..." : "Submit"}
                         </button>
                       </form>
                     </div>
