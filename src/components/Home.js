@@ -341,7 +341,7 @@ export default function Home() {
                         </div>
                         <div className="popu-category-content mt-4">
                           <Link
-                            to={`/sub-categories/${category.id}`}
+                            to="/sub-categories"
                             style={
                               category.jobs_count === 0
                                 ? {

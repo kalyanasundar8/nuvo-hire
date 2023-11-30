@@ -589,6 +589,11 @@ function Header() {
                               My Jobs
                             </Link>
                           </li>
+                          <li>
+                            <Link className='dropdown-item' to='/view-cart'>
+                              View cart
+                            </Link>
+                          </li>
                         </>
                       )}
 

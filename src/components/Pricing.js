@@ -1,11 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { fetchPricing } from "../services/PricingService";
+import { addToCart, fetchPricing } from "../services/PricingService";
 import { FaDollarSign } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 
 export default function Pricing() {
-  const [pricing, setPricing] = useState("");
   const { user_type } = useParams("");
+  
+  const [pricing, setPricing] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleAddToCart = async (pricingId) => {
+    const payload = {
+      package_id: pricingId
+    }
+    console.log(payload);
+
+    try {
+      setLoading(true);
+      const response = await addToCart(payload);
+      console.log(response);
+      setLoading(false);
+    } catch(error) {
+      setLoading(false);
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     const fetchPricingDetails = async () => {
@@ -36,28 +55,6 @@ export default function Pricing() {
             <div className='col-md-6'>
               <div className='text-center text-white'>
                 <h3 className='mb-4'>Pricing Plans</h3>
-                <div className='page-next'>
-                  <nav
-                    className='d-inline-block'
-                    aria-label='breadcrumb text-center'
-                  >
-                    <ol className='breadcrumb justify-content-center'>
-                      <li className='breadcrumb-item'>
-                        <a href='index.php'>Home</a>
-                      </li>
-                      <li className='breadcrumb-item'>
-                        <a href=''>Pricing Plans</a>
-                      </li>
-                      <li
-                        className='breadcrumb-item active'
-                        aria-current='page'
-                      >
-                        {" "}
-                        Pricing Plans{" "}
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
               </div>
             </div>
             {/*end col*/}
@@ -148,12 +145,14 @@ export default function Pricing() {
                         </ul>
                         <div className='text-center mx-auto mb-2'>
                           <Link
-                            to={{
-                              pathname: `/view-cart/${price.id}`, // Include price.id as a URL parameter
-                            }}
-                            className='btn btn-soft-primary rounded-pill'
+                            onClick={() => handleAddToCart(price.id)}
+                            className={`btn btn-soft-primary rounded-pill ${
+                              loading ? "disabled" : ""
+                            }`}
                           >
+                            { loading ? "Purchasing..." : <div className="">
                             Purchase Now <i className='uil uil-arrow-right'></i>
+                            </div> }
                           </Link>
                         </div>
                       </div>

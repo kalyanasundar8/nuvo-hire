@@ -95,7 +95,7 @@ function App() {
           <Route path='/candidate-grid' element={<CandidateGrid />} />
           <Route path='/privacy-policy' element={<PrivacyPolicy />} />
           <Route path='/pricing-plans/:user_type' element={<Pricing />} />
-          <Route path='/view-cart/:priceId' element={<ViewCart />} />
+          <Route path='/view-cart' element={<ViewCart />} />
 
           <Route path='/my-tickets' element={<MyTickets />} />
           <Route path='/raise-new-ticket' element={<RaiseNewTicket />} />
