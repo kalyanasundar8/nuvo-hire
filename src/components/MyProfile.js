@@ -172,6 +172,8 @@ export default function MyProfile() {
   // Modal end
 
   // Dowload resume
+  const [resumeURL, setResumeURL] = useState([]);
+
   const downloadResume = async () => {
     try {
       const response = await ApiService(
@@ -181,6 +183,7 @@ export default function MyProfile() {
         true
       );
       console.log(response);
+      setResumeURL(response?.data?.data)
     } catch (error) {
       console.log(error);
     }
@@ -988,6 +991,7 @@ export default function MyProfile() {
     fetchingExperienceDetails();
     fetchProjectDetails();
     getContact();
+    downloadResume()
   }, [id]);
 
   const kycFormik = useFormik({
@@ -1456,13 +1460,15 @@ export default function MyProfile() {
                             </li>
                           </ul>
                           <div class="mt-3">
+                            { Array.isArray(resumeURL) && resumeURL.map((url) => (
                             <a
-                              onClick={downloadResume}
-                              href=""
+                              // onClick={downloadResume}
+                              href={ url.resume }
                               class="btn btn-primary btn-hover w-100 mt-2"
                             >
                               <i class="uil uil-import"></i> Download CV
                             </a>
+                            ))}
                           </div>
                         </div>
                       </div>

@@ -11,48 +11,48 @@ import useScrollToTop from "../hooks/useScrollToTop";
 export default function JobCategories() {
   // Create a state for job-categories
 
-  // const { id } = useParams();
+  const { id } = useParams();
 
   const [jobCategory, setJobCategory] = useState([]);
 
   // const categoriesData = useFetch("categories");
   // setJobCategory(categoriesData.data);
 
-  const categories = async () => {
-    try {
-      const response = await ApiService("categories", "GET", null, false);
-      console.log(response.data.data);
-      setJobCategory(response?.data?.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    categories();
-  }, []);
-
-  // const jobCategory = categoriesData.data;
-
-  // useEffect(() => {
-  // const fetchingSubCategories = async () => {
-  //   if (id === "all") {
-  //     await fetchAllSubCategories().then((data) => {
-  //       console.log(data);
-  //       setJobCategory(data);
-  //     });
-  //   } else {
-  //     await fetchSingleSubCategories(id).then((data) => {
-  //       console.log(data);
-  //       setJobCategory(data);
-  //     });
+  // const categories = async () => {
+  //   try {
+  //     const response = await ApiService("categories", "GET", null, false);
+  //     console.log(response.data.data);
+  //     setJobCategory(response?.data?.data);
+  //   } catch (error) {
+  //     console.log(error);
   //   }
   // };
 
-  // fetchingSubCategories();
+  // useEffect(() => {
+  //   categories();
   // }, []);
 
-  useScrollToTop()
+  // const jobCategory = categoriesData.data;
+
+  useEffect(() => {
+    const fetchingSubCategories = async () => {
+      if (id === "all") {
+        await fetchAllSubCategories().then((data) => {
+          console.log(data);
+          setJobCategory(data);
+        });
+      } else {
+        await fetchSingleSubCategories(id).then((data) => {
+          console.log(data);
+          setJobCategory(data);
+        });
+      }
+    };
+
+    fetchingSubCategories();
+  }, []);
+
+  useScrollToTop();
 
   return (
     <div class="page-content">
@@ -114,106 +114,118 @@ export default function JobCategories() {
             </div>
           </div>
           <div class="row">
-            <div class="col-lg-4">
-              <div class="card job-Categories-box bg-light border-0">
-                <div class="card-body p-4">
-                  {Array.isArray(jobCategory) &&
-                    jobCategory.slice(0, 10).map((allCat) => (
-                      <ul
-                        key={allCat.id}
-                        class="list-unstyled job-Categories-list mb-3"
-                      >
-                        <li>
-                          <Link
-                            to={`/jobs?subcategory_id=${allCat.id}`}
-                            style={
-                              allCat.jobs_count === 0
-                                ? {
-                                    pointerEvents: "none",
-                                    color: "#007bff",
-                                    textDecoration: "none",
-                                  }
-                                : { color: "inherit" }
-                            }
-                            class="primary-link"
-                          >
-                            {allCat.name}{" "}
-                            <span class="badge bg-info-subtle text-info float-end">
-                              {allCat.jobs_count}
-                            </span>
-                          </Link>
-                        </li>
+            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
+              <div class="col-lg-4">
+                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
+                  <div class="card-body p-4">
+                    {Array.isArray(jobCategory) &&
+                      jobCategory.slice(0, 10).map((allCat) => (
+                        <ul
+                          key={allCat.id}
+                          class="list-unstyled job-Categories-list mb-3"
+                        >
+                          <li>
+                            <Link
+                              to={`/jobs?subcategory_id=${allCat.id}`}
+                              style={
+                                allCat.jobs_count === 0
+                                  ? {
+                                      pointerEvents: "none",
+                                      color: "#007bff",
+                                      textDecoration: "none",
+                                    }
+                                  : { color: "inherit" }
+                              }
+                              class="primary-link"
+                            >
+                              {allCat.name}{" "}
+                              <span class="badge bg-info-subtle text-info float-end">
+                                {allCat.jobs_count}
+                              </span>
+                            </Link>
+                          </li>
+                        </ul>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+
+            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
+              <div class="col-lg-4">
+                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
+                  <div class="card-body p-4">
+                    {Array.isArray(jobCategory) && jobCategory.length > 0 && (
+                      <ul class="list-unstyled job-Categories-list mb-0">
+                        {jobCategory.slice(10, 20).map((allCat) => (
+                          <li key={allCat.id}>
+                            <Link
+                              to={`/jobs?subcategory_id=${allCat.id}`}
+                              style={
+                                allCat.jobs_count === 0
+                                  ? {
+                                      pointerEvents: "none",
+                                      color: "#007bff",
+                                      textDecoration: "none",
+                                    }
+                                  : { color: "inherit" }
+                              }
+                              class="primary-link"
+                            >
+                              {allCat.name}{" "}
+                              <span class="badge bg-info-subtle text-info float-end">
+                                {allCat.jobs_count}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
-                    ))}
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              ""
+            )}
 
-            <div class="col-lg-4">
-              <div class="card job-Categories-box bg-light border-0">
-                <div class="card-body p-4">
-                  {Array.isArray(jobCategory) && jobCategory.length > 0 && (
-                    <ul class="list-unstyled job-Categories-list mb-0">
-                      {jobCategory.slice(10, 20).map((allCat) => (
-                        <li key={allCat.id}>
-                          <Link
-                            to={`/jobs?subcategory_id=${allCat.id}`}
-                            style={
-                              allCat.jobs_count === 0
-                                ? {
-                                    pointerEvents: "none",
-                                    color: "#007bff",
-                                    textDecoration: "none",
-                                  }
-                                : { color: "inherit" }
-                            }
-                            class="primary-link"
-                          >
-                            {allCat.name}{" "}
-                            <span class="badge bg-info-subtle text-info float-end">
-                              {allCat.jobs_count}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
+              <div class="col-lg-4">
+                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
+                  <div class="card-body p-4">
+                    {Array.isArray(jobCategory) && jobCategory.length > 0 && (
+                      <ul class="list-unstyled job-Categories-list mb-0">
+                        {jobCategory.slice(20, 30).map((allCat) => (
+                          <li key={allCat.id}>
+                            <Link
+                              to={`/jobs?subcategory_id=${allCat.id}`}
+                              style={
+                                allCat.jobs_count === 0
+                                  ? {
+                                      pointerEvents: "none",
+                                      color: "#007bff",
+                                      textDecoration: "none",
+                                    }
+                                  : { color: "inherit" }
+                              }
+                              class="primary-link"
+                            >
+                              {allCat.name}{" "}
+                              <span class="badge bg-info-subtle text-info float-end">
+                                {allCat.jobs_count}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-lg-4">
-              <div class="card job-Categories-box bg-light border-0">
-                <div class="card-body p-4">
-                  {Array.isArray(jobCategory) && jobCategory.length > 0 && (
-                    <ul class="list-unstyled job-Categories-list mb-0">
-                      {jobCategory.slice(20, 30).map((allCat) => (
-                        <li key={allCat.id}>
-                          <Link
-                            to={`/jobs?subcategory_id=${allCat.id}`}
-                            style={
-                              allCat.jobs_count === 0
-                                ? {
-                                    pointerEvents: "none",
-                                    color: "#007bff",
-                                    textDecoration: "none",
-                                  }
-                                : { color: "inherit" }
-                            }
-                            class="primary-link"
-                          >
-                            {allCat.name}{" "}
-                            <span class="badge bg-info-subtle text-info float-end">
-                              {allCat.jobs_count}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </section>

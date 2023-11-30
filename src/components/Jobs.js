@@ -94,6 +94,7 @@ export default function Jobs() {
   // Job Search
   const countriesData = useFetch("countries");
   const countries = countriesData.data;
+  const [countryId, setCountryId] = useState("101");
 
   // Experience
   const experienceData = useFetch("experiances", "GET", null, false);
@@ -115,7 +116,6 @@ export default function Jobs() {
   console.log(workModes);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [countryId, setCountryId] = useState("101");
 
   // Category
   const jobData = useFetch("onsearch-jobs");
@@ -248,12 +248,13 @@ export default function Jobs() {
 
   const filterJobs = async () => {
     const payload = {
-      value: selectedJob,
+      value: selectedJob || query,
       country_id: countryId,
       designation_id: category,
       salary_id: selectedSalaries,
       experience_id: selectedExperience,
       work_mode_id: selectedWorkMode,
+      emploment_type_id: employment,
       created_at: datePosted,
     };
     console.log(payload);
@@ -382,8 +383,9 @@ export default function Jobs() {
                             name="choices-single-location"
                             id="choices-single-location"
                             aria-label="Default select example"
+                            value={countryId}
                             onChange={(e) => {
-                              setCountry(e.target.value);
+                              setCountryId(e.target.value);
                             }}
                           >
                             {Array.isArray(countries)
@@ -419,7 +421,7 @@ export default function Jobs() {
                       </div>
                     </div>
                   </form>
-                  <div class="col-lg-2 col-md-2">
+                  {/* <div class="col-lg-2 col-md-2">
                     <Link
                       to=""
                       class="btn btn-primary w-100"
@@ -427,7 +429,7 @@ export default function Jobs() {
                     >
                       <i class="uil uil-filter"></i> Fliter
                     </Link>
-                  </div>
+                  </div> */}
                 </div>
 
                 {loading ? (
@@ -710,7 +712,7 @@ export default function Jobs() {
                         >
                           <div class="accordion-body">
                             <div class="side-title">
-                              <div class="form-check mt-2">
+                              <div class="form-check-all mt-2">
                                 <input
                                   class="form-check-input"
                                   type="radio"

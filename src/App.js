@@ -78,18 +78,18 @@ function App() {
 
           <Route path='/employer-signup' element={<CompanySignup />} />
           <Route path='/employer-signin' element={<CompanySignin />} />
-          <Route path='/employer-profile/:id' element={<EmployerProfile />} />
+          <Route path='/employer-profile' element={<EmployerProfile />} />
           <Route path='/faqs' element={<Faq />} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/jobs/:id?' element={<Jobs />} />
           <Route path='/contact-us' element={<Contact />} />
-          <Route path='/sub-categories' element={<JobCategories />} />
-          <Route path='/job-detail/:id' element={<JobDetail />} />
+          <Route path='/sub-categories/:id?' element={<JobCategories />} />
+          <Route path='/job-detail/:id?' element={<JobDetail />} />
           <Route path='/manage-jobs' element={<ManageJobs />} />
           <Route path='/create-new-job' element={<CreateNewJobs />} />
           <Route path='/edit-jobs-post/:id' element={<EditJobPost />} />
           <Route path='/bookmark-jobs' element={<BookmarkJobs />} />
-          <Route path='/profile/:id' element={<MyProfile />} />
+          <Route path='/my-profile' element={<MyProfile />} />
           <Route path='/candidates' element={<Candidates />} />
           <Route path='/candidate-detail' element={<CandidateDetail />} />
           <Route path='/candidate-grid' element={<CandidateGrid />} />

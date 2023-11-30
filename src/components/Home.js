@@ -341,7 +341,7 @@ export default function Home() {
                         </div>
                         <div className="popu-category-content mt-4">
                           <Link
-                            to="/sub-categories"
+                            to={`/sub-categories/${category.id}`}
                             style={
                               category.jobs_count === 0
                                 ? {
@@ -369,7 +369,7 @@ export default function Home() {
               <div className="col-lg-12">
                 <div className="mt-5 text-center">
                   <Link
-                    to="/sub-categories"
+                    to="/sub-categories/all"
                     className="btn btn-primary btn-hover"
                   >
                     Browse All Categories{" "}

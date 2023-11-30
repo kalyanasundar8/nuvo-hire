@@ -21,7 +21,7 @@ function Header() {
     }
   }, [isAuth]);
 
-  // console.log(user);
+  console.log(user);
 
   const logOut = () => {
     localStorage.removeItem("user");
@@ -574,7 +574,7 @@ function Header() {
                           <li>
                             <Link
                               className='dropdown-item'
-                              to={`/employer-profile/${user?.data?.id}`}
+                              to="/employer-profile"
                             >
                               My Profile
                             </Link>
@@ -613,7 +613,7 @@ function Header() {
                           <li>
                             <Link
                               className='dropdown-item'
-                              to={`/profile/${user?.data?.id}`}
+                              to="/my-profile"
                             >
                               My Profile
                             </Link>
