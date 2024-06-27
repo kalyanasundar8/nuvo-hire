@@ -113,119 +113,45 @@ export default function JobCategories() {
               </div>
             </div>
           </div>
-          <div class="row">
-            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
-              <div class="col-lg-4">
-                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
-                  <div class="card-body p-4">
-                    {Array.isArray(jobCategory) &&
-                      jobCategory.slice(0, 10).map((allCat) => (
-                        <ul
-                          key={allCat.id}
-                          class="list-unstyled job-Categories-list mb-3"
-                        >
-                          <li>
-                            <Link
-                              to={`/jobs?subcategory_id=${allCat.id}`}
-                              style={
-                                allCat.jobs_count === 0
-                                  ? {
-                                      pointerEvents: "none",
-                                      color: "#007bff",
-                                      textDecoration: "none",
-                                    }
-                                  : { color: "inherit" }
-                              }
-                              class="primary-link"
-                            >
-                              {allCat.name}{" "}
-                              <span class="badge bg-info-subtle text-info float-end">
-                                {allCat.jobs_count}
-                              </span>
-                            </Link>
-                          </li>
+          <div className="row">
+            {Array.isArray(jobCategory) &&
+              jobCategory.length > 0 &&
+              Array.from({ length: Math.ceil(jobCategory.length / 10) }).map(
+                (_, columnIndex) => (
+                  <div className="col-lg-4" key={columnIndex}>
+                    <div className={`job-Categories-box bg-light border-0`}>
+                      <div className="card-body p-4">
+                        <ul className="list-unstyled job-Categories-list mb-0">
+                          {jobCategory
+                            .slice(columnIndex * 10, (columnIndex + 1) * 10)
+                            .map((allCat) => (
+                              <li key={allCat.id}>
+                                <Link
+                                  to={`/jobs?subcategory_id=${allCat.id}`}
+                                  style={
+                                    allCat.jobs_count === 0
+                                      ? {
+                                          pointerEvents: "none",
+                                          color: "#007bff",
+                                          textDecoration: "none",
+                                        }
+                                      : { color: "inherit" }
+                                  }
+                                  className="primary-link"
+                                >
+                                  {allCat.name}{" "}
+                                  <span className="badge bg-info-subtle text-info float-end">
+                                    {allCat.jobs_count}
+                                  </span>
+                                </Link>
+                              </li>
+                            ))}
                         </ul>
-                      ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-
-            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
-              <div class="col-lg-4">
-                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
-                  <div class="card-body p-4">
-                    {Array.isArray(jobCategory) && jobCategory.length > 0 && (
-                      <ul class="list-unstyled job-Categories-list mb-0">
-                        {jobCategory.slice(10, 20).map((allCat) => (
-                          <li key={allCat.id}>
-                            <Link
-                              to={`/jobs?subcategory_id=${allCat.id}`}
-                              style={
-                                allCat.jobs_count === 0
-                                  ? {
-                                      pointerEvents: "none",
-                                      color: "#007bff",
-                                      textDecoration: "none",
-                                    }
-                                  : { color: "inherit" }
-                              }
-                              class="primary-link"
-                            >
-                              {allCat.name}{" "}
-                              <span class="badge bg-info-subtle text-info float-end">
-                                {allCat.jobs_count}
-                              </span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
-
-            {Array.isArray(jobCategory) && jobCategory.length > 0 ? (
-              <div class="col-lg-4">
-                <div class={`${ jobCategory.length > 0 ? "job-Categories-box bg-light border-0" : ""}`}>
-                  <div class="card-body p-4">
-                    {Array.isArray(jobCategory) && jobCategory.length > 0 && (
-                      <ul class="list-unstyled job-Categories-list mb-0">
-                        {jobCategory.slice(20, 30).map((allCat) => (
-                          <li key={allCat.id}>
-                            <Link
-                              to={`/jobs?subcategory_id=${allCat.id}`}
-                              style={
-                                allCat.jobs_count === 0
-                                  ? {
-                                      pointerEvents: "none",
-                                      color: "#007bff",
-                                      textDecoration: "none",
-                                    }
-                                  : { color: "inherit" }
-                              }
-                              class="primary-link"
-                            >
-                              {allCat.name}{" "}
-                              <span class="badge bg-info-subtle text-info float-end">
-                                {allCat.jobs_count}
-                              </span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ""
-            )}
+                )
+              )}
           </div>
         </div>
       </section>

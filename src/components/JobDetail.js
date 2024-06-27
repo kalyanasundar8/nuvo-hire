@@ -98,32 +98,36 @@ export default function JobDetail() {
   const [isApplyButtonDisabled, setApplyButtonDisabled] = useState(false);
   const [isBookmarkedDisabled, setIsBookmarkedDisabled] = useState(false);
 
-  const handleApplyJob = async () => {
-    const jobId = id;
+  const userData = localStorage.getItem('user');
+  console.log(userData)
+
+  const handleApplyJob = async (jobId) => {
     const payload = {
       manage_job_id: jobId,
     };
     console.log(payload);
+    console.log(userData);
+    
     try {
+
       const response = await ApiService("apply-jobs", "POST", payload, true);
       console.log(response.data.status);
+
       if (response?.data?.status === false) {
         setApplyButtonDisabled(true);
-        setShowPopUpMessage(response?.data?.message);
       }
 
       if (response.status === true) {
-        setShowPopUp(response.message);
+        window.location.reload();
       }
     } catch (error) {
       console.log("Error: ", error);
     }
-
-    setShowPopUp(true);
   };
 
   const isJobApplied = appliedList?.some((applied) => applied.job_id === id);
   console.log(isJobApplied);
+  console.log(appliedList);
   const isBookmarked = bookMarked?.some((marked) => marked.job_id === id);
   console.log(isBookmarked)
 

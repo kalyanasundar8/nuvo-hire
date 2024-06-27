@@ -212,3 +212,17 @@ export const fetchSingleSubCategories = async (id) => {
     throw new Error("Error while fetching sub-category");
   }
 };
+
+export const candidateList = async () => {
+  try {
+    const response = await ApiService(
+      "candidate-search",
+      "GET",
+      null,
+      true
+    );
+    return response.data;
+  } catch(error) {
+    throw new Error("Error while fetching candidate list")
+  }
+}

@@ -490,11 +490,10 @@ export default function CreateNewJobs() {
           <Alert variant="success">Job post was created successfuly</Alert>
         );
 
-        const timeout = setTimeout(() => {
+        setTimeout(() => {
           setAlertMessage("");
         }, 3000);
 
-        clearTimeout(timeout);
         setButtonLoading(false);
       } else {
         setButtonLoading(false)

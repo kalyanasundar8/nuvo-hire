@@ -97,7 +97,7 @@ export default function JobSeekerSignIn() {
                 <div className='row g-0'>
                   <div className='col-lg-6 text-center'>
                     <div className='card-body p-4'>
-                      <Link to='/'>
+                      {/* <Link to='/'>
                         <img
                           src='assets/images/nuvo_logo.png'
                           alt='nuvo_logo'
@@ -110,7 +110,7 @@ export default function JobSeekerSignIn() {
                           height='120'
                           className='logo-dark'
                         />
-                      </Link>
+                      </Link> */}
                       <div className='mt-2'>
                         <img
                           src='assets/images/auth/sign-in.png'
@@ -126,7 +126,7 @@ export default function JobSeekerSignIn() {
                         <div className='text-center mb-4'>
                           <h5>Welcome Back !</h5>
                           <p className='text-white-70'>
-                            Sign in to continue to Nuvo Hire.
+                            Sign in to continue.
                           </p>
                         </div>
                         {alertMessage && <div role='alert'>{alertMessage}</div>}

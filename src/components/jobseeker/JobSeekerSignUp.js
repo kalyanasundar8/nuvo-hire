@@ -159,7 +159,7 @@ export default function JobSeekerSignUp() {
               <div class='row align-items-center'>
                 <div class='col-lg-6 text-center'>
                   <div class='card-body p-4'>
-                    <a href='index.php'>
+                    {/* <a href='index.php'>
                       <img
                         src='assets/images/nuvo_logo.png'
                         alt='nuvo_logo'
@@ -172,7 +172,7 @@ export default function JobSeekerSignUp() {
                         height='120'
                         class='logo-dark'
                       />
-                    </a>
+                    </a> */}
                     <div class='mt-2'>
                       <img
                         src='assets/images/auth/sign-up.png'
@@ -188,8 +188,7 @@ export default function JobSeekerSignUp() {
                       <div class='text-center'>
                         <h5>Let's Get Started</h5>
                         <p class='text-white-70'>
-                          Sign Up and get access to all the features of Nuvo
-                          Hire
+                          Sign Up and get access to all the features.
                         </p>
                       </div>
                       {alertMessage && <div>{alertMessage}</div>}

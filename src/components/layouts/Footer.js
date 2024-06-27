@@ -42,8 +42,8 @@ export default function Footer() {
                         <div class="row">
                             <div class="col-lg-4">
                                 <div class="footer-item mt-4 mt-lg-0 me-lg-5">
-                                    <h4 class="text-white mb-4">Nuvo Hire</h4>
-                                    <p class="text-white-50">Nuvo Hire is the one-destination platform, rendering the most promising solutions to the needs of both recruiters and candidates.</p>
+                                    <h4 class="text-white mb-4"></h4>
+                                    <p class="text-white-50">Job portal is the one-destination platform, rendering the most promising solutions to the needs of both recruiters and candidates.</p>
                                     <p class="text-white mt-3">Follow Us on:</p>
                                     <ul class="footer-social-menu list-inline mb-0">
                                         <li class="list-inline-item"><Link to="https://www.linkedin.com/company/ready2jobs-manpower-suppliers-pvt-ltd/"><i class="uil uil-linkedin"></i></Link></li>
@@ -105,7 +105,7 @@ export default function Footer() {
                         <div class="row">
                             <div class="col-lg-12">
                                 <p class="text-white-50 text-center mb-0">
-                                    {currentYear} &copy; Nuvo Hire. All Rights Reserved.
+                                    {currentYear} &copy; All Rights Reserved.
                                 </p>
                             </div>
                         </div>

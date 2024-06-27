@@ -149,8 +149,7 @@ export default function CompanySignup() {
                       <div class='text-center'>
                         <h5>Let's Get Started</h5>
                         <p class='text-white-70'>
-                          Sign Up and get access to all the features of Nuvo
-                          Hire
+                          Sign Up and get access to all the features.
                         </p>
                       </div>
                       <form onSubmit={formik.handleSubmit} class='auth-form' autoComplete="off">

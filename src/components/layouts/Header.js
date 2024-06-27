@@ -264,7 +264,7 @@ function Header() {
                   role='button'
                   data-bs-toggle='dropdown'
                 >
-                  About Nuvo Hire <div className='arrow-down'></div>
+                  About Us <div className='arrow-down'></div>
                 </a>
                 <ul
                   className='dropdown-menu dropdown-menu-center'

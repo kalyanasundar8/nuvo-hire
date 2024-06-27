@@ -102,7 +102,7 @@ export default function CompanySignin() {
                   <div className='col-lg-6 text-center'>
                     <div className='card-body p-4'>
                       <Link to='/'>
-                        <img
+                        {/* <img
                           src='assets/images/nuvo_logo.png'
                           alt='nuvo_logo'
                           height='120'
@@ -113,6 +113,12 @@ export default function CompanySignin() {
                           alt='nuvo_logo'
                           height='120'
                           className='logo-dark'
+                        /> */}
+                        <img
+                          src='assets/images/logo/WC_logo.png'
+                          alt='nuvo_logo'
+                          height='120'
+                          className='logo-light'
                         />
                       </Link>
                       <div className='mt-2'>
@@ -130,7 +136,7 @@ export default function CompanySignin() {
                         <div className='text-center mb-4'>
                           <h5>Welcome Back !</h5>
                           <p className='text-white-70'>
-                            Sign in to continue to Nuvo Hire.
+                            Sign in to continue.
                           </p>
                         </div>
                         {alertMessage && <div role='alert'>{alertMessage}</div>}
@@ -222,7 +228,7 @@ export default function CompanySignin() {
                           <p className='mb-0'>
                             Don't have an account ?{" "}
                             <Link
-                              to='/jobseeker-signup'
+                              to='/employer-signup'
                               className='fw-medium text-white text-decoration-underline'
                             >
                               {" "}
